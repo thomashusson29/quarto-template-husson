@@ -1,6 +1,6 @@
 title: Husson
 author: Thomas Husson
-version: 1.0.0
+version: 1.1.0
 quarto-required: ">=1.8.0"
 
 contributes:
@@ -49,3 +49,38 @@ contributes:
         - code-language.lua
         - table-column-widths.lua
       include-in-header: pdf-header.tex
+
+    docx:
+      toc: true
+      toc-depth: 2
+      number-sections: true
+      reference-doc: template.docx
+
+    revealjs:
+      theme:
+        - default
+        - auto-dark-clean.scss
+      menu:
+        side: left
+      slide-number: true
+      date-format: long
+      tbl-colwidths: false
+      html-math-method: katex
+      css:
+        - auto-dark.css
+        - auto-dark-reveal.css
+        - auto-dark-plot-filter.css
+        - auto-dark-gt-reveal.css
+        - auto-dark-switch.css
+      include-in-header:
+        - text: |
+            <script src="auto-dark-reveal-init.js"></script>
+      include-after-body:
+        - text: |
+            <script src="auto-dark-reveal.js"></script>
+        - text: |
+            <script src="auto-dark-renderings.js"></script>
+      format-resources:
+        - auto-dark-reveal-init.js
+        - auto-dark-reveal.js
+        - auto-dark-renderings.js

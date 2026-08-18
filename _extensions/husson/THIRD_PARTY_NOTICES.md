@@ -1,6 +1,6 @@
 # Third-party notices
 
-The Auto Dark resources in this extension come from
+The Auto Dark and Auto Dark Clean RevealJS resources in this extension come from
 [`thomashusson29/quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme),
 copyright © 2026 Thomas Husson and distributed under the MIT License included
 next to this notice.

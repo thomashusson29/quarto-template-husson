@@ -42,6 +42,12 @@ jobs:
       - name: Render the neutral template with the project command
         run: quarto render
 
+      - name: Render the Word format with the embedded reference document
+        run: quarto render template.qmd --to husson-docx --output template.docx
+
+      - name: Render the RevealJS format with Auto Dark Clean
+        run: quarto render template.qmd --to husson-revealjs --output template-slides.html
+
       - name: Render the R/Python example
         run: quarto render examples/r-python-reticulate.qmd
 
@@ -50,8 +56,15 @@ jobs:
         run: |
           test -s output/template.html
           test -s output/template.pdf
-          test -s examples/r-python-reticulate.html
-          grep -q "Predicted" examples/r-python-reticulate.html
+          test -s output/template.docx
+          test -s output/template-slides.html
+          test -s output/examples/r-python-reticulate.html
+          test -s output/auto-dark-reveal-init.js
+          test -s output/auto-dark-reveal.js
+          grep -q "Predicted" output/examples/r-python-reticulate.html
           grep -q "auto-dark-system.js" output/template.html
           grep -q "auto-dark-renderings.js" output/template.html
+          grep -q "auto-dark-reveal-init.js" output/template-slides.html
+          grep -q "auto-dark-reveal.js" output/template-slides.html
+          unzip -t output/template.docx
           pdfinfo output/template.pdf | grep -q '^Pages:'

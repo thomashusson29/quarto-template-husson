@@ -1,20 +1,26 @@
 ---
 title: "Nouveau document"
-subtitle: "Template PDF et HTML"
+subtitle: "Template PDF, HTML, Word et RevealJS"
 author: "Votre nom"
 ---
 
 # Introduction
 
-Ce document utilise automatiquement les formats `husson-pdf` et
+Ce document produit automatiquement les formats `husson-pdf` et
 `husson-html`. Le format PDF applique la mise en page scientifique, les blocs
 de code différenciés et l'optimisation des tableaux. Le format HTML suit le
-mode clair ou sombre du système.
+mode clair ou sombre du système. Les formats `husson-docx` et
+`husson-revealjs` sont disponibles à la demande.
 
 ::: {.callout-note title="Utilisation"}
 Ajoutez votre contenu dans ce fichier, puis lancez simplement
 `quarto render` pour produire les deux formats.
 :::
+
+Pour créer un document Word avec le modèle éditorial embarqué ou une
+présentation RevealJS avec le thème Auto Dark Clean, utilisez respectivement
+`quarto render --to husson-docx` et
+`quarto render --to husson-revealjs`.
 
 # Tableau à largeur automatique
 

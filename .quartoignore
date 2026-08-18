@@ -15,7 +15,15 @@ tests/
 *-auto-dark.jpg
 *-auto-dark.jpeg
 *-auto-dark.webp
-/auto-dark-renderings.js
-/auto-dark-system.js
+auto-dark-renderings.js
+auto-dark-system.js
+auto-dark-reveal-init.js
+auto-dark-reveal.js
+!_extensions/husson/auto-dark-renderings.js
+!_extensions/husson/auto-dark-system.js
+!_extensions/husson/auto-dark-reveal-init.js
+!_extensions/husson/auto-dark-reveal.js
 /examples/auto-dark-renderings.js
 /examples/auto-dark-system.js
+/examples/auto-dark-reveal-init.js
+/examples/auto-dark-reveal.js

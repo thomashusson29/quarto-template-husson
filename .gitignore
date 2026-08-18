@@ -17,10 +17,16 @@ figure-pdf/
 *-auto-dark.webp
 /auto-dark-renderings.js
 /auto-dark-system.js
+/auto-dark-reveal-init.js
+/auto-dark-reveal.js
 /examples/auto-dark-renderings.js
 /examples/auto-dark-system.js
+/examples/auto-dark-reveal-init.js
+/examples/auto-dark-reveal.js
 /tests/auto-dark-renderings.js
 /tests/auto-dark-system.js
+/tests/auto-dark-reveal-init.js
+/tests/auto-dark-reveal.js
 
 /.quarto/
 **/*.quarto_ipynb
