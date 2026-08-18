@@ -56,9 +56,7 @@ autres formats avec `--to`.
 ## Modèle Word embarqué
 
 Le format `husson-docx` référence directement
-`_extensions/husson/template.docx`. Ce fichier est une copie binaire du
-manuscrit Word utilisé auparavant comme `reference-doc` dans le projet
-Hartmann. Aucun chemin externe n'est nécessaire après l'installation de
+`_extensions/husson/template.docx`. Aucun chemin externe n'est nécessaire après l'installation de
 l'extension : les styles Word du modèle sont appliqués automatiquement.
 
 ## Présentations RevealJS
@@ -109,7 +107,3 @@ de Garrick Aden-Buie. La palette One Dark et le traitement des figures sont
 maintenus par Thomas Husson.
 
 Les attributions détaillées sont conservées dans `THIRD_PARTY_NOTICES.md`.
-
-## Licence
-
-MIT. Voir `LICENSE`.
