@@ -1,0 +1,28 @@
+/*
+ * auto-dark-os-detect.css
+ *
+ * Applies the One Dark palette and `quarto-dark` body class when the user's
+ * operating system is set to dark mode, before the Quarto theme toggle fires.
+ *
+ * Loaded directly by the Husson HTML format. The system-preference design
+ * acknowledges gadenbuie/quarto-auto-dark:
+ * https://github.com/gadenbuie/quarto-auto-dark
+ *
+ * How it works:
+ *   1. The format registers this stylesheet as an HTML dependency.
+ *   2. The @media block applies the One Dark background and text colour when
+ *      the OS reports `prefers-color-scheme: dark`.
+ *   3. The `:not([data-bs-theme="light"])` guard lets a user manually switch
+ *      back to light mode via the Quarto toggle without being overridden.
+ */
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-bs-theme="light"]) body {
+    background-color: var(--auto-dark-bg);
+    color: var(--auto-dark-text);
+  }
+
+  html:not([data-bs-theme="light"]) body a {
+    color: var(--auto-dark-link);
+  }
+}

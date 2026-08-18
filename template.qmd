@@ -1,0 +1,46 @@
+---
+title: "Nouveau document"
+subtitle: "Template PDF et HTML"
+author: "Votre nom"
+---
+
+# Introduction
+
+Ce document utilise automatiquement les formats `husson-pdf` et
+`husson-html`. Le format PDF applique la mise en page scientifique, les blocs
+de code différenciés et l'optimisation des tableaux. Le format HTML suit le
+mode clair ou sombre du système.
+
+::: {.callout-note title="Utilisation"}
+Ajoutez votre contenu dans ce fichier, puis lancez simplement
+`quarto render` pour produire les deux formats.
+:::
+
+# Tableau à largeur automatique
+
+La largeur des colonnes est calculée à partir de leur contenu. Une colonne de
+libellés courts conserve uniquement la place nécessaire ; les colonnes
+narratives récupèrent l'espace disponible afin de limiter la hauteur totale.
+
+| Élément | Description méthodologique | Opérationnalisation prévue |
+|---|---|---|
+| **Population** | Définir la population correspondant à la question scientifique avant toute analyse. | Traduire chaque critère en variables observables et datées. |
+| **Analyse** | Préspécifier l'estimand, les hypothèses et les diagnostics nécessaires. | Implémenter les transformations et contrôler les sorties avant interprétation. |
+
+# Code R et Python
+
+Les blocs statiques suivants n'imposent aucun moteur d'exécution au document,
+mais restent visuellement différenciés dans le PDF.
+
+```r
+modele <- lm(y ~ x, data = donnees)
+summary(modele)
+```
+
+```python
+model = sm.OLS(y, x).fit()
+print(model.summary())
+```
+
+Un exemple exécutable faisant circuler des objets entre R et Python est fourni
+dans le dossier `examples`.

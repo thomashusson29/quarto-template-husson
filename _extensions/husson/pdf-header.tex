@@ -1,0 +1,120 @@
+% Configuration PDF commune aux documents Husson.
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{fvextra}
+\usepackage{newunicodechar}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage{needspace}
+\usepackage{pdflscape}
+
+\definecolor{sectionblue}{HTML}{1D4E89}
+\definecolor{commentgray}{HTML}{6F6F6F}
+\definecolor{pythonaccent}{HTML}{9A6100}
+\definecolor{pythonfill}{HTML}{FFF5D9}
+\definecolor{raccent}{HTML}{276DC3}
+\definecolor{rfill}{HTML}{EAF2FB}
+
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\setlength{\emergencystretch}{3em}
+
+\makeatletter
+\renewcommand*{\@pnumwidth}{2.8em}
+\renewcommand*{\@tocrmarg}{3.6em}
+\makeatother
+
+\setkomafont{disposition}{\rmfamily}
+\setkomafont{section}{\rmfamily\color{sectionblue}\bfseries}
+\RedeclareSectionCommand[
+  beforeskip=0.8\baselineskip,
+  afterskip=0.35\baselineskip
+]{section}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\setlist[itemize]{itemsep=1pt,parsep=1pt,topsep=2pt}
+\setlist[enumerate]{itemsep=1pt,parsep=1pt,topsep=2pt}
+
+% Ajoute 0,4 cm au-dessus et au-dessous du contenu de chaque ligne de tableau.
+% La boîte typographique normale est rétablie avant de composer les paragraphes
+% multiligne : la marge n'est donc appliquée qu'une fois par cellule.
+\renewcommand{\arraystretch}{1}
+\setlength{\extrarowheight}{0pt}
+\makeatletter
+\newbox\hussontablestrutbox
+\newcommand{\hussontablepadding}{%
+  \setbox\hussontablestrutbox=\copy\strutbox
+  \setbox\strutbox=\hbox{%
+    \vrule width 0pt
+      height \dimexpr\ht\hussontablestrutbox+0.4cm\relax
+      depth \dimexpr\dp\hussontablestrutbox+0.4cm\relax
+  }%
+  \let\hussontablesavedmkpream\@mkpream
+  \def\@mkpream##1{%
+    \hussontablesavedmkpream{##1}%
+    \setbox\strutbox=\copy\hussontablestrutbox
+    \let\@mkpream\hussontablesavedmkpream
+  }%
+}
+\makeatother
+
+% Les tableaux gardent leur hauteur naturelle, avec une taille homogène.
+\AtBeginEnvironment{longtable}{\small\hussontablepadding}
+\AtBeginEnvironment{tabular}{\small\hussontablepadding}
+
+% Les blocs de code sont compacts et peuvent revenir à la ligne.
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+  fontsize=\footnotesize,
+  breaklines,
+  breakanywhere,
+  commandchars=\\\{\}
+}
+\providecommand{\CommentTok}[1]{\textcolor{commentgray}{\textit{#1}}}
+
+\newcommand{\codelanguagelabel}[2]{%
+  \Needspace{5\baselineskip}%
+  \par\addvspace{0.55\baselineskip}%
+  \noindent\begingroup
+  \setlength{\fboxsep}{3pt}%
+  \colorbox{#1}{\color{white}\sffamily\bfseries\scriptsize #2}%
+  \endgroup\par\nobreak\vspace{-0.25\baselineskip}%
+}
+
+\newenvironment{pythoncode}{%
+  \codelanguagelabel{pythonaccent}{PYTHON}%
+  \begingroup\colorlet{shadecolor}{pythonfill}%
+}{%
+  \endgroup\par\addvspace{0.25\baselineskip}%
+}
+
+\newenvironment{rcode}{%
+  \codelanguagelabel{raccent}{R}%
+  \begingroup\colorlet{shadecolor}{rfill}%
+}{%
+  \endgroup\par\addvspace{0.25\baselineskip}%
+}
+
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{center}
+    {\Large\bfseries\rmfamily \@title\par}
+    \vskip 0.35em
+    {\large\rmfamily \@subtitle\par}
+    \vskip 0.65em
+    {\normalsize\rmfamily \@author\par}
+  \end{center}
+}
+\makeatother
+
+\renewcommand{\contentsname}{}
+\AtBeginDocument{
+  \let\oldtableofcontents\tableofcontents
+  \renewcommand{\tableofcontents}{
+    \begingroup
+    \footnotesize
+    \setlength{\parskip}{1pt}
+    \oldtableofcontents
+    \endgroup
+  }
+}

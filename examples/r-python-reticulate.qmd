@@ -1,0 +1,124 @@
+---
+title: "Exemple R et Python avec reticulate"
+subtitle: "Transfert d'objets R → Python → R"
+author: "Thomas Husson"
+lang: fr
+format:
+  html:
+    toc: true
+    theme:
+      light: cosmo
+      dark: darkly
+    respect-user-color-scheme: true
+    css:
+      - ../_extensions/husson/auto-dark.css
+      - ../_extensions/husson/auto-dark-os-detect.css
+      - ../_extensions/husson/auto-dark-plot-filter.css
+    include-in-header:
+      - text: |
+          <script src="../_extensions/husson/auto-dark-system.js"></script>
+    include-after-body:
+      - text: |
+          <script src="../_extensions/husson/auto-dark-renderings.js"></script>
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: auto-dark-setup
+#| include: false
+
+if (knitr::is_html_output()) {
+  auto_dark_setup <- c(
+    "_extensions/husson/auto-dark-setup.R",
+    "_extensions/thomashusson29/husson/auto-dark-setup.R",
+    "../_extensions/husson/auto-dark-setup.R",
+    "../_extensions/thomashusson29/husson/auto-dark-setup.R"
+  )
+  auto_dark_setup <- auto_dark_setup[file.exists(auto_dark_setup)]
+
+  if (!length(auto_dark_setup)) {
+    stop("Impossible de trouver auto-dark-setup.R dans l'extension Husson.")
+  }
+
+  source(auto_dark_setup[[1]])
+  auto_dark_on()
+}
+```
+
+```{r}
+#| label: python-dependencies
+#| include: false
+
+library(reticulate)
+py_require("statsmodels")
+```
+
+# Création des données dans R
+
+Le tableau est créé dans la session R qui pilote le document avec `knitr`.
+
+```{r}
+#| label: create-r-data
+
+model_data <- data.frame(
+  Age = c(12, 18, 24, 30, 36, 42, 48, 54),
+  Weight = c(1580, 1710, 1825, 1960, 2075, 2210, 2290, 2440)
+)
+
+knitr::kable(model_data)
+```
+
+# Modélisation dans Python
+
+Le préfixe `r.` donne accès à un objet créé dans R. Le modèle et ses sorties
+sont ensuite conservés dans `model_data_py`.
+
+```{python}
+#| label: fit-python-model
+
+model_data_py = r.model_data.copy()
+
+import statsmodels.api as sm
+
+y = model_data_py[["Weight"]]
+x = sm.add_constant(model_data_py[["Age"]])
+model = sm.OLS(y, x).fit()
+
+model_data_py["Predicted"] = model.predict(x)
+model_data_py["Residuals"] = model.resid
+```
+
+# Retour vers R
+
+Le préfixe `py$` récupère l'objet Python dans R. Le contrôle vérifie que le
+transfert a conservé les deux colonnes calculées par Python.
+
+```{r}
+#| label: retrieve-python-results
+
+model_results <- py$model_data_py
+
+stopifnot(
+  all(c("Predicted", "Residuals") %in% names(model_results)),
+  nrow(model_results) == nrow(model_data)
+)
+
+knitr::kable(model_results)
+```
+
+# Visualisation dans R
+
+```{r}
+#| label: plot-results
+#| fig-align: center
+#| fig-alt: "Nuage de points des valeurs prédites et des résidus du modèle Python."
+
+library(ggplot2)
+
+ggplot(model_results, aes(x = Predicted, y = Residuals)) +
+  geom_point(colour = "#2F4F4F", size = 2.5) +
+  geom_hline(yintercept = 0, colour = "#E06C75", linewidth = 0.7) +
+  theme_minimal(base_size = 12)
+```

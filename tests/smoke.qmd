@@ -1,0 +1,20 @@
+---
+title: "Smoke test Husson"
+---
+
+# Tableau
+
+| Item | Colonne narrative longue | Statut |
+|---|---|---|
+| A | Cette colonne doit recevoir davantage de largeur que la première afin de réduire les retours à la ligne. | Prêt |
+| B | Le calcul doit rester stable dans les sorties PDF et ne pas modifier la largeur des tableaux HTML. | Vérifié |
+
+# Langages
+
+```r
+summary(cars)
+```
+
+```python
+print("Husson")
+```

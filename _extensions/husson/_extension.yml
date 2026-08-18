@@ -1,0 +1,51 @@
+title: Husson
+author: Thomas Husson
+version: 1.0.0
+quarto-required: ">=1.8.0"
+
+contributes:
+  formats:
+    html:
+      toc: true
+      toc-depth: 2
+      theme:
+        light: cosmo
+        dark: darkly
+      respect-user-color-scheme: true
+      css:
+        - auto-dark.css
+        - auto-dark-os-detect.css
+        - auto-dark-plot-filter.css
+      include-in-header:
+        - text: |
+            <script src="auto-dark-system.js"></script>
+      include-after-body:
+        - text: |
+            <script src="auto-dark-renderings.js"></script>
+      format-resources:
+        - auto-dark-system.js
+        - auto-dark-renderings.js
+
+    pdf:
+      toc: true
+      toc-depth: 2
+      toc-title: "Table des matières"
+      pdf-engine: xelatex
+      pdf-engine-opts:
+        - -interaction=nonstopmode
+        - -halt-on-error
+      cite-method: natbib
+      biblio-style: unsrturl
+      natbiboptions: "numbers,round,sort,compress"
+      number-sections: true
+      documentclass: scrartcl
+      papersize: a4
+      fontsize: 10pt
+      geometry: margin=2cm
+      colorlinks: true
+      linkcolor: NavyBlue
+      urlcolor: NavyBlue
+      filters:
+        - code-language.lua
+        - table-column-widths.lua
+      include-in-header: pdf-header.tex

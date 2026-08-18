@@ -1,0 +1,19 @@
+project:
+  type: default
+  output-dir: output
+  render:
+    - "*.qmd"
+    - "!examples/"
+    - "!tests/"
+
+lang: fr
+prefer-pdf: true
+
+execute:
+  enabled: true
+  warning: false
+  message: false
+
+format:
+  husson-html: default
+  husson-pdf: default
