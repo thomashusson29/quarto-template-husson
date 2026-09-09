@@ -4,6 +4,13 @@ subtitle: "Template PDF, HTML, Word et RevealJS"
 author: "Votre nom"
 ---
 
+```{r}
+#| label: husson-table-setup
+#| include: false
+source("_extensions/husson/gt-page-fit.R")
+if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
+```
+
 # Introduction
 
 Ce document produit automatiquement les formats `husson-pdf` et
@@ -25,8 +32,9 @@ présentation RevealJS avec le thème Auto Dark Clean, utilisez respectivement
 # Tableau à largeur automatique
 
 La largeur des colonnes est calculée à partir de leur contenu. Une colonne de
-libellés courts conserve uniquement la place nécessaire ; les colonnes
-narratives récupèrent l'espace disponible afin de limiter la hauteur totale.
+libellés reçoit davantage de place, les colonnes `p-value` et `q-value` restent
+compactes, et le reste de la largeur est réparti entre les estimations. Cette
+règle s'applique automatiquement aux tableaux `gt` et `gtsummary` dans le PDF.
 
 | Élément | Description méthodologique | Opérationnalisation prévue |
 |---|---|---|

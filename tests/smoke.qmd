@@ -2,12 +2,59 @@
 title: "Smoke test Husson"
 ---
 
+```{r}
+#| label: husson-table-setup
+#| include: false
+source("../_extensions/husson/gt-page-fit.R")
+if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
+```
+
 # Tableau
 
 | Item | Colonne narrative longue | Statut |
 |---|---|---|
 | A | Cette colonne doit recevoir davantage de largeur que la première afin de réduire les retours à la ligne. | Prêt |
 | B | Le calcul doit rester stable dans les sorties PDF et ne pas modifier la largeur des tableaux HTML. | Vérifié |
+
+```{r}
+#| label: gt-large-table
+#| echo: false
+if (requireNamespace("gt", quietly = TRUE)) {
+  data.frame(
+    Characteristic = c(
+      "Infection du site opératoire profonde ou infection intra-abdominale",
+      "Hospitalisation en unité de surveillance continue"
+    ),
+    `Groupe de référence avec un intitulé volontairement long` = c("7 (29 %)", "17 (71 % )"),
+    `Groupe comparé avec un intitulé volontairement long` = c("8 (35 %)", "18 (78 % )"),
+    p_value = c("0,7", "0,6"),
+    check.names = FALSE
+  ) |>
+    gt::gt() |>
+    gt::cols_label(p_value = "p-value")
+}
+```
+
+```{r}
+#| label: gtsummary-large-table
+#| echo: false
+if (requireNamespace("gtsummary", quietly = TRUE)) {
+  mtcars |>
+    dplyr::mutate(
+      am = factor(am, labels = c("Transmission automatique", "Transmission manuelle"))
+    ) |>
+    gtsummary::tbl_summary(
+      by = am,
+      include = c(mpg, cyl, wt),
+      label = list(
+        mpg ~ "Consommation exprimée en miles parcourus par gallon",
+        cyl ~ "Nombre de cylindres du moteur",
+        wt ~ "Poids du véhicule"
+      )
+    ) |>
+    gtsummary::add_p()
+}
+```
 
 # Langages
 

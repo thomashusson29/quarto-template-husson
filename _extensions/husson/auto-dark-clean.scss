@@ -314,12 +314,28 @@ $selection-bg: #26351c !default;
 
 /* ── Footer (slide citation) ─────────────────────────────────────────────── */
 
-.reveal .footer {
-  position: absolute;
+/*
+ * Le pied de page est aligne a gauche et laisse une gouttiere a droite pour le
+ * numero de diapo (.slide-number, ancre a bottom/right). Les deux occupaient
+ * auparavant le meme angle inferieur droit et se superposaient des que le
+ * texte du footer etait un peu long.
+ */
+
+/*
+ * Selecteur volontairement en `div.footer` : Quarto charge apres ce theme une
+ * regle `.reveal .footer { position: fixed; bottom: 18px; width: 100%; }` de
+ * meme specificite, qui gagnait et rendait `width: auto` (donc la gouttiere)
+ * inoperant. `div.footer` passe devant sans recourir a !important.
+ */
+
+.reveal div.footer {
+  position: fixed;
   bottom: 5px;
-  right: 20px;
-  width: 95%;
-  text-align: right;
+  left: 20px;
+  right: 96px;          /* gouttiere reservee au numero de diapo */
+  width: auto;
+  margin: 0;
+  text-align: left;
   font-size: 0.6em;
   color: #a3a3a3;
   font-style: italic;
@@ -332,8 +348,14 @@ $selection-bg: #26351c !default;
   margin: 0;
   padding: 0;
   line-height: 1.2;
-  text-align: right;
+  text-align: left;
 }
+
+/*
+ * Un logo occupe l'angle inferieur gauche (.slide-logo : left 10px, max 150px).
+ * Le pied de page est alors decale pour ne pas passer dessous.
+ */
+.reveal.has-logo div.footer { left: 172px; }
 
 .reveal .footer ol           { display: inline; list-style: none; padding-left: 0; }
 .reveal .footer li           { display: inline; }

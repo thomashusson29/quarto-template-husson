@@ -53,6 +53,32 @@ produits par la même commande. Pour éviter une collision de noms, utilisez
 habituellement `husson-html` et `husson-pdf` par défaut, puis rendez les deux
 autres formats avec `--to`.
 
+## Tableaux `gt` et `gtsummary`
+
+Le document créé par le template active automatiquement l'ajustement des
+tableaux `gt`, y compris ceux produits par `gtsummary`. En PDF, la largeur
+totale est fixée à la ligne, la colonne descriptive reçoit par défaut 44 %, les
+colonnes `p-value` ou `q-value` 8 % chacune, et le reste est réparti entre les
+colonnes de résultats. Les largeurs définies explicitement avec `cols_width()`
+restent prioritaires.
+
+Dans un document existant auquel l'extension a été ajoutée, placez ceci dans un
+chunk R de setup masqué :
+
+```r
+source("_extensions/husson/gt-page-fit.R")
+husson_tables_on()
+```
+
+Les proportions peuvent être adaptées une seule fois pour tout le document :
+
+```r
+husson_tables_on(label_pct = 48, p_pct = 7)
+```
+
+Un filet de sécurité LaTeX réduit uniquement les rares tableaux contenant
+encore une chaîne insécable plus large que la page.
+
 ## Modèle Word embarqué
 
 Le format `husson-docx` référence directement
@@ -103,7 +129,6 @@ Le thème HTML reprend les ressources du projet
 [`quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme).
 Le mécanisme de détection du mode sombre reprend une idée du projet
 [`gadenbuie/quarto-auto-dark`](https://github.com/gadenbuie/quarto-auto-dark)
-de Garrick Aden-Buie. La palette One Dark et le traitement des figures sont
-maintenus par Thomas Husson.
+de Garrick Aden-Buie.
 
 Les attributions détaillées sont conservées dans `THIRD_PARTY_NOTICES.md`.
