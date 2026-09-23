@@ -38,10 +38,53 @@ local function get_heading_title(h)
   return tex
 end
 
+local function extract_meta_text(meta_item)
+  if not meta_item then return "" end
+  if type(meta_item) == "table" and meta_item.t == "MetaInlines" then
+    local cleaned = clean_inlines(meta_item)
+    local d = pandoc.Pandoc({pandoc.Plain(cleaned)})
+    return pandoc.write(d, "latex"):gsub("%s*$", ""):gsub("^%s*", "")
+  elseif type(meta_item) == "table" and meta_item.t == "MetaBlocks" then
+    local d = pandoc.Pandoc(meta_item)
+    return pandoc.write(d, "latex"):gsub("%s*$", ""):gsub("^%s*", "")
+  elseif type(meta_item) == "table" and meta_item.t == "MetaList" then
+    local names = {}
+    for _, item in ipairs(meta_item) do
+      local s = extract_meta_text(item)
+      if s ~= "" then table.insert(names, s) end
+    end
+    return table.concat(names, ", ")
+  elseif type(meta_item) == "table" and meta_item.name then
+    return extract_meta_text(meta_item.name)
+  else
+    return pandoc.utils.stringify(meta_item)
+  end
+end
+
 local function process_latex(doc)
 
-  -- Possibilite de desactiver la barre via le frontmatter YAML
+  -- Extraction des metadonnees pour le pied de page (auteur et titre)
+  local doc_title = extract_meta_text(doc.meta["short-title"] or doc.meta["footer-title"] or doc.meta.title)
+  local doc_author = extract_meta_text(doc.meta["footer-author"] or doc.meta.author)
+  local footer_left = extract_meta_text(doc.meta["footer-left"])
+
+  local footer_defs = {}
+  if doc_title ~= "" then
+    table.insert(footer_defs, "\\hussondoctitle{" .. doc_title .. "}")
+  end
+  if doc_author ~= "" then
+    table.insert(footer_defs, "\\hussondocauthor{" .. doc_author .. "}")
+  end
+  if footer_left ~= "" then
+    table.insert(footer_defs, "\\hussondocfooterleft{" .. footer_left .. "}")
+  end
+
+  -- Possibilite de desactiver la barre de navigation d'en-tete via le frontmatter YAML
   if doc.meta["navigation-bar"] == false or doc.meta["navbar"] == false then
+    if #footer_defs > 0 then
+      local fdefs_latex = "\n% Metadonnees du pied de page Husson\n" .. table.concat(footer_defs, "\n") .. "\n"
+      table.insert(doc.blocks, 1, pandoc.RawBlock("latex", fdefs_latex))
+    end
     return doc
   end
 
@@ -86,6 +129,10 @@ local function process_latex(doc)
   end
 
   if #header_seq == 0 then
+    if #footer_defs > 0 then
+      local fdefs_latex = "\n% Metadonnees du pied de page Husson\n" .. table.concat(footer_defs, "\n") .. "\n"
+      table.insert(doc.blocks, 1, pandoc.RawBlock("latex", fdefs_latex))
+    end
     return doc
   end
 
@@ -199,8 +246,18 @@ local function process_latex(doc)
   })
 
   -- 4. Inserer les definitions LaTeX au debut des blocs
-  local defs_latex = "\n% Definitions des etats de la barre de navigation Husson\n" .. table.concat(defs, "\n") .. "\n"
-  table.insert(new_doc.blocks, 1, pandoc.RawBlock("latex", defs_latex))
+  local all_defs = {}
+  if #footer_defs > 0 then
+    table.insert(all_defs, "% Metadonnees du pied de page Husson\n" .. table.concat(footer_defs, "\n"))
+  end
+  if #defs > 0 then
+    table.insert(all_defs, "% Definitions des etats de la barre de navigation Husson\n" .. table.concat(defs, "\n"))
+  end
+
+  if #all_defs > 0 then
+    local defs_latex = "\n" .. table.concat(all_defs, "\n\n") .. "\n"
+    table.insert(new_doc.blocks, 1, pandoc.RawBlock("latex", defs_latex))
+  end
 
   return new_doc
 end

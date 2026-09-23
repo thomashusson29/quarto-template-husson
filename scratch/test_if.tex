@@ -1,0 +1,14 @@
+
+\documentclass{scrartcl}
+\makeatletter
+\def\hussondoctitle{Validation de la barre de navigation}
+\def\hussondocauthor{Thomas Husson}
+\providecommand{\hussondocfooterleft}{}
+
+\begin{document}
+1: \ifx\hussondocfooterleft\@empty FOOTERLEFT IS EMPTY \else FOOTERLEFT NOT EMPTY \fi
+
+2: \ifx\hussondocauthor\@empty AUTHOR IS EMPTY \else AUTHOR NOT EMPTY \fi
+
+3: \ifx\hussondoctitle\@empty TITLE IS EMPTY \else TITLE NOT EMPTY \fi
+\end{document}

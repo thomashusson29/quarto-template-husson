@@ -1,0 +1,40 @@
+
+\documentclass{scrartcl}
+\author{Thomas Husson}
+\title{Mon Titre}
+
+\ExplSyntaxOn
+\tl_new:N \g_husson_title_tl
+\tl_new:N \g_husson_author_tl
+
+\NewDocumentCommand{\hussondocauthor}{m}{
+  \tl_gset:Nn \g_husson_author_tl {#1}
+}
+\NewDocumentCommand{\hussondoctitle}{m}{
+  \tl_gset:Nn \g_husson_title_tl {#1}
+}
+
+\NewDocumentCommand{\hussongettitle}{}{
+  \tl_use:N \g_husson_title_tl
+}
+\NewDocumentCommand{\hussongetauthor}{}{
+  \tl_use:N \g_husson_author_tl
+}
+\ExplSyntaxOff
+
+\makeatletter
+\AddToHook{begindocument/before}{%
+  \ifx\@title\@undefined\else
+    \hussondoctitle{\@title}%
+  \fi
+  \ifx\@author\@undefined\else
+    \hussondocauthor{\@author}%
+  \fi
+}
+\makeatother
+
+\begin{document}
+TITLE: \hussongettitle
+
+AUTHOR: \hussongetauthor
+\end{document}

@@ -1,0 +1,38 @@
+
+\documentclass{scrartcl}
+\author{Thomas Husson}
+\title{Mon Titre}
+
+\ExplSyntaxOn
+\tl_new:N \g_husson_title_tl
+\tl_new:N \g_husson_author_tl
+
+\hook_gput_code:nnn { begindocument/before } { husson }
+  {
+    \tl_if_empty:NT \g_husson_title_tl
+      {
+        \cs_if_exist:NTF \@title
+          { \tl_gset:Nn \g_husson_title_tl { \@title } }
+          { }
+      }
+    \tl_if_empty:NT \g_husson_author_tl
+      {
+        \cs_if_exist:NTF \@author
+          { \tl_gset:Nn \g_husson_author_tl { \@author } }
+          { }
+      }
+  }
+
+\NewDocumentCommand{\hussongettitle}{}{
+  \tl_use:N \g_husson_title_tl
+}
+\NewDocumentCommand{\hussongetauthor}{}{
+  \tl_use:N \g_husson_author_tl
+}
+\ExplSyntaxOff
+
+\begin{document}
+TITLE: \hussongettitle
+
+AUTHOR: \hussongetauthor
+\end{document}

@@ -1,0 +1,32 @@
+
+\documentclass{scrartcl}
+\usepackage{xcolor}
+\providecolor{headingcharcoal}{HTML}{34383D}
+\makeatletter
+\def\hussondoctitle{Validation de la barre de navigation}
+\def\hussondocauthor{Thomas Husson}
+\providecommand{\hussondocfooterleft}{}
+
+\newcommand{\hussongetfooterleft}{%
+  \ifx\hussondocfooterleft\@empty
+    \ifx\hussondocauthor\@empty
+      \ifx\hussondoctitle\@empty
+      \else
+        \textit{\hussondoctitle}%
+      \fi
+    \else
+      \hussondocauthor
+      \ifx\hussondoctitle\@empty
+      \else
+        \ \textendash{}\ \textit{\hussondoctitle}%
+      \fi
+    \fi
+  \else
+    \hussondocfooterleft
+  \fi
+}
+\makeatother
+
+\begin{document}
+FOOTER IS: [\hussongetfooterleft]
+\end{document}

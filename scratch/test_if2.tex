@@ -1,0 +1,38 @@
+
+\documentclass{scrartcl}
+\makeatletter
+\def\hussondoctitle{Validation de la barre de navigation}
+\def\hussondocauthor{Thomas Husson}
+\providecommand{\hussondocfooterleft}{}
+
+\newcommand{\hussonifempty}[3]{%
+  \if\relax\detokenize{#1}\relax
+    #2%
+  \else
+    #3%
+  \fi
+}
+
+\newcommand{\hussongetfooterleft}{%
+  \hussonifempty{\hussondocfooterleft}{%
+    \hussonifempty{\hussondocauthor}{%
+      \hussonifempty{\hussondoctitle}{%
+      }{%
+        \textit{\hussondoctitle}%
+      }%
+    }{%
+      \hussondocauthor%
+      \hussonifempty{\hussondoctitle}{%
+      }{%
+        \ \textendash{}\ \textit{\hussondoctitle}%
+      }%
+    }%
+  }{%
+    \hussondocfooterleft%
+  }%
+}
+\makeatother
+
+\begin{document}
+RESULT: [\hussongetfooterleft]
+\end{document}

@@ -359,11 +359,12 @@
 \RequirePackage{graphicx}
 \RequirePackage{geometry}
 
-% Calibrage de l'en-tete pour eviter tout chevauchement et avertissement KOMA-Script
-\geometry{headheight=18pt, headsep=14pt}
+% Calibrage de l'en-tete et du pied de page pour eviter tout chevauchement et avertissement KOMA-Script
+\geometry{headheight=18pt, headsep=14pt, footskip=28pt}
 
 % Couleurs complementaires
 \providecolor{headingblue}{HTML}{17365D}
+\providecolor{headingcharcoal}{HTML}{34383D}
 \providecolor{commentgray}{HTML}{6F6F6F}
 \providecolor{linegray}{HTML}{D0D4D9}
 
@@ -401,9 +402,23 @@
 }
 \makeatother
 
-% Gestion robuste des marques TeX (LaTeX 2022+ / Expl3)
+% Gestion robuste des marques TeX et du pied de page (LaTeX 2022+ / Expl3)
 \ExplSyntaxOn
 \NewMarkClass{hussonnav}
+
+\tl_new:N \g_husson_title_tl
+\tl_new:N \g_husson_author_tl
+\tl_new:N \g_husson_footerleft_tl
+
+\NewDocumentCommand{\hussondocauthor}{m}{
+  \tl_gset:Nn \g_husson_author_tl {#1}
+}
+\NewDocumentCommand{\hussondoctitle}{m}{
+  \tl_gset:Nn \g_husson_title_tl {#1}
+}
+\NewDocumentCommand{\hussondocfooterleft}{m}{
+  \tl_gset:Nn \g_husson_footerleft_tl {#1}
+}
 
 \cs_new:Npn \husson_set_state:nnn #1 #2 #3 {
   \tl_gset:cn { g_husson_h_#1_tl } { #2 }
@@ -431,6 +446,26 @@
     }
 }
 
+% Composition du pied de page gauche (Auteur – Titre en italique)
+\cs_new:Npn \husson_render_footer_left: {
+  \tl_if_empty:NTF \g_husson_footerleft_tl
+    {
+      \tl_if_empty:NTF \g_husson_author_tl
+        {
+          \tl_if_empty:NF \g_husson_title_tl
+            { \textit{ \tl_use:N \g_husson_title_tl } }
+        }
+        {
+          \tl_use:N \g_husson_author_tl
+          \tl_if_empty:NF \g_husson_title_tl
+            { ~--~ \textit{ \tl_use:N \g_husson_title_tl } }
+        }
+    }
+    {
+      \tl_use:N \g_husson_footerleft_tl
+    }
+}
+
 \NewDocumentCommand{\hussonnavstate}{mmm}{
   \husson_set_state:nnn {#1} {#2} {#3}
 }
@@ -439,17 +474,42 @@
   \husson_render_bar:
 }
 
+\NewDocumentCommand{\hussongetfooterleft}{}{
+  \husson_render_footer_left:
+}
+
 \NewDocumentCommand{\hussonnavmark}{m}{
   \InsertMark{hussonnav}{#1}
 }
 \ExplSyntaxOff
 
+% Fallback automatique sur \@title et \@author si non definis par le filtre Lua
+\makeatletter
+\AddToHook{begindocument/before}{%
+  \ExplSyntaxOn
+  \tl_if_empty:NT \g_husson_title_tl
+    {
+      \tl_if_empty:NF \@title
+        { \tl_gset:Nn \g_husson_title_tl { \@title } }
+    }
+  \tl_if_empty:NT \g_husson_author_tl
+    {
+      \tl_if_empty:NF \@author
+        { \tl_gset:Nn \g_husson_author_tl { \@author } }
+    }
+  \ExplSyntaxOff
+}
+\makeatother
+
 % Configuration du style de page avec scrlayer-scrpage
 \clearpairofpagestyles
-\KOMAoptions{headsepline=0.3pt}
+\KOMAoptions{headsepline=0.3pt, footsepline=0.3pt, footheight=18pt}
 \setkomafont{headsepline}{\color{linegray}}
+\setkomafont{footsepline}{\color{linegray}}
 \ihead{\renderhussonnavbar}
-\cfoot{\pagemark}
+\ifoot{\normalfont\scriptsize\textcolor{headingcharcoal}{\hussongetfooterleft}}
+\cfoot[\pagemark]{}
+\ofoot{\normalfont\scriptsize\textcolor{black}{\pagemark}}
 
 % Desactivation propre sur la table des matieres
 \AddToHook{cmd/tableofcontents/before}{%
@@ -458,6 +518,7 @@
 \AddToHook{cmd/tableofcontents/after}{%
   \pagestyle{scrheadings}%
 }
+
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -536,6 +597,10 @@ de page}
 \tableofcontents
 }
 
+
+% Metadonnees du pied de page Husson
+\hussondoctitle{Validation de la barre de navigation}
+\hussondocauthor{Thomas Husson}
 
 % Definitions des etats de la barre de navigation Husson
 \hussonnavstate{1}{1}{\hussonnavfit{\hussonnavstandalone{Introduction}}}
