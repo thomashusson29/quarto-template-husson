@@ -1,0 +1,417 @@
+/*
+ * auto-dark.css
+ * Core stylesheet for the auto-dark Quarto extension.
+ *
+ * Sections:
+ *   1. CSS custom properties (One Dark palette)
+ *   2. Body, font & links
+ *   3. gt / gtsummary tables
+ *   4. Markdown tables
+ *   5. Code blocks
+ *   6. Callouts
+ *   7. System preference mode
+ *   8. Light / dark visibility helpers
+ *   9. Figure background
+ *
+ * The One Dark palette is defined here once. Do not duplicate these variables
+ * in other CSS files — import or reference this file instead.
+ */
+
+
+/* ── 1. CSS custom properties (One Dark palette) ─────────────────────────── */
+
+:root {
+  /* Match the light Cosmo theme; the darkly Bootstrap theme defaults to Lato. */
+  --auto-dark-font-sans:     "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+                             "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                             sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+                             "Segoe UI Symbol";
+  --auto-dark-bg:            #282c34;
+  --auto-dark-bg-soft:       #2c313a;
+  --auto-dark-panel:         #21252b;
+  --auto-dark-border:        #3e4451;
+  --auto-dark-border-strong: #5c6370;
+  --auto-dark-text:          #abb2bf;
+  --auto-dark-text-strong:   #e6edf3;
+  --auto-dark-text-muted:    #8b949e;
+  --auto-dark-link:          #61afef;
+  --auto-dark-green:         #98c379;
+  --auto-dark-red:           #e06c75;
+  --auto-dark-accent:        #c678dd;
+}
+
+
+/* ── 2. Body & links ─────────────────────────────────────────────────────── */
+
+body.quarto-dark,
+body.auto-dark-theme-dark,
+html.auto-dark-theme-dark,
+html.auto-dark-theme-dark body {
+  --bs-font-sans-serif:      var(--auto-dark-font-sans);
+  --bs-body-font-family:     var(--auto-dark-font-sans);
+  --bs-btn-font-family:      var(--auto-dark-font-sans);
+  --bs-nav-link-font-family: var(--auto-dark-font-sans);
+
+  color-scheme:     dark;
+  background-color: var(--auto-dark-bg);
+  color:            var(--auto-dark-text);
+  font-family:      var(--auto-dark-font-sans);
+}
+
+body.quarto-dark a,
+body.auto-dark-theme-dark a,
+html.auto-dark-theme-dark a {
+  color: var(--auto-dark-link);
+}
+
+
+/* ── 3. gt / gtsummary tables ────────────────────────────────────────────── */
+
+body.quarto-dark .gt_table,
+body.auto-dark-theme-dark .gt_table,
+html.auto-dark-theme-dark .gt_table {
+  color:              var(--auto-dark-text-strong) !important;
+  background-color:   var(--auto-dark-bg) !important;
+  border-top-color:   var(--auto-dark-border-strong) !important;
+  border-bottom-color: var(--auto-dark-border-strong) !important;
+  opacity:            1 !important;
+}
+
+body.quarto-dark .gt_table *,
+body.auto-dark-theme-dark .gt_table *,
+html.auto-dark-theme-dark .gt_table * {
+  color:        var(--auto-dark-text-strong) !important;
+  border-color: var(--auto-dark-border) !important;
+  opacity:      1 !important;
+}
+
+body.quarto-dark .gt_table th,
+body.quarto-dark .gt_table td,
+body.quarto-dark .gt_table .gt_row,
+body.quarto-dark .gt_table .gt_stub,
+body.quarto-dark .gt_table .gt_stubhead,
+body.auto-dark-theme-dark .gt_table th,
+body.auto-dark-theme-dark .gt_table td,
+body.auto-dark-theme-dark .gt_table .gt_row,
+body.auto-dark-theme-dark .gt_table .gt_stub,
+body.auto-dark-theme-dark .gt_table .gt_stubhead,
+html.auto-dark-theme-dark .gt_table th,
+html.auto-dark-theme-dark .gt_table td,
+html.auto-dark-theme-dark .gt_table .gt_row,
+html.auto-dark-theme-dark .gt_table .gt_stub,
+html.auto-dark-theme-dark .gt_table .gt_stubhead {
+  background-color: var(--auto-dark-bg) !important;
+}
+
+body.quarto-dark .gt_table .gt_row,
+body.quarto-dark .gt_table .gt_stub,
+body.quarto-dark .gt_table .gt_stub *,
+body.auto-dark-theme-dark .gt_table .gt_row,
+body.auto-dark-theme-dark .gt_table .gt_stub,
+body.auto-dark-theme-dark .gt_table .gt_stub *,
+html.auto-dark-theme-dark .gt_table .gt_row,
+html.auto-dark-theme-dark .gt_table .gt_stub,
+html.auto-dark-theme-dark .gt_table .gt_stub * {
+  color: var(--auto-dark-text-strong) !important;
+}
+
+body.quarto-dark .gt_table .gt_col_headings,
+body.quarto-dark .gt_table .gt_col_heading,
+body.quarto-dark .gt_table .gt_heading,
+body.quarto-dark .gt_table .gt_group_heading,
+body.auto-dark-theme-dark .gt_table .gt_col_headings,
+body.auto-dark-theme-dark .gt_table .gt_col_heading,
+body.auto-dark-theme-dark .gt_table .gt_heading,
+body.auto-dark-theme-dark .gt_table .gt_group_heading,
+html.auto-dark-theme-dark .gt_table .gt_col_headings,
+html.auto-dark-theme-dark .gt_table .gt_col_heading,
+html.auto-dark-theme-dark .gt_table .gt_heading,
+html.auto-dark-theme-dark .gt_table .gt_group_heading {
+  color:            var(--auto-dark-text-strong) !important;
+  background-color: var(--auto-dark-panel) !important;
+  border-color:     var(--auto-dark-border-strong) !important;
+}
+
+/* Alternate row shading */
+body.quarto-dark .gt_table .gt_table_body tr:nth-child(even) td,
+body.quarto-dark .gt_table .gt_table_body tr:nth-child(even) th,
+body.auto-dark-theme-dark .gt_table .gt_table_body tr:nth-child(even) td,
+body.auto-dark-theme-dark .gt_table .gt_table_body tr:nth-child(even) th,
+html.auto-dark-theme-dark .gt_table .gt_table_body tr:nth-child(even) td,
+html.auto-dark-theme-dark .gt_table .gt_table_body tr:nth-child(even) th {
+  background-color: var(--auto-dark-bg-soft) !important;
+}
+
+body.quarto-dark .gt_table .gt_footnotes,
+body.quarto-dark .gt_table .gt_source_notes,
+body.quarto-dark .gt_table .gt_sourcenotes,
+body.quarto-dark .gt_table .gt_footnote,
+body.quarto-dark .gt_table .gt_source_note,
+body.auto-dark-theme-dark .gt_table .gt_footnotes,
+body.auto-dark-theme-dark .gt_table .gt_source_notes,
+body.auto-dark-theme-dark .gt_table .gt_sourcenotes,
+body.auto-dark-theme-dark .gt_table .gt_footnote,
+body.auto-dark-theme-dark .gt_table .gt_source_note,
+html.auto-dark-theme-dark .gt_table .gt_footnotes,
+html.auto-dark-theme-dark .gt_table .gt_source_notes,
+html.auto-dark-theme-dark .gt_table .gt_sourcenotes,
+html.auto-dark-theme-dark .gt_table .gt_footnote,
+html.auto-dark-theme-dark .gt_table .gt_source_note {
+  color:            var(--auto-dark-text) !important;
+  background-color: var(--auto-dark-bg) !important;
+  border-color:     var(--auto-dark-border) !important;
+}
+
+body.quarto-dark .gt_table .gt_footnote_marks,
+body.quarto-dark .gt_table .gt_footnote_marks sup,
+body.auto-dark-theme-dark .gt_table .gt_footnote_marks,
+body.auto-dark-theme-dark .gt_table .gt_footnote_marks sup,
+html.auto-dark-theme-dark .gt_table .gt_footnote_marks,
+html.auto-dark-theme-dark .gt_table .gt_footnote_marks sup {
+  color: var(--auto-dark-accent) !important;
+}
+
+body.quarto-dark .gt_table a,
+body.auto-dark-theme-dark .gt_table a,
+html.auto-dark-theme-dark .gt_table a {
+  color: var(--auto-dark-link) !important;
+}
+
+
+/* ── 4. Markdown tables ──────────────────────────────────────────────────── */
+
+body.quarto-dark table:not(.gt_table),
+body.auto-dark-theme-dark table:not(.gt_table),
+html.auto-dark-theme-dark table:not(.gt_table) {
+  color:        var(--auto-dark-text);
+  border-color: var(--auto-dark-border);
+}
+
+body.quarto-dark table:not(.gt_table) th,
+body.quarto-dark table:not(.gt_table) td,
+body.auto-dark-theme-dark table:not(.gt_table) th,
+body.auto-dark-theme-dark table:not(.gt_table) td,
+html.auto-dark-theme-dark table:not(.gt_table) th,
+html.auto-dark-theme-dark table:not(.gt_table) td {
+  border-color: var(--auto-dark-border);
+}
+
+
+/* ── 5. Code blocks ──────────────────────────────────────────────────────── */
+
+body.quarto-dark pre,
+body.auto-dark-theme-dark pre,
+html.auto-dark-theme-dark pre {
+  background-color: var(--auto-dark-panel);
+  border-color:     var(--auto-dark-border);
+}
+
+body.quarto-dark code,
+body.auto-dark-theme-dark code,
+html.auto-dark-theme-dark code {
+  color: var(--auto-dark-text-strong);
+}
+
+
+/* ── 6. Callouts ─────────────────────────────────────────────────────────── */
+
+body.quarto-dark .callout,
+body.auto-dark-theme-dark .callout,
+html.auto-dark-theme-dark .callout {
+  background-color: var(--auto-dark-panel);
+  border-color:     var(--auto-dark-border);
+}
+
+
+/* ── 7. System preference mode ───────────────────────────────────────────── */
+/*
+ * HTML output follows the OS/browser colour scheme. Hide Quarto's generated
+ * manual toggle because it writes localStorage and blocks system switching.
+ * RevealJS uses its own .auto-dark-switch and is not affected by this rule.
+ */
+
+.quarto-color-scheme-toggle {
+  display: none !important;
+}
+
+
+/* ── 8. Light / dark visibility helpers ──────────────────────────────────── */
+/*
+ * Elements with .light-content are hidden in dark mode and vice versa.
+ * The .auto-dark-render-light / .auto-dark-render-dark selectors are kept for
+ * older rendered pages; current pages swap one image source instead.
+ */
+
+body.quarto-dark .light-content,
+body.auto-dark-theme-dark .light-content,
+html.auto-dark-theme-dark .light-content {
+  display: none !important;
+}
+
+body.quarto-light .dark-content,
+body.auto-dark-theme-light .dark-content,
+html.auto-dark-theme-light .dark-content {
+  display: none !important;
+}
+
+body.quarto-light .auto-dark-render-dark,
+body.auto-dark-theme-light .auto-dark-render-dark,
+html.auto-dark-theme-light .auto-dark-render-dark,
+body.quarto-dark .auto-dark-render-light,
+body.auto-dark-theme-dark .auto-dark-render-light,
+html.auto-dark-theme-dark .auto-dark-render-light {
+  display: none !important;
+}
+
+
+/* ── 9. Figure background ────────────────────────────────────────────────── */
+/*
+ * Ensure figure images have a transparent background in dark mode, so the
+ * One Dark page background is visible through transparent plot areas.
+ */
+
+body.quarto-dark .quarto-figure img,
+body.quarto-dark .cell-output-display img,
+body.auto-dark-theme-dark .quarto-figure img,
+body.auto-dark-theme-dark .cell-output-display img,
+html.auto-dark-theme-dark .quarto-figure img,
+html.auto-dark-theme-dark .cell-output-display img {
+  background-color: transparent;
+}
+
+
+/* ── 10. @media fallback — OS preference without Quarto JS ───────────────── */
+/*
+ * Quarto's body.quarto-dark class is set by JS that can read localStorage.
+ * auto-dark-system.js clears that stored preference so OS-level changes keep
+ * driving the page.
+ *
+ * This @media block mirrors ALL sections above so that the One Dark palette
+ * applies via pure CSS whenever the OS is in dark mode — regardless of JS
+ * or localStorage state.
+ *
+ * Specificity note: these fallback rules only apply before/without Quarto's
+ * class switch. Once Quarto has applied body.quarto-dark or body.quarto-light,
+ * the class-scoped rules above control the full theme.
+ */
+
+@media (prefers-color-scheme: dark) {
+  /*
+   * Use body:not(.quarto-light) so these rules fire when:
+   *   (a) body starts as quarto-light (hardcoded) then JS switches to quarto-dark, OR
+   *   (b) no localStorage — Quarto JS will remove quarto-light and add quarto-dark.
+   *
+   * For table/code/figure elements, we scope to body:not(.quarto-light)
+   * as an ancestor to achieve the same effect without :has() everywhere.
+   */
+
+  /* Body & links */
+  body:not(.quarto-light) {
+    color-scheme:     dark;
+    background-color: var(--auto-dark-bg);
+    color:            var(--auto-dark-text);
+  }
+
+  body:not(.quarto-light) a {
+    color: var(--auto-dark-link);
+  }
+
+  /* gt / gtsummary tables */
+  body:not(.quarto-light) .gt_table {
+    color:               var(--auto-dark-text-strong) !important;
+    background-color:    var(--auto-dark-bg) !important;
+    border-top-color:    var(--auto-dark-border-strong) !important;
+    border-bottom-color: var(--auto-dark-border-strong) !important;
+    opacity:             1 !important;
+  }
+
+  body:not(.quarto-light) .gt_table * {
+    color:        var(--auto-dark-text-strong) !important;
+    border-color: var(--auto-dark-border) !important;
+    opacity:      1 !important;
+  }
+
+  body:not(.quarto-light) .gt_table th,
+  body:not(.quarto-light) .gt_table td,
+  body:not(.quarto-light) .gt_table .gt_row,
+  body:not(.quarto-light) .gt_table .gt_stub,
+  body:not(.quarto-light) .gt_table .gt_stubhead {
+    background-color: var(--auto-dark-bg) !important;
+  }
+
+  body:not(.quarto-light) .gt_table .gt_row,
+  body:not(.quarto-light) .gt_table .gt_stub,
+  body:not(.quarto-light) .gt_table .gt_stub * {
+    color: var(--auto-dark-text-strong) !important;
+  }
+
+  body:not(.quarto-light) .gt_table .gt_col_headings,
+  body:not(.quarto-light) .gt_table .gt_col_heading,
+  body:not(.quarto-light) .gt_table .gt_heading,
+  body:not(.quarto-light) .gt_table .gt_group_heading {
+    color:            var(--auto-dark-text-strong) !important;
+    background-color: var(--auto-dark-panel) !important;
+    border-color:     var(--auto-dark-border-strong) !important;
+  }
+
+  body:not(.quarto-light) .gt_table .gt_table_body tr:nth-child(even) td,
+  body:not(.quarto-light) .gt_table .gt_table_body tr:nth-child(even) th {
+    background-color: var(--auto-dark-bg-soft) !important;
+  }
+
+  body:not(.quarto-light) .gt_table .gt_footnotes,
+  body:not(.quarto-light) .gt_table .gt_source_notes,
+  body:not(.quarto-light) .gt_table .gt_sourcenotes,
+  body:not(.quarto-light) .gt_table .gt_footnote,
+  body:not(.quarto-light) .gt_table .gt_source_note {
+    color:            var(--auto-dark-text) !important;
+    background-color: var(--auto-dark-bg) !important;
+    border-color:     var(--auto-dark-border) !important;
+  }
+
+  body:not(.quarto-light) .gt_table .gt_footnote_marks,
+  body:not(.quarto-light) .gt_table .gt_footnote_marks sup {
+    color: var(--auto-dark-accent) !important;
+  }
+
+  body:not(.quarto-light) .gt_table a {
+    color: var(--auto-dark-link) !important;
+  }
+
+  /* Markdown tables */
+  body:not(.quarto-light) table:not(.gt_table) {
+    color:        var(--auto-dark-text);
+    border-color: var(--auto-dark-border);
+  }
+
+  body:not(.quarto-light) table:not(.gt_table) th,
+  body:not(.quarto-light) table:not(.gt_table) td {
+    border-color: var(--auto-dark-border);
+  }
+
+  /* Code blocks */
+  body:not(.quarto-light) pre {
+    background-color: var(--auto-dark-panel);
+    border-color:     var(--auto-dark-border);
+  }
+
+  body:not(.quarto-light) code {
+    color: var(--auto-dark-text-strong);
+  }
+
+  /* Callouts */
+  body:not(.quarto-light) .callout {
+    background-color: var(--auto-dark-panel);
+    border-color:     var(--auto-dark-border);
+  }
+
+  /* Visibility helpers */
+  body:not(.quarto-light) .light-content          { display: none !important; }
+  body:not(.quarto-light) .auto-dark-render-light { display: none !important; }
+
+  /* Figure backgrounds */
+  body:not(.quarto-light) .quarto-figure img,
+  body:not(.quarto-light) .cell-output-display img {
+    background-color: transparent;
+  }
+}

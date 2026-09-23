@@ -1,0 +1,108 @@
+% navigation-header.tex
+% Module LaTeX pour la barre de navigation hierarchique sur une seule ligne
+% Extension Husson pour Quarto PDF
+
+\RequirePackage{scrlayer-scrpage}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{geometry}
+
+% Calibrage de l'en-tete pour eviter tout chevauchement et avertissement KOMA-Script
+\geometry{headheight=18pt, headsep=14pt}
+
+% Couleurs complementaires
+\providecolor{headingblue}{HTML}{17365D}
+\providecolor{commentgray}{HTML}{6F6F6F}
+\providecolor{linegray}{HTML}{D0D4D9}
+
+% Elements graphiques de separation et d'accentuation
+\makeatletter
+\newdimen\husson@w
+\newsavebox{\husson@fitbox}
+
+% Branche active
+\newcommand{\hussonactive}[1]{#1}
+
+% Separateur de fil d'Ariane
+\newcommand{\hussonsep}{\,\textcolor{commentgray!60}{›}\,}
+
+% Espacement elastique entre les rubriques H2
+\newcommand{\hussonhsep}{\hspace{1.1em plus 0.8em minus 0.5em}}
+
+% Separateur vertical entre H1 et la liste des H2
+\newcommand{\hussonbarsep}{\hspace{0.8em}\textcolor{linegray}{\rule[-0.2em]{0.6pt}{1.0em}}\hspace{0.8em}}
+
+% H1 autonome (chapitre sans H2 : Bibliographie, Conclusion, Annexes, etc.)
+\newcommand{\hussonnavstandalone}[1]{%
+  \noindent\normalfont\scriptsize
+  \textcolor{headingblue}{\textbf{#1}}%
+}
+
+% Ajustement automatique doux : si la ligne depasse \textwidth, reduction proportionnelle
+\newcommand{\hussonnavfit}[1]{%
+  \sbox{\husson@fitbox}{#1}%
+  \ifdim\wd\husson@fitbox>\textwidth
+    \resizebox{\textwidth}{!}{\usebox{\husson@fitbox}}%
+  \else
+    \usebox{\husson@fitbox}%
+  \fi
+}
+\makeatother
+
+% Gestion robuste des marques TeX (LaTeX 2022+ / Expl3)
+\ExplSyntaxOn
+\NewMarkClass{hussonnav}
+
+\cs_new:Npn \husson_set_state:nnn #1 #2 #3 {
+  \tl_gset:cn { g_husson_h_#1_tl } { #2 }
+  \tl_gset:cn { g_husson_bar_#1_tl } { #3 }
+}
+
+\cs_new:Npn \husson_get_h:n #1 {
+  \tl_if_exist:cTF { g_husson_h_#1_tl }
+    { \tl_use:c { g_husson_h_#1_tl } }
+    { 0 }
+}
+
+\cs_new:Npn \husson_get_bar:n #1 {
+  \tl_if_exist:cTF { g_husson_bar_#1_tl }
+    { \tl_use:c { g_husson_bar_#1_tl } }
+    { }
+}
+
+% Resolution de la marque active selon la premiere rubrique en vigueur sur la page
+\cs_new:Npn \husson_render_bar: {
+  \tl_set:Ne \l_tmpa_tl { \FirstMark{hussonnav} }
+  \tl_if_empty:NF \l_tmpa_tl
+    {
+      \husson_get_bar:n { \l_tmpa_tl }
+    }
+}
+
+\NewDocumentCommand{\hussonnavstate}{mmm}{
+  \husson_set_state:nnn {#1} {#2} {#3}
+}
+
+\NewDocumentCommand{\renderhussonnavbar}{}{
+  \husson_render_bar:
+}
+
+\NewDocumentCommand{\hussonnavmark}{m}{
+  \InsertMark{hussonnav}{#1}
+}
+\ExplSyntaxOff
+
+% Configuration du style de page avec scrlayer-scrpage
+\clearpairofpagestyles
+\KOMAoptions{headsepline=0.3pt}
+\setkomafont{headsepline}{\color{linegray}}
+\ihead{\renderhussonnavbar}
+\cfoot{\pagemark}
+
+% Desactivation propre sur la table des matieres
+\AddToHook{cmd/tableofcontents/before}{%
+  \pagestyle{plain}%
+}
+\AddToHook{cmd/tableofcontents/after}{%
+  \pagestyle{scrheadings}%
+}

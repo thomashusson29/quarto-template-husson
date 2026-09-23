@@ -1,0 +1,107 @@
+---
+title: "Navigation Hierarchique RevealJS"
+subtitle: "Demonstration de la barre en haut de diapositive (Variante A)"
+author: "Thomas Husson"
+format:
+  husson-revealjs: default
+---
+
+# Introduction {.unnumbered}
+
+Cette premiere section autonome de niveau 1 teste l'affichage d'un titre de chapitre sans sous-section.
+
+La barre doit afficher uniquement `Introduction` a gauche, en gras sobre, sans sous-titre.
+
+# Matériels et méthodes {nav-title="MÉTHODES"}
+
+Diapositive titre de chapitre pour Matériels et méthodes.
+
+La barre affiche `MÉTHODES`.
+
+## Design expérimental et cohortes {nav-title="Design"}
+
+Premier niveau 2 sous le chapitre Méthodes.
+
+La barre doit afficher : `MÉTHODES | Design` avec `Design` en gras.
+
+| Paramètre | Contrôle | Traité |
+|:---|:---:|:---:|
+| Effectif | 25 | 25 |
+| Âge | 54.2 ± 6.1 | 55.0 ± 5.8 |
+
+## Transporteurs d'oxygène {nav-title="Transporteurs"}
+
+Deuxième niveau 2 sous Méthodes.
+
+La barre doit afficher : `MÉTHODES | Transporteurs` avec `Transporteurs` en gras.
+
+---
+
+Cette diapositive n'a pas de titre Markdown (séparateur `---`).
+
+Elle doit conserver le fil d'Ariane de la diapositive précédente : `MÉTHODES | Transporteurs`.
+
+## Analyses biologiques {nav-title="Biologie"}
+
+### Réponse inflammatoire {nav-title="Inflammation"}
+
+#### Dosage des cytokines {nav-title="Cytokines"}
+
+##### Interleukine 6 {nav-title="IL-6"}
+
+Nous atteignons ici un niveau profond (H5).
+
+La barre doit afficher sur une seule ligne fine :
+
+`MÉTHODES | Biologie › Inflammation › Cytokines › IL-6`
+
+avec `IL-6` en gras, sans filet epais superflu.
+
+# Résultats expérimentaux {nav-title="RÉSULTATS"}
+
+## Paramètres hémodynamiques {nav-title="Hémodynamique"}
+
+Transition vers un nouveau chapitre H1.
+
+La barre doit desormais afficher : `RÉSULTATS | Hémodynamique`.
+
+## Défilement avec titre fixe {.scrollable nav-title="Scrollable"}
+
+Ce titre de diapositive doit rester ancre en haut de la zone de contenu (position sticky) lors du defilement vertical.
+
+| Echantillon | Valeur mesurée | Valeur de référence | Ecart type |
+|:---|:---:|:---:|:---:|
+| Lot 01 | 12.4 | 12.0 | 0.4 |
+| Lot 02 | 14.1 | 13.8 | 0.3 |
+| Lot 03 | 11.8 | 12.0 | 0.2 |
+| Lot 04 | 15.6 | 15.0 | 0.6 |
+| Lot 05 | 13.2 | 13.0 | 0.2 |
+| Lot 06 | 16.0 | 15.5 | 0.5 |
+| Lot 07 | 12.9 | 12.5 | 0.4 |
+| Lot 08 | 14.7 | 14.2 | 0.5 |
+| Lot 09 | 11.5 | 11.8 | 0.3 |
+| Lot 10 | 13.8 | 13.5 | 0.3 |
+| Lot 11 | 15.2 | 15.0 | 0.2 |
+| Lot 12 | 12.1 | 12.0 | 0.1 |
+| Lot 13 | 14.5 | 14.0 | 0.5 |
+| Lot 14 | 16.3 | 16.0 | 0.3 |
+| Lot 15 | 13.0 | 12.8 | 0.2 |
+| Lot 16 | 15.8 | 15.5 | 0.3 |
+| Lot 17 | 12.6 | 12.5 | 0.1 |
+| Lot 18 | 14.9 | 14.5 | 0.4 |
+| Lot 19 | 11.9 | 12.0 | 0.1 |
+| Lot 20 | 13.5 | 13.2 | 0.3 |
+
+Le contenu du tableau ci-dessus defile sous le titre sans que le titre ne soit masque ou superpose de maniere illisible.
+
+## Diapositive sans navigation {nav="false"}
+
+Cette diapositive est marquee avec `{nav="false"}`.
+
+La barre de navigation doit etre masquee sur cette diapositive.
+
+# Conclusion {nav-title="CONCLUSION"}
+
+Dernier chapitre autonome.
+
+La barre doit afficher : `CONCLUSION`.

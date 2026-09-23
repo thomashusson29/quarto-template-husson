@@ -1,0 +1,12 @@
+---
+title: "Test Garamond"
+font: "Garamond"
+---
+
+# Titre en Garamond
+
+Ceci est un paragraphe écrit en Garamond avec des **mots en gras**, des *mots en italique* et des \textsc{Petites Capitales}.
+
+| Colonne 1 | Colonne 2 |
+|---|---|
+| Donnée A | Donnée B |

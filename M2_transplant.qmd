@@ -1,0 +1,339 @@
+---
+title: "Faisabilité et sécurité de l'utilisation de la décharge cave comme transporteur d'oxygène en perfusion normothermique"
+author: "Thomas Husson"
+lang: fr
+prefer-pdf: true
+format:
+  husson-html: default
+  husson-pdf:
+    cite-method: citeproc
+  husson-docx: default
+bibliography: biblio/biblio_master_perf.bib
+csl: biblio/american-medical-association.csl
+link-citations: true
+reference-section-title: Références
+---
+
+```{r}
+#| label: setup
+#| include: false
+#| echo: false
+source("_extensions/husson/gt-page-fit.R")
+if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr) 
+library(survival)
+library(stringr)
+library(lubridate)
+library(forcats)
+library(purrr)
+library(tibble)
+library(googlesheets4)
+library(googledrive)
+library(readxl)
+library(forecast)
+library(plotrix)
+library(randomForest)
+library(tidyr)
+library(epiR)
+library(viridisLite)
+library(ggplot2)
+library(binom)
+library(survminer)
+library(pROC)
+library(treemap)
+library(psy)
+library(MASS)
+library(rpart)
+library(ggsurvfit)
+library(rpart.plot)
+library(plotly)
+library(lmerTest)
+library(psych)
+library(lme4)
+library(prettyR)
+library(zoo)
+library(kableExtra)
+library(gtsummary)
+library(dplyr)
+library(lattice)
+library(survey)
+library(corrplot)
+library(mice)
+library(paletteer)
+library(nord)
+library(wesanderson)
+library(qgraph)
+library(nlme)
+library(pwr)
+library(ape)
+library(survival)
+library(gmodels)
+library(httpgd)
+library(e1071)
+library(psy)
+library(reshape2)
+knitr::opts_chunk$set(echo = TRUE)
+
+sheet_url <- "https://docs.google.com/spreadsheets/d/1Xz3XqwfyJ4Q5aS3ggBlVECw_iF_tLS1uqB2UpmTk-Rg/edit?usp=sharing"
+```
+
+:::callout-important
+
+-   C'est en cours de réalisation !!
+
+-   Les fichiers peuvent être téléchargés (dont le script R qui sert à faire ça) en bas à gauche de l'écran (section "Other Formats")
+:::
+
+\newpage
+# Introduction
+
+## Contexte 
+
+### Transplantation hépatique et inadéquation entre besoins et greffons disponibles
+
+La transplantation hépatique est le traitement de référence de nombreuses maladies hépatiques terminales, de certaines insuffisances hépatiques aiguës et d’indications oncologiques sélectionnées. Elle permet de remplacer simultanément les fonctions métaboliques, synthétiques, immunologiques et d’épuration d’un foie défaillant, avec des résultats à long terme qui en font une thérapeutique majeure. Les recommandations récentes soulignent que son champ évolue rapidement : le vieillissement des candidats, le développement de la transplantation oncologique, le recours croissant aux donneurs décédés après arrêt circulatoire et la diffusion des techniques de perfusion des greffons modifient à la fois les indications et l’organisation des programmes [@europeanassociationforthestudyoftheliverEASLClinicalPractice2024].
+
+Sur les deux dernières décennies, le recul des hépatopathies liées au virus de l’hépatite C après l’arrivée des antiviraux à action directe a contrasté avec la progression des maladies liées à l’alcool et au syndrome métabolique. Dans le registre européen, parmi 68 950 premières transplantations réalisées entre 2002 et 2016, la part attribuée à la stéatohépatite non alcoolique est passée de 1,2 % à 8,4 %, sans différence ajustée de survie du patient ou du greffon [@haldarOutcomesLiverTransplantation2019]. Cette transition s’accompagne de candidats plus âgés et davantage exposés aux comorbidités métaboliques et cardiovasculaires, imposant une attention accrue à la fragilité et au risque extra-hépatique [@europeanassociationforthestudyoftheliverEASLClinicalPractice2024].
+
+En France, cette évolution est visible dans les données nationales. La cirrhose alcoolique est la première indication d’inscription, devant le carcinome hépatocellulaire (CHC). Entre 2023 et 2024, les inscriptions pour CHC ont diminué de 3,2 %, tandis que celles pour cirrhose alcoolique ont progressé de 22,3 % en deux ans. Dans le même temps, l’âge moyen des nouveaux candidats a atteint 52,9 ans et le nombre de patients inscrits de plus de 65 ans a augmenté de 26,8 % [@agencedelabiomedecineGreffeHepatique2024].
+
+L’essor de la transplantation oncologique au-delà du CHC trouve son exemple le plus démonstratif dans les métastases hépatiques non résécables d’un cancer colorectal. Le consensus IHPBA préconise une sélection fondée sur l’extension et la biologie tumorales, la réponse aux traitements et l’absence de localisation extra-hépatique, en considérant l’impact sur l’allocation [@bonneyLiverTransplantationNonresectable2021]. L’essai européen TRANSMET a randomisé 94 patients dans 20 centres entre transplantation associée à la chimiothérapie et chimiothérapie seule. La survie globale à cinq ans était respectivement de 56,6 % et 12,6 % en intention de traiter, puis de 73,3 % et 9,3 % en analyse per protocole [@adamLiverTransplantationChemotherapy2024]. Ces résultats portent sur des patients de 18 à 65 ans, sans maladie extra-hépatique, avec une tumeur sans mutation *BRAF* et contrôlée par la chimiothérapie : ils définissent une option potentiellement curative, non une indication généralisable à toute maladie métastatique.
+
+Cette dynamique se reflète dans le registre français : les inscriptions pour « autre tumeur maligne », principalement des métastases colorectales hépatiques non résécables, ont augmenté de 66,7 % entre 2023 et 2024 [@agencedelabiomedecineGreffeHepatique2024]. L’élargissement des indications renforce la tension sur les greffons et complexifie l’appariement entre risque de l’organe, gravité du receveur, pronostic oncologique et bénéfice attendu.
+
+Malgré une hausse de 7,2 % de l’activité de greffe hépatique en 2024, l’offre de greffons demeure structurellement inférieure aux besoins. Parmi les patients inscrits pour la première fois en 2021, 64,3 % avaient été greffés à trois ans, alors que 9,9 % étaient décédés après une période en liste active et que d’autres avaient été retirés de liste en raison d’une aggravation. L’indicateur de pénurie fondé sur le nombre de receveurs en attente active au 1^er^ janvier rapporté au nombre de greffons utilisables était de 0,3 en 2024. Ce chiffre doit être interprété dans un contexte où une proportion importante de patients est temporairement inactive sur la liste ; il ne traduit donc pas une disparition de la pénurie, mais plutôt la complexité de l’accès effectif à la greffe [@agencedelabiomedecineGreffeHepatique2024].
+
+Cette inadéquation a conduit à mobiliser plusieurs leviers : optimisation du don après mort encéphalique, développement du don après arrêt circulatoire contrôlé, partage hépatique, don vivant, amélioration de l’appariement donneur–receveur et réévaluation de greffons autrefois refusés. La conservation dynamique s’inscrit dans cette stratégie. En France, la perfusion hypothermique oxygénée bénéficie depuis 2023 d’un financement pour certains greffons à critères élargis ; en 2024, 212 greffons provenant de donneurs en mort encéphalique et 50 greffons issus de donneurs Maastricht III ont ainsi été perfusés avant transplantation [@agencedelabiomedecineGreffeHepatique2024; @muller2022].
+
+### Du greffon « marginal » à un continuum de risque
+
+L’extension du pool de donneurs repose en grande partie sur l’utilisation de greffons dits « à critères élargis », « sous-optimaux » ou « marginaux ». Ces termes ne correspondent toutefois pas à une définition universelle. Le consensus de Paris a proposé de distinguer les facteurs augmentant le risque de dysfonction du greffon de ceux exposant à une transmission infectieuse ou tumorale, et a insisté sur le caractère continu, plutôt que dichotomique, de la qualité d’un organe [@durandReportParisConsensus2008]. Les revues ultérieures ont confirmé qu’un greffon ne peut pas être classé comme simplement « bon » ou « mauvais » à partir d’un seuil isolé : le risque résulte de la combinaison des caractéristiques du donneur, de l’organe, de la séquence de prélèvement et de conservation, puis du terrain du receveur [@vodkinExtendedCriteriaDonors2017; @winterMatchingGraftQuality2020].
+
+Les principaux facteurs de risque comprennent l’âge avancé du donneur, la stéatose macro-vésiculaire, les épisodes d’hypotension ou d’arrêt cardiaque, des anomalies biologiques hépatiques, une hypernatrémie importante, une durée prolongée de séjour en réanimation, certaines infections ou tumeurs du donneur, ainsi que les durées d’ischémie chaude et froide. La stéatose est particulièrement importante, car l’accumulation lipidique altère la microcirculation sinusoïdale, augmente le stress oxydant et rend l’hépatocyte plus vulnérable à l’ischémie-reperfusion [@boteon2018]. De même, l’effet de la durée d’ischémie froide n’est pas uniforme : il dépend de l’indication de greffe et se majore lorsque plusieurs facteurs défavorables sont associés [@lozanovskiDifferentialInfluenceCold2020].
+
+Le mode de décès du donneur constitue une autre dimension du risque. Chez les donneurs décédés après mort encéphalique (DBD), le foie reste perfusé jusqu’au clampage aortique, même si l’orage catécholaminergique, l’inflammation systémique et l’instabilité hémodynamique peuvent déjà altérer l’organe. Chez les donneurs décédés après arrêt circulatoire (DCD), une phase supplémentaire d’ischémie chaude fonctionnelle précède le refroidissement. Cette exposition touche les hépatocytes, mais aussi le plexus vasculaire péribiliaire, ce qui contribue au risque de cholangiopathie ischémique et de sténoses biliaires non anastomotiques. Les recommandations EASL considèrent ainsi les stratégies de perfusion comme particulièrement pertinentes pour les greffons DCD et les greffons à critères élargis [@europeanassociationforthestudyoftheliverEASLClinicalPractice2024; @vanrijnHypothermicMachinePerfusion2021].
+
+La qualité du greffon doit enfin être mise en regard de la situation du receveur. Un organe porteur de plusieurs facteurs de risque peut procurer un bénéfice de survie majeur à un patient dont la probabilité de décès sans greffe est élevée, alors que le même organe pourrait être refusé pour un receveur stable disposant d’autres possibilités. Inversement, l’accumulation d’un greffon à haut risque et d’un receveur fragile peut conduire à une défaillance primaire, une dysfonction précoce, une insuffisance rénale, des complications biliaires ou une hospitalisation prolongée. Les stratégies modernes cherchent donc moins à exclure systématiquement les organes imparfaits qu’à mieux caractériser leur risque, les traiter lorsque cela est possible et les attribuer au receveur approprié [@winterMatchingGraftQuality2020; @ceresa2022].
+
+## Conservation et optimisation des greffons
+
+### Conservation statique hypothermique
+
+La conservation statique hypothermique (static cold storage, SCS) demeure la méthode de référence pour la majorité des greffons hépatiques. Après le clampage aortique, l’organe est rincé avec une solution de préservation froide puis transporté immergé à environ 4 °C. Les solutions University of Wisconsin, IGL-1, histidine–tryptophane–cétoglutarate ou Celsior associent, selon des formulations différentes, des tampons, des osmoles, des colloïdes et des antioxydants destinés à limiter l’œdème cellulaire, l’acidose et les dommages membranaires. L’hypothermie réduit fortement le métabolisme et la consommation d’oxygène ; elle ralentit ainsi l’épuisement énergétique sans toutefois l’interrompre complètement [@muller2022; @kirsteColdNotToo2022].
+
+La SCS présente des avantages décisifs : simplicité, faible coût, transport aisé et résultats excellents pour les greffons de risque standard lorsque la durée d’ischémie reste maîtrisée. Sa principale limite tient à son caractère passif. En l’absence de circulation, l’oxygène et les substrats ne sont plus apportés, les métabolites ne sont plus éliminés et aucune mesure dynamique de la fonction hépatique n’est possible. L’organe est évalué à partir de données indirectes — caractéristiques du donneur, biologie, imagerie, aspect macroscopique et parfois biopsie — dont la combinaison ne prédit qu’imparfaitement sa capacité à fonctionner après implantation [@ceresa2022; @mergentalDevelopmentClinicalCriteria2018].
+
+Pendant l’ischémie, la diminution de la phosphorylation oxydative entraîne une déplétion en adénosine triphosphate, une perturbation des pompes ioniques, un gonflement cellulaire et une accumulation de métabolites réducteurs. Le froid limite la vitesse de ces réactions, mais induit aussi des altérations propres de la membrane, du cytosquelette et de l’endothélium [@marshHypothermicPreservationHepatocytes1989]. Lors de la reperfusion, la réintroduction brutale d’oxygène dans des mitochondries altérées favorise une production de dérivés réactifs de l’oxygène, l’activation endothéliale, du complément et des cellules immunitaires, puis le recrutement leucocytaire. Les neutrophiles participent à l’amplification secondaire des lésions et à l’atteinte microcirculatoire [@oliveiraNeutrophilsCornerstoneLiver2018].
+
+Ces mécanismes expliquent pourquoi un temps de conservation acceptable pour un foie standard peut devenir délétère pour un foie stéatosique, âgé ou ayant subi une ischémie chaude. Ils justifient également le développement de méthodes capables de réoxygéner l’organe de façon contrôlée, de restaurer ses réserves énergétiques et, selon la température choisie, d’en apprécier la fonction avant la transplantation. La perfusion sur machine transforme ainsi la conservation d’une période de ralentissement passif en une intervention active sur le greffon [@muller2022; @ceresa2022].
+
+### Perfusion hypothermique oxygénée
+
+La perfusion hypothermique oxygénée (hypothermic oxygenated perfusion, HOPE) est le plus souvent réalisée en fin de conservation froide, après le transport du greffon. Une solution acellulaire froide et oxygénée circule à basse pression dans la veine porte ; lorsque l’artère hépatique est également perfusée, on parle de dual-HOPE ou D-HOPE. À basse température, les besoins métaboliques sont suffisamment réduits pour que l’oxygène dissous dans la solution puisse contribuer à restaurer progressivement le métabolisme mitochondrial sans nécessiter de transporteur d’oxygène cellulaire [@bodewes2020; @kirsteColdNotToo2022]. Cette phase vise moins à reproduire la physiologie normale qu’à préparer le greffon à la reperfusion normotherme.
+
+Les résultats cliniques sont particulièrement convaincants pour les greffons DCD. Dans l’essai multicentrique DHOPE-DCD, 160 patients ont été randomisés et 156 ont reçu un greffon. La fréquence des sténoses biliaires non anastomotiques à six mois était de 6 % après D-HOPE contre 18 % après SCS ; le syndrome de post-reperfusion et la dysfonction précoce du greffon étaient également moins fréquents, sans augmentation des événements indésirables [@vanrijnHypothermicMachinePerfusion2021]. Ces résultats soutiennent l’hypothèse d’une protection du compartiment biliaire, particulièrement vulnérable après une ischémie chaude.
+
+Chez les donneurs DBD à critères élargis, les résultats sont plus nuancés mais globalement compatibles avec une réduction de l’agression précoce. Un essai multicentrique de 46 receveurs a observé, après HOPE, une réduction de 47 % du pic d’alanine aminotransférase, moins de complications sévères à 90 jours et des séjours plus courts [@cziganyHypothermicOxygenatedMachine2021]. Dans un essai de phase III portant sur 170 transplantations, HOPE n’a pas diminué le critère principal — proportion de patients présentant au moins une complication de grade Clavien III ou plus à un an — mais des analyses exploratoires ont suggéré moins de complications sévères directement liées au greffon et moins de pertes de greffon d’origine hépatique [@schlegelMulticenterRandomizedcontrolledTrial2023]. L’essai américain PILOT a par ailleurs établi la non-infériorité d’une perfusion hypothermique oxygénée portable par rapport à la SCS pour la dysfonction précoce [@panayotovaPortableHypothermicOxygenated2024].
+
+La HOPE ouvre aussi une voie d’évaluation biologique. La flavine mononucléotide (FMN), cofacteur libéré lors de l’atteinte du complexe I de la chaîne respiratoire mitochondriale, peut être mesurée dans le perfusat. Les premières séries ont montré une association entre la libération de FMN, la dysfonction sévère et la perte précoce du greffon [@mullerNovelRealtimePrediction2019; @wangFlavinMononucleotideBiomarker2020]. Une validation internationale sur 473 perfusats provenant de dix centres a ensuite confirmé que la FMN prédisait la perte de greffon, les cholangiopathies et l’insuffisance rénale, avec une performance supérieure à plusieurs scores cliniques conventionnels [@edenAssessmentLiverGraft2025]. La valeur décisionnelle exacte des seuils reste néanmoins à standardiser avant d’en faire un critère isolé d’acceptation ou de refus.
+
+Ainsi, la HOPE/D-HOPE combine une mise en œuvre relativement simple, une réoxygénation contrôlée et une protection démontrée dans certaines populations à risque. Elle reste cependant une perfusion hypothermique : l’activité métabolique est faible, la production biliaire limitée et l’observation d’une fonction hépatique intégrée demeure incomplète. Pour tester directement la capacité du greffon à maintenir une homéostasie proche de la physiologie, une perfusion à température corporelle est nécessaire.
+
+### Perfusion normothermique ex situ
+
+La perfusion normothermique sur machine (normothermic machine perfusion, NMP) maintient le foie autour de 37 °C dans un circuit apportant oxygène, substrats énergétiques, électrolytes et médicaments, avec une perfusion portale continue et une perfusion artérielle généralement pulsatile. À cette température, le métabolisme hépatique reprend : le foie consomme de l’oxygène, métabolise le lactate et le glucose, synthétise des protéines, régule l’équilibre acido-basique et produit de la bile. Cette activité permet d’envisager simultanément la préservation, la réhabilitation et l’évaluation fonctionnelle du greffon [@ravikumar2016; @ceresa2022].
+
+Les premières expériences cliniques ont établi la faisabilité de la méthode. L’étude de phase I de Ravikumar et collaborateurs a montré que des foies pouvaient être préservés en normothermie puis transplantés sans excès évident de complications par rapport à des témoins contemporains [@ravikumar2016]. L’essai randomisé européen publié par Nasralla en 2018 a constitué une étape décisive : parmi 220 transplantations, la NMP a réduit d’environ 50 % le pic d’aspartate aminotransférase, alors même que la durée moyenne de conservation était prolongée de 54 %, et a divisé par deux le taux de greffons écartés. Aucune différence significative n’était toutefois observée pour la survie du patient, celle du greffon ou les complications biliaires, ce qui invite à distinguer amélioration des marqueurs précoces et bénéfice clinique à long terme [@nasralla2018].
+
+L’essai OCS Liver PROTECT a évalué une stratégie portable débutée sur le site du donneur. Par rapport à la SCS, la perfusion normothermique a réduit la dysfonction précoce du greffon et les lésions histologiques d’ischémie-reperfusion, tout en permettant l’utilisation d’un plus grand nombre de foies provenant de donneurs DCD [@markmann2022]. Un autre essai multicentrique américain, incluant 383 organes randomisés et 266 transplantations, n’a pas montré de réduction significative du critère principal de dysfonction précoce dans l’ensemble de la population. Les analyses exploratoires suggéraient néanmoins un effet plus marqué pour les greffons DCD et ceux du quartile de risque le plus élevé, ainsi qu’une diminution du syndrome de post-reperfusion [@chapmanNormothermicMachinePerfusion2023]. Ces résultats ne sont pas contradictoires : ils indiquent que le bénéfice dépend probablement du profil de risque, du moment de mise en perfusion et du critère étudié.
+
+Des essais de plus faible effectif apportent des informations complémentaires. Dans une étude randomisée de vingt greffons provenant de donneurs âgés d’au moins 70 ans, la NMP était associée à des signes histologiques de moindre lésion d’ischémie-reperfusion, sans démonstration d’un bénéfice clinique en raison de la taille de l’échantillon [@ghinolfi2019]. Les méta-analyses d’essais randomisés concluent globalement à une réduction des marqueurs de lésion et du taux de refus, mais soulignent l’hétérogénéité des dispositifs, des populations et des définitions des événements [@jeddou2025]. Il serait donc excessif de considérer la NMP comme systématiquement supérieure à la SCS pour tous les greffons ; sa valeur paraît maximale lorsque le risque est incertain ou lorsque la durée de conservation doit être prolongée.
+
+L’intérêt distinctif de la NMP réside dans l’évaluation de la viabilité avant implantation. La clairance du lactate, la stabilité du pH sans correction excessive, la consommation de glucose, les débits et résistances vasculaires, l’aspect homogène du parenchyme et la production de bile sont couramment surveillés. Les critères proposés par Mergental et collaborateurs ont permis de transplanter des foies initialement refusés avec une sélection fondée sur leur comportement pendant la perfusion [@mergentalDevelopmentClinicalCriteria2018]. Cependant, une bonne fonction hépatocytaire ne garantit pas l’intégrité de l’arbre biliaire. L’analyse du pH, du bicarbonate et du glucose biliaires vise à apprécier la fonction des cholangiocytes et du plexus péribiliaire, déterminante pour le risque de cholangiopathie [@jeddou2025a]. Aucun seuil unique n’est aujourd’hui suffisamment validé pour résumer à lui seul la viabilité d’un greffon.
+
+La NMP peut également servir de plateforme d’intervention : déstéatose, immunomodulation, thérapies cellulaires ou géniques ont été explorées sans exposition systémique du receveur [@boteon2018; @laingDeliveryMultipotentAdult2020; @lascaris2022]. Des systèmes expérimentaux ont même maintenu des foies humains plusieurs jours [@eshmuminovIntegratedPerfusionMachine2020; @lauLongtermExSitu2023]. Ces applications restent toutefois translationnelles ; l’objectif clinique immédiat demeure de préserver et de sélectionner plus sûrement les greffons disponibles.
+
+### Nécessité d’un transporteur d’oxygène
+
+À 37 °C, l’augmentation du métabolisme s’accompagne d’une forte demande en oxygène, alors que la quantité d’oxygène simplement dissoute dans une solution aqueuse est insuffisante pour couvrir les besoins du foie. L’apport dépend du débit de perfusion, de la pression partielle en oxygène, de la concentration du transporteur et de sa capacité à charger puis délivrer l’oxygène aux tissus. Au-dessus d’environ 20 °C, un transporteur d’oxygène devient donc nécessaire pour assurer une perfusion hépatique aérobie stable [@bodewes2020]. Dans un modèle porcin, la fonction s’altérait lorsque la concentration d’hémoglobine passait d’environ 30 à 20 g/L, ce qui illustre l’existence d’un seuil minimal dépendant du circuit et des conditions de perfusion [@bral2018].
+
+Les culots globulaires humains constituent la solution la plus physiologique et la plus utilisée. Ils apportent de l’hémoglobine encapsulée, une courbe de dissociation régulée et une viscosité contribuant aux propriétés rhéologiques du perfusat. Leur utilisation présente néanmoins plusieurs contraintes : disponibilité limitée, mobilisation d’un produit thérapeutique destiné aux patients, compatibilité immuno-hématologique, variabilité liée au donneur et au stockage, coût et gestion logistique. Le stockage entraîne en outre des modifications morphologiques et biochimiques des hématies ; l’ATP et le 2,3-diphosphoglycérate diminuent, tandis que fragilité membranaire, microparticules et hémoglobine libre peuvent augmenter [@makrooEvaluationRedCell2011]. Ces modifications ne rendent pas les culots impropres à la NMP, mais justifient de rechercher des sources plus disponibles et adaptées à cet usage.
+
+Plusieurs alternatives ont été étudiées. L’HBOC-201, solution d’hémoglobine bovine polymérisée, peut être utilisée à différentes températures et a permis des séquences combinant D-HOPE, réchauffement contrôlé et NMP de greffons initialement refusés [@devriesPretransplantSequentialHypo2019; @moeinHemoglobinbasedOxygenCarriers2022]. Son emploi clinique systémique a cependant été limité par des préoccupations concernant la vasoconstriction, la méthémoglobinémie et la toxicité de l’hémoglobine libre [@mackenzie2019; @tingleMethaemoglobinaemiaCanComplicate2021]. Des perfusats sans produits sanguins humains ont également montré leur faisabilité dans des modèles de foies humains, mais les séries restent limitées [@laingUseAcellularOxygen2017; @matton2018].
+
+L’hémoglobine extracellulaire M101, issue du ver marin *Arenicola marina* et commercialisée sous le nom HEMO2life®, possède une forte capacité de fixation de l’oxygène et fonctionne sans cofacteur allostérique. Les travaux disponibles concernent surtout son ajout aux solutions de conservation froide : des modèles expérimentaux suggèrent une meilleure préservation énergétique et une réduction des lésions de reperfusion, notamment pour les foies stéatosiques [@alixAddingOxygenCarrier2020; @asong-fontemNovelOxygenCarrier2021]. Son évaluation clinique est plus avancée en transplantation rénale qu’en NMP hépatique [@meur2023]. À ce jour, aucune alternative ne réunit de façon incontestable la disponibilité, la simplicité, la sécurité, le coût et les propriétés physiologiques des hématies.
+
+### Décharge cave comme source de globules rouges
+
+Lors d’un prélèvement multi-organes abdominal, l’aorte est canulée pour perfuser la solution de conservation après le clampage, tandis que la veine cave est ouverte ou canulée pour permettre l’exsanguination et l’évacuation du liquide de rinçage. La « décharge cave » est donc un mélange de sang veineux du donneur et de solution de préservation, habituellement éliminé. Sa fraction sanguine contient pourtant des globules rouges disponibles, issus du même donneur que le greffon et compatibles avec l’organe à perfuser.
+
+Ce liquide ne peut pas être utilisé directement : sa dilution et sa composition varient, et il peut contenir potassium, débris cellulaires, hémoglobine libre, leucocytes, médiateurs inflammatoires ou contaminants. Une récupération peropératoire par Cell Saver pourrait séparer les éléments figurés par centrifugation, éliminer une partie du plasma et des solutés par lavage, puis concentrer les hématies dans une suspension saline. En chirurgie, cette technique réduit l’exposition aux transfusions allogéniques, avec un bénéfice variable selon les contextes et les protocoles [@carrollIntraoperativeCellSalvage2021; @meybohm2016]. Ici, elle ne viserait pas une autotransfusion, mais la préparation d’un transporteur d’oxygène pour la NMP du foie du même donneur.
+
+Ce changement d’usage impose d’abord d’établir la faisabilité : le volume récupéré et le rendement après lavage doivent permettre de constituer un perfusat suffisamment concentré en hémoglobine. La qualité du produit doit ensuite être caractérisée par l’hématocrite, le pH, les électrolytes, les lactates et la méthémoglobine. L’hémolyse constitue un risque central, car les hématies sont exposées à l’aspiration, à la centrifugation, au lavage, au pompage et à l’oxygénation. Les gradients de pression, turbulences et contacts avec les surfaces artificielles peuvent altérer leur membrane [@bhirowoHemolysisCardiopulmonaryBypass2023]. Une hausse de l’hémoglobine libre signalerait à la fois la dégradation du transporteur et une exposition potentielle du greffon à des espèces pro-oxydantes.
+
+Le circuit extracorporel peut également activer leucocytes, plaquettes, complément et coagulation ; la réponse dépend des surfaces, des flux, de l’oxygénateur et de la durée [@millarInflammatoryResponseExtracorporeal2016; @banerjeeStrategiesAttenuateMaladaptive2024]. Le lavage retire une grande partie du plasma, sans garantir une suspension biologiquement inerte, ce qui justifie le suivi des cytokines. La sécurité microbiologique doit parallèlement être documentée. Des bactéries ont été détectées dans une partie du sang récupéré par Cell Saver au cours de transplantations hépatiques, sans stérilisation systématique par leucoréduction [@kimBacterialContaminationAutologous2024]. Après HOPE ou NMP, la transmission microbienne paraît rare mais non nulle, ce qui soutient la réalisation de cultures du perfusat [@endoRiskMicrobialTransmission2024]. Ces études ne portent pas directement sur la décharge cave et ne permettent donc pas d’en présumer la sécurité.
+
+Cette ressource associe ainsi disponibilité immédiate, identité donneur–greffon et valorisation d’un liquide aujourd’hui éliminé. Sa pertinence réelle dépend toutefois du volume érythrocytaire obtenu, de la stabilité des hématies pendant la NMP et de l’absence de contamination significative. Or la littérature décrit séparément les transporteurs d’oxygène utilisés en NMP et le Cell Saver destiné à l’autotransfusion ; leur intersection — préparer à partir de la décharge cave le transporteur d’oxygène d’un foie perfusé *ex situ* — demeure très peu étudiée. Cette lacune fonde la présente étude.
+
+## Problématique et objectifs
+
+L’hypothèse est que le sang contenu dans la décharge cave peut être récupéré et lavé par un dispositif de récupération peropératoire pour produire une suspension érythrocytaire en quantité suffisante, de qualité compatible avec son utilisation comme transporteur d’oxygène pendant une NMP hépatique. Cette stratégie pourrait réduire le recours aux culots globulaires de banque sans compromettre les conditions de perfusion, mais elle ne peut être proposée sans données préalables de faisabilité et de sécurité.
+
+L’objectif principal est d’évaluer la faisabilité du recueil de la décharge cave et de son traitement par Cell Saver, à partir du volume initial, du rendement et du volume érythrocytaire final. Les objectifs secondaires sont de caractériser le produit obtenu sur les plans hématologique et biochimique, d’en évaluer la qualité microbiologique, puis d’étudier sa stabilité pendant la perfusion normothermique. La sécurité sera appréciée en particulier par les marqueurs d’hémolyse, l’évolution de la méthémoglobine et des paramètres d’oxygénation, ainsi que par la cinétique de cytokines inflammatoires. L’étude vise ainsi à produire les données nécessaires avant toute évaluation comparative ou utilisation clinique de cette ressource.
+
+# Nombre de perfusions réalisées
+
+ colnames(df)
+  [1] "manip_ID"                                         "manip_date"                                      
+  [3] "donneur_preleveur"                                "donneur_groupe"                                  
+  [5] "donneur_ville"                                    "decharge_volume_total_litres"                    
+  [7] "decharge_condition_recueil"                       "decharge_condition_recueil_aspiration_ou_declive"
+  [9] "cell_saver_heure_debut"                           "cell_saver_heure_fin"                            
+ [11] "cell_saver_heure_duree"                           "cell_saver_volume_total_final_mL"                
+ [13] "cell_saver_volume_rapport_vs_volume_decharge"     "greffon_perfuse_YN"                              
+ [15] "greffon_perfuse_commentaire"                      "H0_hemocs_aero"                                  
+ [17] "H0_hemocs_anaero"                                 "C0_hemato_Hb"                                    
+ [19] "C0_hemato_Ht"                                     "C0_hemato_VGM"                                   
+ [21] "C0_hemato_leucocytes"                             "C0_GDS_pH"                                       
+ [23] "C0_GDS_pO2_mmHg"                                  "C0_GDS_SatO2_percent"                            
+ [25] "C0_GDS_pCO2_mmHg"                                 "C0_GDS_metHb_percent"                            
+ [27] "C0_GDS_COHb_percent"                              "C0_GDS_Lactates_mmol_L"                          
+ [29] "C0_bioch_Na_mmol"                                 "C0_bioch_K_mmol"                                 
+ [31] "C0_bioch_Bili_totale"                             "C0_bioch_LDH"                                    
+ [33] "C0_bioch_Hb_libre"                                "C0_bioch_indice_hemolyse"                        
+ [35] "C0_bioch_haptoglobine"                            "LANCEMENT_LIVER_ASSIST"                          
+ [37] "P0_kit_rince_YN"                                  "P0_volume_bicarbonate_pour_correction_mL"        
+ [39] "P0_heure_debut_correction"                        "P0_heure_debut_perfusion"                        
+ [41] "P0_duree_correction"                              "P0_hemato_Hb"                                    
+ [43] "P0_hemato_Ht"                                     "P0_hemato_VGM"                                   
+ [45] "P0_hemato_leucocytes"                             "P0_GDS_pH"                                       
+ [47] "P0_GDS_pO2_mmHg"                                  "P0_GDS_SatO2"                                    
+ [49] "P0_GDS_pCO2_mmHg"                                 "P0_GDS_metHb"                                    
+ [51] "P0_GDS_COHb"                                      "P0_GDS_Lactates_mmol_L"                          
+ [53] "P0_bioch_Na_mmol"                                 "P0_bioch_K_mmol"                                 
+ [55] "P0_bioch_Bili_totale"                             "P0_bioch_LDH"                                    
+ [57] "P0_bioch_Hb_libre"                                "P0_bioch_indice_hemolyse"                        
+ [59] "P0_bioch_haptoglobine"                            "P1"                                              
+ [61] "P1_perfusion_heure"                               "P1_perfusion_delai_avec_P0"                      
+ [63] "P1_hemato_Hb"                                     "P1_hemato_Ht"                                    
+ [65] "P1_hemato_VGM"                                    "P1_hemato_leucocytes"                            
+ [67] "P1_GDS_pH"                                        "P1_GDS_pO2_mmHg"                                 
+ [69] "P1_GDS_SatO2"                                     "P1_GDS_pCO2_mmHg"                                
+ [71] "P1_GDS_metHb"                                     "P1_GDS_COHb"                                     
+ [73] "P1_GDS_Lactates_mmol_L"                           "P1_bioch_Na_mmol"                                
+ [75] "P1_bioch_K_mmol"                                  "P1_bioch_Bili_totale"                            
+ [77] "P1_bioch_LDH"                                     "P1_bioch_Hb_libre"                               
+ [79] "P1_bioch_indice_hemolyse"                         "P1_bioch_haptoglobine"                           
+ [81] "P2"                                               "P2_perfusion_heure"                              
+ [83] "P2_perfusion_delai_avec_P0"                       "P2_hemato_Hb"                                    
+ [85] "P2_hemato_Ht"                                     "P2_hemato_VGM"                                   
+ [87] "P2_hemato_leucocytes"                             "P2_GDS_pH"                                       
+ [89] "P2_GDS_pO2_mmHg"                                  "P2_GDS_SatO2"                                    
+ [91] "P2_GDS_pCO2_mmHg"                                 "P2_GDS_metHb"                                    
+ [93] "P2_GDS_COHb"                                      "P2_GDS_Lactates_mmol_L"                          
+ [95] "P2_bioch_Na_mmol"                                 "P2_bioch_K_mmol"                                 
+ [97] "P2_bioch_Bili_totale"                             "P2_bioch_LDH"                                    
+ [99] "P2_bioch_Hb_libre"                                "P2_bioch_indice_hemolyse"                        
+[101] "P2_bioch_haptoglobine"                            "P4"                                              
+[103] "P4_perfusion_heure"                               "P4_perfusion_delai_avec_P0"                      
+[105] "P4_hemocs_aerobie"                                "P4_hemocs_anaerobie"                             
+[107] "P4_hemato_Hb"                                     "P4_hemato_Ht"                                    
+[109] "P4_hemato_VGM"                                    "P4_hemato_leucocytes"                            
+[111] "P4_GDS_pH"                                        "P4_GDS_pO2_mmHg"                                 
+[113] "P4_GDS_SatO2"                                     "P4_GDS_pCO2_mmHg"                                
+[115] "P4_GDS_metHb"                                     "P4_GDS_COHb"                                     
+[117] "P4_GDS_Lactates_mmol_L"                           "P4_bioch_Na_mmol"                                
+[119] "P4_bioch_K_mmol"                                  "P4_bioch_Bili_totale"                            
+[121] "P4_bioch_LDH"                                     "P4_bioch_Hb_libre"                               
+[123] "P4_bioch_indice_hemolyse"                         "P4_bioch_haptoglobine"                           
+
+-   `r nrow(df)` perfusions réalisées, la première le `r min(df$manip_date)` et la dernière le `r max(df$manip_date)`.
+
+# Traitement de la décharge cave au Cell Saver
+
+```{r}
+#| label: decharge-cave
+#| echo: false
+#| warning: false
+#| message: false
+df_decharge_cave <- df
+
+cols_to_include_decharge <- c(
+    "decharge_volume_total_litres",
+    "decharge_condition_recueil",
+    "decharge_condition_recueil_aspiration_ou_declive",
+    "cell_saver_heure_duree",
+    "cell_saver_volume_total_final_mL",
+    "cell_saver_volume_rapport_vs_volume_decharge",
+    "greffon_perfuse_YN",
+    "greffon_perfuse_commentaire"
+)
+
+table_decharge <- df_decharge_cave %>%
+    tbl_summary(
+        include = all_of(cols_to_include_decharge),
+        statistic = list(
+            all_continuous() ~ "{mean} ({sd})",
+            all_categorical() ~ "{n} / {N} ({p}%)"
+        ),
+        label = list(
+            decharge_volume_total_litres ~ "Volume total de la décharge (L)",
+            decharge_condition_recueil ~ "Condition de recueil de la décharge",
+            decharge_condition_recueil_aspiration_ou_declive ~ "Condition de recueil : aspiration ou déclive",
+            cell_saver_heure_duree ~ "Durée d'utilisation du Cell Saver (heures)",
+            cell_saver_volume_total_final_mL ~ "Volume total final dans le Cell Saver (mL)",
+            cell_saver_volume_rapport_vs_volume_decharge ~ "Rapport entre le volume final du Cell Saver et le volume de la décharge (%)",
+            greffon_perfuse_YN ~ "Greffon perfusé (Oui/Non)",
+            greffon_perfuse_commentaire ~ "Commentaire sur la perfusion du greffon"
+        ),
+        digits = all_continuous() ~ 2
+    ) %>%
+    add_overall() %>%
+    modify_header(label = "**Variable**") 
+
+table_decharge
+```
+
+# Analyse de la corrélation entre le volume de la décharge et le volume final dans le Cell Saver
+
+```{r}
+#| label: correlation-decharge-cell-saver
+#| echo: false
+#| warning: false
+#| message: false
+
+correlation_decharge_cell_saver <- cor(df$decharge_volume_total_litres, df$cell_saver_volume_total_final_mL, use = "complete.obs")
+correlation_decharge_cell_saver
+```
+
+# Évolution du pH selon le temps de perfusion
+
+```{r}
+#| label: evolution-pH
+#| echo: false
+#| warning: false
+#| message: false
+df_pH <- df %>%
+    select(C0_GDS_pH, P0_GDS_pH, P1_GDS_pH, P2_GDS_pH, P4_GDS_pH)
+
+table_pH <- df_pH %>%
+    tbl_summary(
+        statistic = all_continuous() ~ "{mean} ({sd})",
+        label = list(
+            C0_GDS_pH ~ "pH à T0",
+            P0_GDS_pH ~ "pH à P0",
+            P1_GDS_pH ~ "pH à P1",
+            P2_GDS_pH ~ "pH à P2",
+            P4_GDS_pH ~ "pH à P4"
+        ),
+        digits = all_continuous() ~ 2
+    ) %>%
+    add_overall() %>%
+    modify_header(label = "**Point temporel**", stat_0 = "**Moyenne (SD)**")
+
+table_pH
+```

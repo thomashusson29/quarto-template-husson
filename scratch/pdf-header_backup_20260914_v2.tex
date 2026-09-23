@@ -1,0 +1,189 @@
+% Configuration PDF commune aux documents Husson.
+\usepackage{fontspec}
+\IfFontExistsTF{texgyretermes-regular.otf}{%
+  \defaultfontfeatures{%
+    SmallCapsFont = texgyretermes-regular.otf,%
+    SmallCapsFeatures = {Letters=SmallCaps}%
+  }%
+}{%
+  \defaultfontfeatures{SmallCapsFeatures={Letters=SmallCaps}}%
+}
+\usepackage{xcolor}
+\usepackage{fvextra}
+\usepackage{newunicodechar}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage{needspace}
+\usepackage{pdflscape}
+\usepackage{adjustbox}
+
+\definecolor{headingblue}{HTML}{17365D}
+\definecolor{headingred}{HTML}{7A1F2B}
+\definecolor{headinggreen}{HTML}{1F5A3A}
+\definecolor{headingcharcoal}{HTML}{34383D}
+\definecolor{commentgray}{HTML}{6F6F6F}
+\definecolor{pythonaccent}{HTML}{9A6100}
+\definecolor{pythonfill}{HTML}{FFF5D9}
+\definecolor{raccent}{HTML}{276DC3}
+\definecolor{rfill}{HTML}{EAF2FB}
+
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\setlength{\emergencystretch}{3em}
+
+% Pagination éditoriale. Une ligne isolée au début ou à la fin d'une page est
+% évitée, tandis que \raggedbottom autorise un blanc final raisonnable plutôt
+% que d'étirer artificiellement les espacements verticaux.
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\raggedbottom
+
+\makeatletter
+\renewcommand*{\@pnumwidth}{2.8em}
+\renewcommand*{\@tocrmarg}{3.6em}
+\makeatother
+
+% Hiérarchie éditoriale sobre : les trois premiers niveaux structurent la page
+% par la graisse et une couleur foncée. Les niveaux suivants restent proches
+% du texte courant et se distinguent par la graisse, l'italique ou les petites
+% capitales. Seuls les trois premiers niveaux sont numérotés.
+\setcounter{secnumdepth}{3}
+\setkomafont{disposition}{\rmfamily}
+\setkomafont{section}{\rmfamily\color{headingblue}\bfseries\Large}
+\setkomafont{subsection}{\rmfamily\color{headingred}\bfseries\large}
+\setkomafont{subsubsection}{\rmfamily\color{headinggreen}\bfseries\normalsize}
+\setkomafont{paragraph}{\rmfamily\color{headingcharcoal}\bfseries\normalsize}
+\setkomafont{subparagraph}{\rmfamily\color{headingcharcoal}\itshape\normalsize}
+
+\RedeclareSectionCommand[
+  beforeskip=1.25\baselineskip,
+  afterskip=0.65\baselineskip
+]{section}
+\RedeclareSectionCommand[
+  beforeskip=1.05\baselineskip,
+  afterskip=0.50\baselineskip
+]{subsection}
+\RedeclareSectionCommand[
+  beforeskip=0.90\baselineskip,
+  afterskip=0.42\baselineskip
+]{subsubsection}
+\RedeclareSectionCommand[
+  beforeskip=0.76\baselineskip,
+  afterskip=0.28\baselineskip
+]{paragraph}
+\RedeclareSectionCommand[
+  beforeskip=0.62\baselineskip,
+  afterskip=0.24\baselineskip
+]{subparagraph}
+
+% Pandoc rend normalement un titre Markdown de niveau 6 comme du texte brut
+% en LaTeX. Le filtre heading-levels.lua l'entoure de cet environnement pour
+% lui donner un style discret et un espace propre avec le texte.
+\newenvironment{hussonsixthheading}{%
+  \Needspace{3\baselineskip}%
+  \par\addvspace{0.52\baselineskip}%
+  \noindent\rmfamily\color{headingcharcoal}\scshape\small
+}{%
+  \par\nobreak\vspace{0.20\baselineskip}%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\setlist[itemize]{itemsep=1pt,parsep=1pt,topsep=2pt}
+\setlist[enumerate]{itemsep=1pt,parsep=1pt,topsep=2pt}
+
+% Espacement vertical compact et sobre pour les tableaux (hauteur minimale).
+% La boîte typographique normale est rétablie avant de composer les paragraphes
+% multiligne : la marge n'est donc appliquée qu'une fois par cellule.
+\renewcommand{\arraystretch}{1}
+\setlength{\extrarowheight}{0pt}
+\makeatletter
+\newbox\hussontablestrutbox
+\newcommand{\hussontablepadding}{%
+  \setbox\hussontablestrutbox=\copy\strutbox
+  \setbox\strutbox=\hbox{%
+    \vrule width 0pt
+      height \dimexpr\ht\hussontablestrutbox+2.5pt\relax
+      depth \dimexpr\dp\hussontablestrutbox+2.5pt\relax
+  }%
+  \let\hussontablesavedmkpream\@mkpream
+  \def\@mkpream##1{%
+    \hussontablesavedmkpream{##1}%
+    \setbox\strutbox=\copy\hussontablestrutbox
+    \let\@mkpream\hussontablesavedmkpream
+  }%
+}
+\makeatother
+
+% Les tableaux gardent leur hauteur naturelle, avec une taille homogène. Un
+% tableau long peut se poursuivre sur la page suivante, mais ne commence pas
+% dans les toutes dernières lignes de la page courante.
+\AtBeginEnvironment{longtable}{\Needspace{6\baselineskip}\small\hussontablepadding}
+\AtBeginEnvironment{tabular}{\small\hussontablepadding}
+
+% Filet de securite : seuls les tableaux depassant la ligne sont reduits a \linewidth.
+\BeforeBeginEnvironment{tabular*}{\begin{adjustbox}{max width=\linewidth}}
+\AfterEndEnvironment{tabular*}{\end{adjustbox}}
+\BeforeBeginEnvironment{tabular}{\begin{adjustbox}{max width=\linewidth}}
+\AfterEndEnvironment{tabular}{\end{adjustbox}}
+
+% Les blocs de code restent divisibles lorsqu'ils sont longs. Cette réserve
+% empêche seulement qu'un bloc commence en bas de page avec une ou deux lignes.
+\BeforeBeginEnvironment{Shaded}{\Needspace{8\baselineskip}}
+
+% Les blocs de code sont compacts et peuvent revenir à la ligne.
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+  fontsize=\footnotesize,
+  breaklines,
+  breakanywhere,
+  commandchars=\\\{\}
+}
+\providecommand{\CommentTok}[1]{\textcolor{commentgray}{\textit{#1}}}
+
+\newcommand{\codelanguagelabel}[2]{%
+  \Needspace{5\baselineskip}%
+  \par\addvspace{0.55\baselineskip}%
+  \noindent\begingroup
+  \setlength{\fboxsep}{3pt}%
+  \colorbox{#1}{\color{white}\sffamily\bfseries\scriptsize #2}%
+  \endgroup\par\nobreak\vspace{-0.25\baselineskip}%
+}
+
+\newenvironment{pythoncode}{%
+  \codelanguagelabel{pythonaccent}{PYTHON}%
+  \begingroup\colorlet{shadecolor}{pythonfill}%
+}{%
+  \endgroup\par\addvspace{0.25\baselineskip}%
+}
+
+\newenvironment{rcode}{%
+  \codelanguagelabel{raccent}{R}%
+  \begingroup\colorlet{shadecolor}{rfill}%
+}{%
+  \endgroup\par\addvspace{0.25\baselineskip}%
+}
+
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{center}
+    {\Large\bfseries\rmfamily \@title\par}
+    \vskip 0.35em
+    {\large\rmfamily \@subtitle\par}
+    \vskip 0.65em
+    {\normalsize\rmfamily \@author\par}
+  \end{center}
+}
+\makeatother
+
+\renewcommand{\contentsname}{}
+\AtBeginDocument{
+  \let\oldtableofcontents\tableofcontents
+  \renewcommand{\tableofcontents}{
+    \begingroup
+    \footnotesize
+    \setlength{\parskip}{1pt}
+    \oldtableofcontents
+    \endgroup
+  }
+}

@@ -1,0 +1,126 @@
+---
+title: "Validation de la barre de navigation"
+subtitle: "Tests exhaustifs des niveaux H1 à H5, nav-title et transitions de page"
+author: "Thomas Husson"
+format:
+  husson-pdf:
+    keep-tex: true
+toc: true
+toc-depth: 3
+---
+
+# Introduction {.unnumbered}
+
+Cette première section non numérotée sert de section liminaire ou introductive.
+Elle permet de vérifier le comportement de la barre lorsqu'un titre de niveau 1 ne possède aucune sous-section H2. La barre doit afficher le titre seul à gauche avec son filet sobre.
+
+\newpage
+
+# Matériels et méthodes {nav-title="MÉTHODES"}
+
+## Design expérimental et groupes d'étude {nav-title="Design"}
+
+Ce paragraphe décrit la méthodologie générale et la constitution des cohortes.
+La barre de navigation doit afficher à ce stade :
+`MÉTHODES | Design   Transporteurs   Perfusion   Biologie   Statistiques`
+avec `Design` en surbrillance active et souligné.
+
+\vspace{5cm}
+
+| Paramètre | Groupe Contrôle | Groupe Traité | p-value |
+|:---|:---:|:---:|:---:|
+| Nombre de sujets | 25 | 25 | > 0.99 |
+| Âge moyen (années) | 54.2 ± 6.1 | 55.0 ± 5.8 | 0.62 |
+| Débit de perfusion (mL/min) | 120 ± 15 | 125 ± 12 | 0.18 |
+
+: Tableau comparatif des caractéristiques initiales {#tbl-demo}
+
+\newpage
+
+## Préparation des transporteurs d'oxygène {nav-title="Transporteurs"}
+
+Les transporteurs d'oxygène basés sur l'hémoglobine et les globules rouges lavés ont été préparés selon les protocoles standardisés.
+
+La barre de navigation doit maintenant afficher `Transporteurs` en surbrillance active et souligné.
+
+\newpage
+
+## Procédure de perfusion hépatique normothermique {nav-title="Perfusion"}
+
+Détails de la mise en route du circuit extracorporel et de la canulation.
+
+\newpage
+
+## Analyses biologiques des perfusats {nav-title="Biologie"}
+
+### Évaluation de la réponse inflammatoire {nav-title="Inflammation"}
+
+#### Dosage des cytokines circulantes {nav-title="Cytokines"}
+
+##### Interleukine 6 {nav-title="IL-6"}
+
+Nous atteignons ici une branche profonde de niveau 5.
+
+La position hiérarchique réelle est :
+- H1 : Matériels et méthodes (`MÉTHODES`)
+- H2 : Analyses biologiques des perfusats (`Biologie`)
+- H3 : Évaluation de la réponse inflammatoire (`Inflammation`)
+- H4 : Dosage des cytokines circulantes (`Cytokines`)
+- H5 : Interleukine 6 (`IL-6`)
+
+La barre doit afficher sur une seule ligne :
+`MÉTHODES | Design   Transporteurs   Perfusion   Biologie › Inflammation › Cytokines › IL-6   Statistiques`
+
+avec `Biologie › Inflammation › Cytokines › IL-6` en bleu, et `IL-6` en gras, le tout souligné par le trait bleu.
+
+\newpage
+
+### Marqueurs d'hémolyse et souffrance cellulaire {nav-title="Hémolyse"}
+
+Cette page teste le retour à un niveau supérieur (H3) sous le même H2 (`Biologie`).
+Les sous-branches précédentes (`Inflammation`, `Cytokines`, `IL-6`) doivent être complètement nettoyées.
+
+La barre doit afficher :
+`MÉTHODES | Design   Transporteurs   Perfusion   Biologie › Hémolyse   Statistiques`
+
+\newpage
+
+## Analyses statistiques {nav-title="Statistiques"}
+
+Les variables continues ont été exprimées en moyennes ± écart-type.
+
+Cette section vérifie que le passage au dernier H2 du chapitre réinitialise le déploiement de `Biologie` et active `Statistiques`.
+
+\newpage
+
+# Résultats expérimentaux {nav-title="RÉSULTATS"}
+
+## Paramètres hémodynamiques {nav-title="Hémodynamique"}
+
+Premier H2 du second chapitre. La barre doit basculer sur le H1 `RÉSULTATS` et lister ses propres sous-sections H2.
+
+\newpage
+
+## Gazométrie et oxygénation {nav-title="Gazométrie"}
+
+Texte de la première moitié de page sur la gazométrie.
+
+\vspace{12cm}
+
+## Marqueurs métaboliques et lactates {nav-title="Métabolisme"}
+
+Ce nouveau titre H2 commence au bas de la page courante.
+Selon la règle validée du haut de page (*Top-mark*), l'en-tête de cette page doit continuer d'afficher `Gazométrie`.
+Le titre `Métabolisme` prendra effet dans l'en-tête de la page suivante.
+
+\newpage
+
+Suite de la section sur les marqueurs métaboliques et la clairance des lactates sur la page suivante.
+L'en-tête doit ici afficher `Métabolisme` actif.
+
+\newpage
+
+# Conclusion et perspectives {.unnumbered}
+
+Cette section finale n'a pas de sous-section H2.
+Elle doit s'afficher sobrement comme `Conclusion et perspectives` à gauche, avec la ligne fine en-dessous.

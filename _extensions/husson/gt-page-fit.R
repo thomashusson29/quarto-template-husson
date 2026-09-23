@@ -1,140 +1,164 @@
-# Mise en page automatique des tableaux gt dans les sorties PDF Quarto.
+# Mise en page automatique des tableaux (gt, kable, tibble, markdown) dans les sorties PDF Quarto.
 #
-# Le module est volontairement charge une seule fois dans le chunk de setup :
+# Le module est charge dans le chunk de setup :
 #   source("_extensions/husson/gt-page-fit.R")
 #   husson_tables_on()
 #
-# gtsummary imprime ses tableaux via gt. Le hook knit_print ci-dessous couvre
-# donc les objets gt crees directement et les tableaux gtsummary, sans imposer
-# un appel de mise en forme apres chaque tableau.
+# Objectifs :
+# - 100% de la largeur de la page (\linewidth)
+# - Hauteur minimale (largeurs de colonnes automatiques et proportionnelles au contenu)
+# - Police controlee (reduction maximale de 25% : \small ~10pt ou \footnotesize ~9pt pour >= 6 colonnes)
+# - Remplacement automatique des largeurs px() excessives qui debordent de la page
 
 husson_latex_output <- function() {
   requireNamespace("knitr", quietly = TRUE) &&
     isTRUE(knitr::is_latex_output())
 }
 
-husson_fit_gt_to_page <- function(tbl,
-                                  label_pct = 44,
-                                  p_pct = 8,
-                                  min_other_pct = 8,
-                                  force = FALSE) {
+# Calcul heuristique de repartition optimale de largeur (en %) minimisant les retours a la ligne
+husson_calculate_optimal_widths <- function(df, visible_cols, boxhead = NULL, tbl = NULL) {
+  n_cols <- length(visible_cols)
+  if (n_cols <= 1L) {
+    return(stats::setNames(100, visible_cols))
+  }
+
+  # 1. Demande textuelle des en-tetes reels
+  hdr_demands <- vapply(visible_cols, function(col) {
+    if (is.data.frame(boxhead) && "var" %in% names(boxhead) && "column_label" %in% names(boxhead)) {
+      match_idx <- match(col, boxhead$var)
+      if (!is.na(match_idx)) {
+        lbl <- boxhead$column_label[[match_idx]]
+        lbl_str <- as.character(lbl)
+        # Nettoyage des balises Markdown, HTML et commandes LaTeX
+        lbl_clean <- gsub("[*_`#]|<[^>]+>", "", lbl_str)
+        lbl_clean <- gsub("\\\\[a-zA-Z]+(\\[[^\\]]*\\])?(\\{[^}]*\\})?", "", lbl_clean)
+        lbl_clean <- gsub("[{}]", "", lbl_clean)
+        lbl_clean <- gsub("[ \t\r\n]+", " ", lbl_clean)
+        lbl_clean <- trimws(lbl_clean)
+        return(min(max(nchar(lbl_clean), 1), 40))
+      }
+    }
+    nchar(as.character(col))
+  }, numeric(1))
+
+  # 2. Demande textuelle des donnees (en priorite sur les cellules formatees gt)
+  body_df <- df
+  if (inherits(tbl, "gt_tbl")) {
+    tryCatch({
+      built <- gt:::build_data(tbl, context = "latex")
+      if (is.data.frame(built[["_body"]])) {
+        body_df <- built[["_body"]]
+      }
+    }, error = function(e) NULL)
+  }
+
+  val_demands <- vapply(visible_cols, function(col) {
+    vals <- body_df[[col]]
+    vals_clean <- gsub("[*_`#]|<[^>]+>", "", as.character(vals))
+    vals_clean <- gsub("\\\\[a-zA-Z]+(\\[[^\\]]*\\])?(\\{[^}]*\\})?", "", vals_clean)
+    vals_clean <- gsub("[{}]", "", vals_clean)
+    lens <- nchar(trimws(vals_clean))
+    lens <- lens[!is.na(lens) & lens > 0]
+    if (length(lens) == 0L) return(1)
+    if (length(lens) > 1L) stats::quantile(lens, 0.90, names = FALSE) else max(lens)
+  }, numeric(1))
+
+  demands <- pmax(hdr_demands, val_demands, 1)
+
+  # Transformation puissance : 0.85 donne le poids necessaire aux colonnes descriptives
+  scores <- demands^0.85
+
+  # Plancher minimal par colonne pour eviter l'etouffement des en-tetes courts
+  min_pct <- max(5, 25 / n_cols)
+  raw_pcts <- scores / sum(scores) * 100
+  adjusted <- pmax(raw_pcts, min_pct)
+  pcts <- round(adjusted / sum(adjusted) * 100, 1)
+
+  # Ajustement du dernier arrondi pour atteindre exactement 100.0%
+  diff <- 100 - sum(pcts)
+  pcts[which.max(pcts)] <- pcts[which.max(pcts)] + diff
+
+  stats::setNames(pcts, visible_cols)
+}
+
+husson_fit_gt_to_page <- function(tbl, force = FALSE) {
   if (!inherits(tbl, "gt_tbl") ||
       (!isTRUE(force) && !husson_latex_output())) {
     return(tbl)
   }
 
-  if (!requireNamespace("gt", quietly = TRUE)) {
+  if (!requireNamespace("gt", quietly = TRUE) ||
+      !requireNamespace("rlang", quietly = TRUE)) {
     return(tbl)
   }
 
-  # GT ne fournit pas encore de selecteur public pour repartir automatiquement
-  # la largeur entre toutes les colonnes visibles. Si sa structure interne
-  # evolue, on conserve au minimum la largeur totale du tableau.
   boxhead <- tbl[["_boxhead"]]
   if (!is.data.frame(boxhead) ||
-      !all(c("var", "type", "column_width") %in% names(boxhead))) {
+      !all(c("var", "type") %in% names(boxhead))) {
     return(gt::tab_options(tbl, table.width = gt::pct(100)))
   }
 
   visible <- boxhead$var[boxhead$type != "hidden"]
-  if (length(visible) < 2L) {
+  n_cols <- length(visible)
+  if (n_cols < 1L) {
     return(gt::tab_options(tbl, table.width = gt::pct(100)))
   }
 
-  # Une largeur explicitement definie par l'auteur reste prioritaire.
+  # Verification des largeurs existantes
   existing <- boxhead$column_width[match(visible, boxhead$var)]
-  has_explicit_width <- vapply(
-    existing,
-    function(x) {
-      length(x) > 0L &&
-        !all(is.na(x)) &&
-        any(nzchar(as.character(x)))
-    },
-    logical(1)
-  )
-  if (any(has_explicit_width)) {
-    return(gt::tab_options(tbl, table.width = gt::pct(100)))
-  }
+  has_pixels <- FALSE
+  has_valid_pct <- FALSE
 
-  lower <- tolower(visible)
-  p_cols <- visible[grepl(
-    "^(p|q)([._-]?(value|valeur))?[0-9]*$",
-    lower
-  )]
+  all_strs <- unlist(lapply(existing, as.character))
+  all_strs <- all_strs[!is.na(all_strs) & nzchar(all_strs)]
 
-  preferred_labels <- c(
-    "label", "variable", "characteristic", "caractéristique",
-    "caracteristique", "méthode", "methode", "stratégie", "strategie",
-    "description", "exposition", "critère", "critere"
-  )
-  label_candidates <- visible[lower %in% preferred_labels]
-  non_p_cols <- setdiff(visible, p_cols)
-  label_col <- if (length(label_candidates)) {
-    label_candidates[[1L]]
-  } else if (length(non_p_cols)) {
-    non_p_cols[[1L]]
-  } else {
-    visible[[1L]]
-  }
-
-  p_cols <- setdiff(p_cols, label_col)
-  other_cols <- setdiff(visible, c(label_col, p_cols))
-
-  # Les p/q-values sont compactes, la colonne descriptive absorbe les retours
-  # a la ligne, et le solde est reparti uniformement entre les estimations.
-  p_total <- if (length(p_cols)) {
-    min(p_pct * length(p_cols), 20)
-  } else {
-    0
-  }
-  label_width <- min(
-    label_pct,
-    100 - p_total - min_other_pct * length(other_cols)
-  )
-  label_width <- max(label_width, 24)
-  other_total <- 100 - label_width - p_total
-
-  width_map <- stats::setNames(label_width, label_col)
-  if (length(other_cols)) {
-    width_map <- c(
-      width_map,
-      stats::setNames(
-        rep(other_total / length(other_cols), length(other_cols)),
-        other_cols
-      )
-    )
-  }
-  if (length(p_cols)) {
-    width_map <- c(
-      width_map,
-      stats::setNames(
-        rep(p_total / length(p_cols), length(p_cols)),
-        p_cols
-      )
-    )
-  }
-
-  if (!requireNamespace("rlang", quietly = TRUE)) {
-    return(gt::tab_options(tbl, table.width = gt::pct(100)))
-  }
-
-  width_specs <- lapply(
-    names(width_map),
-    function(column) {
-      rlang::new_formula(
-        rlang::sym(column),
-        gt::pct(unname(width_map[[column]]))
-      )
+  if (length(all_strs) > 0L) {
+    if (any(grepl("px$", all_strs, ignore.case = TRUE))) {
+      has_pixels <- TRUE
+    } else if (all(grepl("%$", all_strs))) {
+      nums <- as.numeric(sub("%$", "", all_strs))
+      if (all(!is.na(nums)) && abs(sum(nums) - 100) < 5) {
+        has_valid_pct <- TRUE
+      }
     }
-  )
+  }
 
-  gt::cols_width(tbl, .list = width_specs) |>
-    gt::tab_options(table.width = gt::pct(100))
+  # Si l'auteur a deja fourni une repartition valide en %, on la conserve.
+  # En revanche, si des px() sont presents (ex: table 1 avec 905px qui deborde),
+  # ou si aucune largeur n'est specifiee, on calcule la repartition optimale.
+  if (!has_valid_pct || has_pixels) {
+    df <- tbl[["_data"]]
+    if (is.data.frame(df)) {
+      col_names <- intersect(visible, names(df))
+      if (length(col_names) == n_cols) {
+        width_map <- husson_calculate_optimal_widths(df, visible, boxhead = boxhead, tbl = tbl)
+        width_specs <- lapply(
+          names(width_map),
+          function(column) {
+            rlang::new_formula(
+              rlang::sym(column),
+              gt::pct(unname(width_map[[column]]))
+            )
+          }
+        )
+        tbl <- gt::cols_width(tbl, .list = width_specs)
+      }
+    }
+  }
+
+  # Police proportionnee : \small (10pt, -9%) par defaut, ou \footnotesize (9pt, -18%) si >= 6 colonnes
+  font_size <- if (n_cols >= 6L) "9pt" else "10pt"
+
+  tbl |>
+    gt::tab_options(
+      table.width = gt::pct(100),
+      table.font.size = font_size,
+      data_row.padding = gt::px(3),
+      column_labels.padding = gt::px(4)
+    )
 }
 
-husson_tables_on <- function(label_pct = 44,
-                             p_pct = 8,
-                             min_other_pct = 8) {
+husson_tables_on <- function() {
   if (!requireNamespace("knitr", quietly = TRUE) ||
       !requireNamespace("gt", quietly = TRUE)) {
     warning(
@@ -148,53 +172,76 @@ husson_tables_on <- function(label_pct = 44,
     return(invisible(TRUE))
   }
 
-  original <- getS3method(
+  # 1. Hook d'impression pour les tableaux gt
+  original_gt <- getS3method(
     "knit_print",
     "gt_tbl",
     envir = asNamespace("knitr"),
     optional = TRUE
   )
-  if (is.null(original)) {
-    warning("La methode d'impression de 'gt' est introuvable.", call. = FALSE)
-    return(invisible(FALSE))
+
+  wrapper_gt <- function(x, ..., inline = FALSE) {
+    x <- husson_fit_gt_to_page(x)
+    if (is.function(original_gt)) {
+      original_gt(x, ..., inline = inline)
+    } else {
+      knitr::normal_print(x)
+    }
   }
 
-  wrapper <- function(x, ..., inline = FALSE) {
-    x <- husson_fit_gt_to_page(
-      x,
-      label_pct = label_pct,
-      p_pct = p_pct,
-      min_other_pct = min_other_pct
-    )
-    original(x, ..., inline = inline)
+  # 2. Hook d'impression pour les data.frame et tibble (redirection vers gt automatique)
+  original_df <- getS3method(
+    "knit_print",
+    "data.frame",
+    envir = asNamespace("knitr"),
+    optional = TRUE
+  )
+
+  wrapper_df <- function(x, ..., inline = FALSE) {
+    if (husson_latex_output()) {
+      gt_x <- gt::gt(x) |> husson_fit_gt_to_page()
+      knitr::knit_print(gt_x, ..., inline = inline)
+    } else if (is.function(original_df)) {
+      original_df(x, ..., inline = inline)
+    } else {
+      knitr::normal_print(x)
+    }
   }
 
   options(
-    husson.tables.knit_print_original = original,
+    husson.tables.knit_print_original_gt = original_gt,
+    husson.tables.knit_print_original_df = original_df,
     husson.tables.hook_installed = TRUE
   )
-  registerS3method(
-    "knit_print",
-    "gt_tbl",
-    wrapper,
-    envir = asNamespace("knitr")
-  )
+
+  registerS3method("knit_print", "gt_tbl", wrapper_gt, envir = asNamespace("knitr"))
+  registerS3method("knit_print", "data.frame", wrapper_df, envir = asNamespace("knitr"))
+  if (requireNamespace("tibble", quietly = TRUE)) {
+    registerS3method("knit_print", "tbl_df", wrapper_df, envir = asNamespace("knitr"))
+  }
 
   invisible(TRUE)
 }
 
 husson_tables_off <- function() {
-  original <- getOption("husson.tables.knit_print_original")
-  if (is.function(original) && requireNamespace("knitr", quietly = TRUE)) {
-    registerS3method(
-      "knit_print",
-      "gt_tbl",
-      original,
-      envir = asNamespace("knitr")
-    )
+  orig_gt <- getOption("husson.tables.knit_print_original_gt")
+  orig_df <- getOption("husson.tables.knit_print_original_df")
+
+  if (requireNamespace("knitr", quietly = TRUE)) {
+    if (is.function(orig_gt)) {
+      registerS3method("knit_print", "gt_tbl", orig_gt, envir = asNamespace("knitr"))
+    }
+    if (is.function(orig_df)) {
+      registerS3method("knit_print", "data.frame", orig_df, envir = asNamespace("knitr"))
+      if (requireNamespace("tibble", quietly = TRUE)) {
+        registerS3method("knit_print", "tbl_df", orig_df, envir = asNamespace("knitr"))
+      }
+    }
   }
+
   options(
-    husson.tables.knit_print_original = NULL,
+    husson.tables.knit_print_original_gt = NULL,
+    husson.tables.knit_print_original_df = NULL,
     husson.tables.hook_installed = FALSE
   )
   invisible(TRUE)

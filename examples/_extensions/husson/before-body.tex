@@ -1,0 +1,115 @@
+$if(has-frontmatter)$
+\frontmatter
+$endif$
+
+$if(thesis)$
+$-- =========================================================================
+$-- Page de garde officielle de thèse / mémoire (modèle HAL / Paris-Saclay / Paris Cité)
+$-- =========================================================================
+\begin{titlepage}
+\newgeometry{top=3.0cm,bottom=2.5cm,left=2.2cm,right=2.2cm}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+
+$-- Logo en haut à gauche
+$if(thesis.logo)$
+\noindent\includegraphics[height=2.5cm]{$thesis.logo$}\par
+\vspace{0.60cm}
+$else$
+\vspace*{3.10cm}
+$endif$
+
+$-- En-tête institutionnel centré
+\begin{center}
+$if(thesis.university)$
+{\LARGE\scshape $thesis.university$\par}
+\vspace{0.20cm}
+$endif$
+{\large
+$if(thesis.faculty)$$thesis.faculty$\\$endif$
+$if(thesis.school)$$thesis.school$\\$endif$
+$if(thesis.specialty)$$thesis.specialty$\\$endif$
+$if(thesis.laboratory)$$thesis.laboratory$\\$endif$
+$if(thesis.department)$$thesis.department$$endif$\par}
+
+$-- Double filet encadrant le titre
+\vspace{0.80cm}
+\rule{\textwidth}{0.8pt}\par
+\vspace{0.45cm}
+{\LARGE\bfseries $title$\par}
+$if(subtitle)$
+\vspace{0.35cm}
+{\Large $subtitle$\par}
+$endif$
+\vspace{0.45cm}
+\rule{\textwidth}{0.8pt}\par
+
+$-- Auteur
+\vspace{1.05cm}
+{\Large $for(authors)$$it.name.literal$$sep$ et $endfor$}\par
+
+$-- Diplôme et encadrement
+\vspace{1.05cm}
+$if(thesis.degree)$
+{\normalsize $thesis.degree$\par}
+$endif$
+
+$if(thesis.directors)$
+\vspace{0.20cm}
+{\normalsize
+$for(thesis.directors)$
+$it.role$ par $it.name$$if(it.title)$, $it.title$$endif$\\
+$endfor$
+\par}
+$endif$
+
+$-- Date et annonce du jury
+\vspace{1.30cm}
+{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$$else$Présentée et soutenue publiquement le$endif$ $if(thesis.date)$$thesis.date$$else$$date$$endif$\par}
+
+$if(thesis.jury)$
+\vspace{0.20cm}
+{\normalsize Devant un jury composé de :\par}
+\vspace{0.80cm}
+
+$-- Tableau du jury occupant exactement \textwidth avec rôles alignés à droite
+\small
+\renewcommand{\arraystretch}{1.15}
+\noindent\begin{tabular*}{\textwidth}{@{}l@{\hspace{12pt}}l@{\extracolsep{\fill}}r@{}}
+$for(thesis.jury)$
+\mbox{$it.name$} & \mbox{$it.title$} & \mbox{$it.role$} \\
+$endfor$
+\end{tabular*}
+$endif$
+
+\end{center}
+\restoregeometry
+\end{titlepage}
+
+$-- Page blanche au verso (pour impression recto-verso)
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
+
+$-- Début de la numérotation romaine pour les liminaires (TOC, etc.)
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$else$
+$-- Comportement standard si pas de métadonnée thesis
+$if(title)$
+\maketitle
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$endif$
+$endif$

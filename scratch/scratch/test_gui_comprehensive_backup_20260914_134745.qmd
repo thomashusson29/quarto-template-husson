@@ -1,0 +1,74 @@
+---
+title: Rapport d'Évaluation Méthodologique
+author: Thomas Husson
+lang: fr
+format:
+  pdf:
+    documentclass: scrartcl
+    number-sections: true
+    pdf-engine: xelatex
+    toc: true
+    toc-depth: 3
+    fontsize: 11pt
+    linestretch: 1.15
+    template-partials:
+      - _extensions/husson/before-body.tex
+    include-in-header:
+      - _extensions/husson/pdf-header.tex
+    filters:
+      - _extensions/husson/typography.lua
+      - _extensions/husson/table-column-widths.lua
+    language:
+      fr:
+        crossref-tbl-title: Tableau
+        crossref-tbl-prefix: Tableau
+        crossref-lot-title: Liste des tableaux
+    mainfont: Times New Roman
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    embed-resources: true
+    language:
+      fr:
+        crossref-tbl-title: Tableau
+        crossref-tbl-prefix: Tableau
+        crossref-lot-title: Liste des tableaux
+language:
+  fr:
+    crossref-tbl-title: Tableau
+    crossref-tbl-prefix: Tableau
+    crossref-lot-title: Liste des tableaux
+mainfont: Times New Roman
+---
+# Introduction et Contexte
+
+Ce document a pour but de valider le fonctionnement complet du Studio Quarto Husson.
+Il integre des elements avances : typographie scientifique, page de garde institutionnelle,
+tableau avec calcul automatique des largeurs, et appel bibliographique.
+
+# Analyse Statistique et Resultats
+
+Les caracteristiques basales de la cohorte et les scores de propension ont ete estimes selon la methodologie de @connorsEffectivenessRightHeart1996.
+
+La probabilite d'attribution s'exprime par le modele logistique :
+
+$$
+\text{logit}(P(Z = 1 \mid X)) = \beta_0 + \sum_{j=1}^p \beta_j X_j
+$$
+
+Le @tbl-baseline presente la comparaison des groupes avant et apres ponderation.
+
+| Variable clinique | Groupe Controle (N=500) | Groupe Traite (N=450) | Difference standardisee (%) |
+|---|---|---|---|
+| Age moyen (annees) | 62.4 [58.1 ; 66.8] | 63.1 [59.0 ; 67.2] | 4.2 |
+| Score APACHE III moyen | 54.2 [42.0 ; 68.0] | 55.1 [43.2 ; 69.1] | 3.8 |
+| Insuffisance renale aigue | 45 (9.0%) | 42 (9.3%) | 1.1 |
+| Choc septique | 68 (13.6%) | 65 (14.4%) | 2.3 |
+: Comparaison des covariables basales {#tbl-baseline}
+
+# Discussion et Conclusion
+
+L'equilibre entre les deux groupes est atteint avec des differences standardisees toutes inferieures au seuil de 10%.
+Ce rapport illustre la qualite de mise en page academique produite par le template Husson.

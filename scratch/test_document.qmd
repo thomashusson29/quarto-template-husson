@@ -1,0 +1,19 @@
+---
+title: "Document de Test Quarto"
+author: "Thomas Husson"
+format:
+  pdf:
+    documentclass: scrartcl
+---
+
+# Introduction
+
+Ceci est un document de test pour valider l'application Quarto Husson Studio.
+
+| Variable | Groupe 1 | Groupe 2 |
+|---|---|---|
+| Mesure A | 12.4 | 15.2 |
+| Mesure B | 4.8 | 3.1 |
+: Tableau de mesures {#tbl-test}
+
+Le @tbl-test montre les resultats.

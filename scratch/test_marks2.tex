@@ -1,0 +1,74 @@
+\documentclass{scrartcl}
+\usepackage{scrlayer-scrpage}
+\usepackage{xcolor}
+
+\NewMarkClass{hussonnav}
+
+% State definitions: \hussonstate<id> -> {H1_id}{Bar content}
+\newcommand{\defstate}[3]{%
+  \expandafter\def\csname hussonh@#1\endcsname{#2}%
+  \expandafter\def\csname hussonbar@#1\endcsname{#3}%
+}
+
+\defstate{1}{1}{CHAPITRE 1 -- Sec A}
+\defstate{2}{1}{CHAPITRE 1 -- Sec B}
+\defstate{3}{2}{CHAPITRE 2 -- Sec C}
+\defstate{4}{2}{CHAPITRE 2 -- Sec D}
+
+\makeatletter
+\newcommand{\getstateHone}[1]{%
+  \@ifundefined{hussonh@#1}{0}{\csname hussonh@#1\endcsname}%
+}
+\newcommand{\getstateBar}[1]{%
+  \@ifundefined{hussonbar@#1}{}{\csname hussonbar@#1\endcsname}%
+}
+
+\newcommand{\resolveactivemark}{%
+  \edef\@topm{\TopMark{hussonnav}}%
+  \edef\@firstm{\FirstMark{hussonnav}}%
+  \ifx\@topm\@empty
+    \@firstm
+  \else
+    \edef\@toph{\getstateHone{\@topm}}%
+    \edef\@firsth{\getstateHone{\@firstm}}%
+    \ifx\@toph\@firsth
+      \@topm
+    \else
+      \@firstm
+    \fi
+  \fi
+}
+
+\newcommand{\renderhussonbar}{%
+  \edef\@curstate{\resolveactivemark}%
+  \getstateBar{\@curstate}%
+}
+\makeatother
+
+\clearpairofpagestyles
+\ihead{\renderhussonbar}
+
+\begin{document}
+% Page 1: Chapter 1 starts
+\InsertMark{hussonnav}{1}
+Page 1: Chapitre 1, Section A.
+\clearpage
+% Page 2: Continues Section A, then midway Section B begins
+Page 2: Section A suite...
+\vspace{10cm}
+\InsertMark{hussonnav}{2}
+Section B commence ici en milieu de page 2.
+\clearpage
+% Page 3: Continues Section B
+Page 3: Section B suite...
+\clearpage
+% Page 4: Chapter 2 starts
+\InsertMark{hussonnav}{3}
+Page 4: Chapitre 2 commence !
+\vspace{10cm}
+\InsertMark{hussonnav}{4}
+Section D commence en bas de page 4.
+\clearpage
+% Page 5: Section D
+Page 5: Section D suite...
+\end{document}

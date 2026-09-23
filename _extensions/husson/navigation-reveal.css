@@ -1,0 +1,186 @@
+/*
+ * navigation-reveal.css
+ * Barre de navigation hierarchique superieure pour Quarto RevealJS
+ * Extension Husson (Variante A : fil d'Ariane sobre H1 | H2 › H3)
+ */
+
+.husson-reveal-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 80px 0 28px;
+  font-family: var(--r-main-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 14.5px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #17365D;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid #D0D4D9;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Masquage fluide sur diapositive de titre ou masquage explicite */
+.husson-reveal-navbar.husson-nav-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Chapitre H1 */
+.husson-reveal-navbar .husson-nav-h1 {
+  font-weight: 700;
+  color: #17365D;
+  text-transform: uppercase;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.husson-reveal-navbar .husson-nav-h1.husson-nav-clickable {
+  cursor: pointer;
+}
+
+.husson-reveal-navbar .husson-nav-h1.husson-nav-clickable:hover {
+  opacity: 0.75;
+}
+
+/* H1 seul (autonome, sans sous-section) */
+.husson-reveal-navbar .husson-nav-standalone {
+  text-transform: none;
+  font-size: 15px;
+}
+
+/* Separateur vertical H1 | fil d'Ariane */
+.husson-reveal-navbar .husson-nav-bar-sep {
+  display: inline-block;
+  margin: 0 12px;
+  color: #D0D4D9;
+  font-weight: 300;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Conteneur du fil d'Ariane */
+.husson-reveal-navbar .husson-nav-bc {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Segment individuel du fil d'Ariane */
+.husson-reveal-navbar .husson-nav-crumb {
+  color: #17365D;
+  font-weight: 400;
+  font-size: 14.5px;
+  transition: opacity 0.15s ease;
+}
+
+.husson-reveal-navbar .husson-nav-crumb.husson-nav-clickable {
+  cursor: pointer;
+}
+
+.husson-reveal-navbar .husson-nav-crumb.husson-nav-clickable:hover {
+  opacity: 0.75;
+}
+
+/* Dernier segment actif : en gras */
+.husson-reveal-navbar .husson-nav-crumb.husson-nav-active {
+  font-weight: 700;
+}
+
+/* Fleche de separation › */
+.husson-reveal-navbar .husson-nav-arrow {
+  margin: 0 8px;
+  color: #8b949e;
+  font-size: 14px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+/* Adaptation au Mode Sombre (One Dark Pro / auto-dark) */
+html.auto-dark-theme-dark .husson-reveal-navbar,
+body.auto-dark-theme-dark .husson-reveal-navbar,
+body.quarto-dark .husson-reveal-navbar {
+  color: #abb2bf;
+  background: rgba(33, 37, 43, 0.94);
+  border-bottom: 1px solid #3e4451;
+}
+
+html.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-h1,
+body.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-h1,
+body.quarto-dark .husson-reveal-navbar .husson-nav-h1 {
+  color: #61afef;
+}
+
+html.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-bar-sep,
+body.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-bar-sep,
+body.quarto-dark .husson-reveal-navbar .husson-nav-bar-sep {
+  color: #4b5263;
+}
+
+html.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-crumb,
+body.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-crumb,
+body.quarto-dark .husson-reveal-navbar .husson-nav-crumb {
+  color: #abb2bf;
+}
+
+html.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-crumb.husson-nav-active,
+body.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-crumb.husson-nav-active,
+body.quarto-dark .husson-reveal-navbar .husson-nav-crumb.husson-nav-active {
+  color: #e6edf3;
+}
+
+html.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-arrow,
+body.auto-dark-theme-dark .husson-reveal-navbar .husson-nav-arrow,
+body.quarto-dark .husson-reveal-navbar .husson-nav-arrow {
+  color: #5c6370;
+}
+
+/* ── Titre fixe sur les diapositives a defilement (.scrollable) ────────── */
+.reveal .slide.scrollable > :is(h1, h2):first-of-type,
+.reveal .slides section.scrollable > :is(h1, h2):first-of-type {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  box-sizing: border-box;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 6px;
+  padding-bottom: 10px;
+  background-color: #ffffff;
+  background-color: var(--r-background-color, #ffffff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Adaptation en mode sombre */
+html.auto-dark-theme-dark .reveal .slide.scrollable > :is(h1, h2):first-of-type,
+html.auto-dark-theme-dark .reveal .slides section.scrollable > :is(h1, h2):first-of-type,
+body.auto-dark-theme-dark .reveal .slide.scrollable > :is(h1, h2):first-of-type,
+body.auto-dark-theme-dark .reveal .slides section.scrollable > :is(h1, h2):first-of-type,
+body.quarto-dark .reveal .slide.scrollable > :is(h1, h2):first-of-type,
+body.quarto-dark .reveal .slides section.scrollable > :is(h1, h2):first-of-type {
+  background-color: #282c34 !important;
+  border-bottom: 1px solid #3e4451 !important;
+}
+
+/* Diapositives a fond sombre explicite */
+.reveal .slide.scrollable.has-dark-background > :is(h1, h2):first-of-type,
+.reveal .slides section.scrollable.has-dark-background > :is(h1, h2):first-of-type {
+  background-color: #131516 !important;
+  border-bottom: 1px solid #333333 !important;
+}
+

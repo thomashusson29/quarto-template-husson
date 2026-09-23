@@ -1,0 +1,20 @@
+\documentclass{scrartcl}
+\usepackage{scrlayer-scrpage}
+\usepackage{xcolor}
+
+\NewMarkClass{hussonnav}
+
+\clearpairofpagestyles
+\ihead{Top: \TopMark{hussonnav} | First: \FirstMark{hussonnav} | Last: \LastMark{hussonnav}}
+
+\begin{document}
+\InsertMark{hussonnav}{State-1}
+Page 1 content.
+\clearpage
+Page 2 starts.
+\vspace{10cm}
+\InsertMark{hussonnav}{State-2}
+New section midway on page 2.
+\clearpage
+Page 3 starts.
+\end{document}

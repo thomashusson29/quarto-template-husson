@@ -1,0 +1,157 @@
+// Settings imported from Visual Studio Code
+{
+	"files.associations": {
+		"renv.lock": "json",
+		"*.rmd": "markdown"
+	},
+	"positron.assistant.enable": true,
+	"positron.assistant.alwaysEnableApplyInEditorAction": true,
+	"positron.assistant.followups.enable": true,
+	"continue.enableTabAutocomplete": false,
+	"latex-workshop.view.pdf.viewer": "tab",
+	"latex-workshop.view.pdf.ref.viewer": "tab",
+	"latex-workshop.latex.autoBuild.run": "onSave",
+	"latex-workshop.latex.outDir": "./out",
+	"latex-workshop.latex.recipes": [
+		{
+			"name": "XeLaTeX",
+			"tools": [
+				"xelatex"
+			]
+		},
+		{
+			"name": "XeLaTeX ➞ BibTeX ➞ XeLaTeX ×2",
+			"tools": [
+				"xelatex",
+				"bibtex",
+				"xelatex",
+				"xelatex"
+			]
+		}
+	],
+	"latex-workshop.latex.tools": [
+		{
+			"name": "xelatex",
+			"command": "xelatex",
+			"args": [
+				"-synctex=1",
+				"-interaction=nonstopmode",
+				"-file-line-error",
+				"%DOCFILE%"
+			]
+		},
+		{
+			"name": "bibtex",
+			"command": "bibtex",
+			"args": [
+				"%DOCFILE%"
+			]
+		}
+	],
+	"security.workspace.trust.untrustedFiles": "open",
+	"chat.mcp.gallery.enabled": true,
+	"explorer.confirmDelete": false,
+	"editor.guides.bracketPairs": "active",
+	"geminicodeassist.project": "handy-clone-vlb3w",
+	"github.copilot.enable": {
+		"quarto": true,
+		"*": true,
+		"plaintext": false,
+		"markdown": true,
+		"scminput": false
+	},
+	"r.plot.useHttpgd": true,
+	"workbench.settings.applyToAllProfiles": [
+		"r.plot.useHttpgd"
+	],
+	"terminal.integrated.enableMultiLinePasteWarning": "never",
+	"terminal.integrated.inheritEnv": false,
+	"r.alwaysUseActiveTerminal": true,
+	"editor.renderWhitespace": "all",
+	"terminal.integrated.defaultProfile.osx": "bash",
+	"explorer.confirmDragAndDrop": false,
+	"git.enableSmartCommit": true,
+	"geminicodeassist.displayInlineContextHint": false,
+	"git.confirmSync": false,
+	"editor.fontSize": 12.5,
+	"geminicodeassist.inlineSuggestions.enableAuto": true,
+	"geminicodeassist.languages": [
+		"*",
+		"r"
+	],
+	"github.copilot.nextEditSuggestions.enabled": true,
+	"svg.preview.mode": "svg",
+	"chat.tools.terminal.autoApprove": {
+		"Rscript": true
+	},
+	"claudeCode.preferredLocation": "panel",
+	"git.autofetch": true,
+	"workbench.iconTheme": "GitHub Dark Icons",
+	"http.systemCertificatesNode": true,
+	"terminal.integrated.env.osx": {
+		"FIG_NEW_SESSION": "1"
+	},
+	"window.autoDetectColorScheme": true,
+	"workbench.preferredLightColorTheme": "Monokai Pro Light (Filter Sun)",
+	"workbench.preferredDarkColorTheme": "One Dark Pro",
+	"workbench.colorTheme": "Monokai Pro Light (Filter Sun)",
+	"editor.guides.highlightActiveIndentation": "always",
+	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+	"highlight.regexes": {
+		"((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *TODO(?:[\\t\\f\\v ]*\\([^\\r\\n)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^\\r\\n:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\r\\n@]*?)(?= *(?:[^\\r\\n:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^\\r\\n@]+)?))": {
+			"filterFileRegex": ".*(?<!CHANGELOG.md)$",
+			"decorations": [
+				{
+					"overviewRulerColor": "#ffcc00",
+					"backgroundColor": "#ffcc00",
+					"color": "#1f1f1f",
+					"fontWeight": "bold"
+				},
+				{
+					"backgroundColor": "#ffcc00",
+					"color": "#1f1f1f"
+				}
+			]
+		},
+		"((?:<!-- *)?(?:#|// @|//|./\\*+|<!--|--|\\* @|{!|{{!--|{{!) *(?:FIXME|FIX|BUG|UGLY|DEBUG|HACK)(?:[\\t\\f\\v ]*\\([^\\r\\n)]+\\))?:?)((?!\\w)(?: *-->| *\\*/| *!}| *--}}| *}}|(?= *(?:[^\\r\\n:]//|/\\*+|<!--|@|--|{!|{{!--|{{!))|(?: +[^\\r\\n@]*?)(?= *(?:[^\\r\\n:]//|/\\*+|<!--|@|--(?!>)|{!|{{!--|{{!))|(?: +[^\\r\\n@]+)?))": {
+			"filterFileRegex": ".*(?<!CHANGELOG.md)$",
+			"decorations": [
+				{
+					"overviewRulerColor": "#cc0000",
+					"backgroundColor": "#cc0000",
+					"color": "#1f1f1f",
+					"fontWeight": "bold"
+				},
+				{
+					"backgroundColor": "#cc0000",
+					"color": "#1f1f1f"
+				}
+			]
+		}
+	},
+	"editor.accessibilitySupport": "off",
+	"accessibility.signalOptions.volume": 0,
+	"workbench.editorAssociations": {
+		"*.copilotmd": "vscode.markdown.preview.editor",
+		"*.docx": "cweijan.officeViewer"
+	},
+	"positron.notebook.enabled": true,
+	"positron.assistant.notebook.ghostCellSuggestions.enabled": true,
+	"githubIssues.assignWhenWorking": false,
+	"python.languageServer": "None",
+	"workbench.editor.enablePreview": false,
+	"markdown.copyFiles.destination": {
+		"**/*.md": "${documentDirName}/images/${fileName}"
+	},
+	"markdown.copyFiles.overwriteBehavior": "nameIncrementally",
+	"markdown.editor.filePaste.enabled": "always",
+	"markdown.editor.filePaste.copyIntoWorkspace": "mediaFiles",
+	"markdown.editor.drop.enabled": "always",
+	"markdown.editor.drop.copyIntoWorkspace": "mediaFiles",
+	"vscode-office.pasterImgPath": "images/${now}.png",
+	"workbench.topActionBar.visible": false,
+	"window.customTitleBarVisibility": "never",
+	"vscode-office.editorTheme": "Auto",
+	"packages.confirmMissingOnRun": false,
+	"github.copilot.nextEditSuggestions.eagerness": "high"
+}

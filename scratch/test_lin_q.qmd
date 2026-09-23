@@ -1,0 +1,7 @@
+---
+title: "Test"
+format:
+  husson-pdf:
+    mainfont: "LinLibertine_R.otf"
+---
+Test

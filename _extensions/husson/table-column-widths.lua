@@ -11,6 +11,7 @@
 local FULL_LINE_CHARACTERS = 92
 local ABSOLUTE_MINIMUM = 0.065
 local ABSOLUTE_MAXIMUM = 0.60
+local TWO_COLUMN_MAXIMUM = 0.88
 
 local function unicode_length(text)
   local length = utf8.len(text)
@@ -53,11 +54,13 @@ local function content_metrics(tbl, column_count)
   local totals = {}
   local counts = {}
   local longest_words = {}
+  local longest_cells = {}
 
   for column = 1, column_count do
     totals[column] = 0
     counts[column] = 0
     longest_words[column] = 0
+    longest_cells[column] = 0
   end
 
   for _, row in ipairs(table_rows(tbl)) do
@@ -65,6 +68,7 @@ local function content_metrics(tbl, column_count)
       if column <= column_count then
         local text = normalise_text(cell.contents)
         local length = unicode_length(text)
+        longest_cells[column] = math.max(longest_cells[column], length)
 
         if length > 0 then
           totals[column] = totals[column] + length
@@ -72,19 +76,27 @@ local function content_metrics(tbl, column_count)
         end
 
         for word in text:gmatch("%S+") do
-          longest_words[column] = math.max(
-            longest_words[column],
-            unicode_length(word)
-          )
+          -- Découpage sur les tirets, barres obliques ou césures explicites
+          for segment in word:gmatch("[^%-%s\u{00ad}\\%/]+") do
+            local seg_len = unicode_length(segment)
+            -- Les mots techniques/composés longs (> 12 caractères) sont sécables par césure LaTeX
+            if seg_len > 12 then
+              seg_len = math.ceil(seg_len / 2)
+            end
+            longest_words[column] = math.max(
+              longest_words[column],
+              seg_len
+            )
+          end
         end
       end
     end
   end
 
-  return totals, counts, longest_words
+  return totals, counts, longest_words, longest_cells
 end
 
-local function bounded_proportions(scores, minimums)
+local function bounded_proportions(scores, minimums, maximum)
   local widths = {}
   local active = {}
   local remaining_width = 1
@@ -125,9 +137,9 @@ local function bounded_proportions(scores, minimums)
   local excess = 0
   local recipients = 0
   for column, width in ipairs(widths) do
-    if width > ABSOLUTE_MAXIMUM then
-      excess = excess + width - ABSOLUTE_MAXIMUM
-      widths[column] = ABSOLUTE_MAXIMUM
+    if width > maximum then
+      excess = excess + width - maximum
+      widths[column] = maximum
     else
       recipients = recipients + 1
     end
@@ -135,7 +147,7 @@ local function bounded_proportions(scores, minimums)
 
   if excess > 0 and recipients > 0 then
     for column, width in ipairs(widths) do
-      if width < ABSOLUTE_MAXIMUM then
+      if width < maximum then
         widths[column] = width + excess / recipients
       end
     end
@@ -149,33 +161,118 @@ function Table(tbl)
     return nil
   end
 
+  -- Si des largeurs de colonnes ont été explicitement définies par l'auteur, ne pas les écraser
+  if tbl.attr and tbl.attr.attributes and (tbl.attr.attributes["tbl-colwidths"] or tbl.attr.attributes["colwidths"]) then
+    return nil
+  end
+
   local column_count = #tbl.colspecs
 
   if column_count < 2 then
     return nil
   end
 
-  local totals, counts, longest_words = content_metrics(tbl, column_count)
+  local totals, counts, longest_words, longest_cells = content_metrics(tbl, column_count)
   local scores = {}
   local minimums = {}
 
   for column = 1, column_count do
     local average = totals[column] / math.max(counts[column], 1)
 
-    -- La racine carrée empêche une cellule exceptionnellement longue de
-    -- monopoliser la largeur tout en favorisant les colonnes narratives.
-    scores[column] = math.sqrt(math.max(average, 1))
+    -- Dans un tableau à deux colonnes, une colonne de repères courts doit
+    -- rester étroite pour laisser l'essentiel de la ligne au texte narratif.
+    -- Pour les tableaux plus larges, la racine carrée évite qu'une colonne
+    -- exceptionnellement longue monopolise la page.
+    scores[column] = math.max(average, 1) ^ (column_count == 2 and 0.8 or 0.5)
     minimums[column] = math.max(
       ABSOLUTE_MINIMUM,
       math.min(0.24, (longest_words[column] + 1) / FULL_LINE_CHARACTERS)
     )
+    if column_count == 2 and longest_cells[column] <= 20 then
+      -- Conserve sur une ligne les repères tels que « T + 3 h 30 ».
+      minimums[column] = math.max(
+        minimums[column],
+        math.min(0.22, (longest_cells[column] + 2) / FULL_LINE_CHARACTERS)
+      )
+    end
   end
 
-  local widths = bounded_proportions(scores, minimums)
+  local maximum = column_count == 2 and TWO_COLUMN_MAXIMUM or ABSOLUTE_MAXIMUM
+  local widths = bounded_proportions(scores, minimums, maximum)
 
   for column, colspec in ipairs(tbl.colspecs) do
     tbl.colspecs[column] = {colspec[1], widths[column]}
   end
 
   return tbl
+end
+
+-- Intercepte et ajuste automatiquement les tableaux générés en LaTeX brut (ex: gt, kable)
+function RawBlock(raw)
+  if not FORMAT:match("latex") then
+    return nil
+  end
+
+  local text = raw.text
+  if not (text:match("\\begin%{tabular") or text:match("\\begin%{longtable")) then
+    return nil
+  end
+
+  -- 1. Détection des largeurs fixes en pt dans dimexpr (ex: générées par gt à partir de px)
+  local pt_widths = {}
+  for w in text:gmatch("dimexpr%s*([%d%.]+)pt") do
+    table.insert(pt_widths, tonumber(w))
+  end
+
+  if #pt_widths > 0 then
+    local total_pt = 0
+    for _, w in ipairs(pt_widths) do
+      total_pt = total_pt + w
+    end
+
+    -- Normalisation automatique à 100% de \linewidth
+    if total_pt > 0 then
+      text = text:gsub("(dimexpr%s*)([%d%.]+)pt", function(pre, w)
+        local num = tonumber(w)
+        local proportion = num / total_pt
+        return string.format("%s%.3f\\linewidth", pre, proportion)
+      end)
+    end
+  end
+
+  -- Détection du nombre de colonnes pour ajuster la police
+  local num_cols = #pt_widths
+  if num_cols == 0 then
+    local header_row = text:match("\\toprule%s*(.-)%s*\\\\")
+      or text:match("\\midrule%s*(.-)%s*\\\\")
+      or text:match("\\hline%s*(.-)%s*\\\\")
+    if header_row then
+      local _, count = header_row:gsub("[^\\]&", "")
+      num_cols = count + 1
+    end
+  end
+
+  -- 2. Ajustement de la taille de police (réduction maximale autorisée : 25% de 11pt)
+  -- \small (~10pt, -9%) par défaut, ou \footnotesize (~9pt, -18%) si >= 6 colonnes
+  local target_size = (num_cols >= 6) and 9 or 10
+  local target_skip = (num_cols >= 6) and 11 or 12
+
+  if text:match("\\fontsize") then
+    text = text:gsub("\\fontsize%{%s*[%d%.]+%s*p?t?%s*%}%{%s*[%d%.]+%s*p?t?%s*%}", function()
+      return string.format("\\fontsize{%.1fpt}{%.1fpt}", target_size, target_skip)
+    end)
+  end
+
+  if text ~= raw.text then
+    return pandoc.RawBlock(raw.format, text)
+  end
+
+  return nil
+end
+
+function RawInline(el)
+  if FORMAT:match("latex") and el.format == "html" and (el.text == "<br>" or el.text == "<br/>" or el.text == "<br />") then
+    return pandoc.RawInline("latex", "\\newline ")
+  end
+  return nil
 end

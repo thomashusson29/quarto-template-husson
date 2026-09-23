@@ -1,0 +1,8 @@
+---
+title: "Preuve que ça marche"
+format: husson-revealjs
+---
+
+## Ça fonctionne !
+
+Le lien symbolique est reconnu par Quarto sans copier le dossier.

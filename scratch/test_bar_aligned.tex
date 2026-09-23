@@ -1,0 +1,49 @@
+\documentclass{scrartcl}
+\usepackage[margin=2cm, headheight=20pt, headsep=15pt]{geometry}
+\usepackage{xcolor}
+\usepackage{scrlayer-scrpage}
+\usepackage{fontspec}
+
+\definecolor{headingblue}{HTML}{17365D}
+\definecolor{headingred}{HTML}{7A1F2B}
+\definecolor{commentgray}{HTML}{6F6F6F}
+\definecolor{linegray}{HTML}{D0D4D9}
+
+\makeatletter
+\newdimen\husson@w
+\newcommand{\hussonactive}[1]{%
+  \settowidth{\husson@w}{#1}%
+  \leavevmode
+  \rlap{\textcolor{headingblue}{\rule[-3.6pt]{\husson@w}{1.2pt}}}%
+  #1%
+}
+\makeatother
+
+\newcommand{\hussonsep}{\,\textcolor{commentgray!60}{›}\,}
+\newcommand{\hussonhsep}{\hspace{1.2em plus 0.8em minus 0.4em}}
+\newcommand{\hussonbarsep}{\hspace{0.9em}\textcolor{linegray}{\rule[-0.2em]{0.6pt}{1.0em}}\hspace{0.9em}}
+
+\newcommand{\demonavbar}{%
+  \noindent\scriptsize\rmfamily
+  \textcolor{headingblue}{\textbf{MÉTHODES}}%
+  \hussonbarsep
+  \textcolor{commentgray}{Design}%
+  \hussonhsep
+  \textcolor{commentgray}{Transporteurs}%
+  \hussonhsep
+  \textcolor{commentgray}{Perfusion}%
+  \hussonhsep
+  \hussonactive{\textcolor{headingblue}{Biologie}\hussonsep\textcolor{headingblue}{Inflammation}\hussonsep\textcolor{headingblue}{Cytokines}\hussonsep\textbf{\textcolor{headingblue}{IL-6}}}%
+  \hussonhsep
+  \textcolor{commentgray}{Statistiques}%
+}
+
+\clearpairofpagestyles
+\KOMAoptions{headsepline=0.3pt}
+\setkomafont{headsepline}{\color{linegray}}
+\ihead{\demonavbar}
+
+\begin{document}
+\vspace*{1cm}
+Contenu de la page avec la barre de navigation en haut.
+\end{document}

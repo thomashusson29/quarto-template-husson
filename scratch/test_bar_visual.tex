@@ -1,0 +1,59 @@
+\documentclass{scrartcl}
+\usepackage[margin=2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{scrlayer-scrpage}
+\usepackage{fontspec}
+\usepackage{calc}
+
+\definecolor{headingblue}{HTML}{17365D}
+\definecolor{headingred}{HTML}{7A1F2B}
+\definecolor{commentgray}{HTML}{6F6F6F}
+\definecolor{linegray}{HTML}{D0D4D9}
+
+\newsavebox{\hussonactbox}
+\newcommand{\hussonactivebranch}[1]{%
+  \sbox{\hussonactbox}{\textbf{#1}}%
+  \parbox[b]{\wd\hussonactbox}{%
+    \usebox{\hussonactbox}\\[2pt]%
+    \textcolor{headingblue}{\rule{\wd\hussonactbox}{1.2pt}}%
+  }%
+}
+
+\newcommand{\hussoninactive}[1]{%
+  \parbox[b]{\widthof{#1}}{%
+    \textcolor{commentgray}{#1}\\[2pt]%
+    \vspace*{1.2pt}%
+  }%
+}
+
+\newcommand{\hussonsep}{\,\textcolor{commentgray!60}{\scriptsize\textrsaquo{}}\,}
+\newcommand{\hussonhsep}{\hspace{1.2em plus 0.8em minus 0.4em}}
+\newcommand{\hussonbarsep}{\hspace{0.9em}\textcolor{linegray}{\rule[-0.2em]{0.6pt}{1.1em}}\hspace{0.9em}}
+
+\newcommand{\demonavbar}{%
+  \noindent\parbox[b]{\textwidth}{%
+    \scriptsize
+    \noindent
+    \textcolor{headingblue}{\textbf{\textsc{MÉTHODES}}}%
+    \hussonbarsep
+    \hussoninactive{Design}%
+    \hussonhsep
+    \hussoninactive{Transporteurs}%
+    \hussonhsep
+    \hussoninactive{Perfusion}%
+    \hussonhsep
+    \hussonactivebranch{\textcolor{headingblue}{Biologie}\hussonsep\textcolor{headingblue}{Inflammation}\hussonsep\textcolor{headingblue}{Cytokines}\hussonsep\textbf{\textcolor{headingblue}{IL-6}}}%
+    \hussonhsep
+    \hussoninactive{Statistiques}%
+    \par\vspace{1pt}%
+    \textcolor{linegray}{\rule{\textwidth}{0.3pt}}%
+  }%
+}
+
+\clearpairofpagestyles
+\ihead{\demonavbar}
+
+\begin{document}
+\vspace*{1cm}
+Contenu de la page avec la barre de navigation en haut.
+\end{document}

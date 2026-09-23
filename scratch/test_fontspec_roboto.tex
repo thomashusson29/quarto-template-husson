@@ -1,0 +1,13 @@
+\documentclass{article}
+\usepackage{fontspec}
+\defaultfontfeatures{SmallCapsFeatures={Letters=SmallCaps}}
+\IfFontExistsTF{texgyretermes-regular.otf}{%
+  \defaultfontfeatures[Times New Roman]{%
+    SmallCapsFont = texgyretermes-regular.otf,%
+    SmallCapsFeatures = {Letters=SmallCaps}%
+  }%
+}{}
+\setmainfont{Roboto}
+\begin{document}
+Normal text in Roboto. \textsc{Small Caps in Roboto}.
+\end{document}

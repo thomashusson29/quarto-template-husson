@@ -1,0 +1,13 @@
+\documentclass{article}
+\usepackage{fontspec}
+\defaultfontfeatures{SmallCapsFeatures={Letters=SmallCaps}}
+\IfFontExistsTF{texgyretermes-regular.otf}{%
+  \defaultfontfeatures[Times New Roman]{%
+    SmallCapsFont = texgyretermes-regular.otf,%
+    SmallCapsFeatures = {Letters=SmallCaps}%
+  }%
+}{}
+\setmainfont{Times New Roman}
+\begin{document}
+Normal text. \textsc{Small Caps text}.
+\end{document}

@@ -1,0 +1,12 @@
+---
+title: "Test Carlito"
+font: "Carlito"
+---
+
+# Titre en Carlito
+
+Ceci est un paragraphe écrit en Carlito avec des **mots en gras** et des *mots en italique*.
+
+| Colonne 1 | Colonne 2 |
+|---|---|
+| Donnée A | Donnée B |

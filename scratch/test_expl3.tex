@@ -1,0 +1,80 @@
+\documentclass{scrartcl}
+\usepackage{scrlayer-scrpage}
+
+\ExplSyntaxOn
+\NewMarkClass{hussonnav}
+
+\cs_new:Npn \husson_set_state:nnn #1 #2 #3 {
+  \tl_const:cn { c_husson_h_#1_tl } { #2 }
+  \tl_const:cn { c_husson_bar_#1_tl } { #3 }
+}
+
+\husson_set_state:nnn {1} {1} {CHAPITRE~1~--~Sec~A}
+\husson_set_state:nnn {2} {1} {CHAPITRE~1~--~Sec~B}
+\husson_set_state:nnn {3} {2} {CHAPITRE~2~--~Sec~C}
+\husson_set_state:nnn {4} {2} {CHAPITRE~2~--~Sec~D}
+
+\cs_new:Npn \husson_get_h:n #1 {
+  \tl_if_exist:cTF { c_husson_h_#1_tl }
+    { \tl_use:c { c_husson_h_#1_tl } }
+    { 0 }
+}
+
+\cs_new:Npn \husson_get_bar:n #1 {
+  \tl_if_exist:cTF { c_husson_bar_#1_tl }
+    { \tl_use:c { c_husson_bar_#1_tl } }
+    { }
+}
+
+\cs_new:Npn \husson_render_bar: {
+  \tl_set:Ne \l_tmpa_tl { \TopMark{hussonnav} }
+  \tl_set:Ne \l_tmpb_tl { \FirstMark{hussonnav} }
+  \tl_if_empty:NTF \l_tmpa_tl
+    {
+      \husson_get_bar:n { \l_tmpb_tl }
+    }
+    {
+      \tl_set:Ne \l_tmpc_tl { \husson_get_h:n { \l_tmpa_tl } }
+      \tl_set:Ne \l_tmpd_tl { \husson_get_h:n { \l_tmpb_tl } }
+      \tl_if_eq:NNTF \l_tmpc_tl \l_tmpd_tl
+        { \husson_get_bar:n { \l_tmpa_tl } }
+        { \husson_get_bar:n { \l_tmpb_tl } }
+    }
+}
+
+\NewDocumentCommand{\renderhussonbar}{}{
+  \husson_render_bar:
+}
+
+\NewDocumentCommand{\hussonnavmark}{m}{
+  \InsertMark{hussonnav}{#1}
+}
+\ExplSyntaxOff
+
+\clearpairofpagestyles
+\ihead{\renderhussonbar}
+
+\begin{document}
+% Page 1
+\hussonnavmark{1}
+Page 1: Chapitre 1, Section A.
+\clearpage
+% Page 2
+Page 2: Section A suite...
+\vspace{10cm}
+\hussonnavmark{2}
+Section B commence ici en milieu de page 2.
+\clearpage
+% Page 3
+Page 3: Section B suite...
+\clearpage
+% Page 4
+\hussonnavmark{3}
+Page 4: Chapitre 2 commence !
+\vspace{10cm}
+\hussonnavmark{4}
+Section D commence en bas de page 4.
+\clearpage
+% Page 5
+Page 5: Section D suite...
+\end{document}
