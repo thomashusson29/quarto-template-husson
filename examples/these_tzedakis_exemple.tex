@@ -125,7 +125,10 @@
 
 
 % Configuration PDF commune aux documents Husson.
+\PassOptionsToPackage{french}{babel}
+\PassOptionsToPackage{bidi=default}{babel}
 \usepackage{fontspec}
+\usepackage{listings}
 \defaultfontfeatures{SmallCapsFeatures={Letters=SmallCaps}}
 \IfFontExistsTF{texgyretermes-regular.otf}{%
   \defaultfontfeatures[Times New Roman]{%
@@ -141,6 +144,19 @@
 \usepackage{needspace}
 \usepackage{pdflscape}
 \usepackage{adjustbox}
+\usepackage{ragged2e}
+
+% Securite et compatibilite pour documents existants (classes KOMA vs standard)
+\providecommand{\setkomafont}[2]{}
+\providecommand{\addtokomafont}[2]{}
+\providecommand{\RedeclareSectionCommand}[2][]{}
+
+% Transition automatique de numerotation : chiffres romains pour les liminaires (TOC), puis reprise en chiffres arabes des le corps du texte
+\AddToHook{cmd/tableofcontents/after}{%
+  \clearpage
+  \pagenumbering{arabic}%
+  \setcounter{page}{1}%
+}
 
 \definecolor{headingblue}{HTML}{17365D}
 \definecolor{headingred}{HTML}{7A1F2B}
@@ -154,7 +170,27 @@
 
 \newunicodechar{≥}{\ensuremath{\geq}}
 \newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{₂}{\textsubscript{2}}
+\newunicodechar{₁}{\textsubscript{1}}
+\newunicodechar{₀}{\textsubscript{0}}
+\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{₄}{\textsubscript{4}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
 \setlength{\emergencystretch}{3em}
+
+% Typographie française : "Tableau" au lieu de "Table" lorsque la langue principale est le français
+\makeatletter
+\AddToHook{begindocument/end}{%
+  \@ifundefined{languagename}{}{%
+    \def\@frenchname{french}%
+    \ifx\languagename\@frenchname
+      \def\tablename{Tableau}%
+    \fi
+  }%
+}
+\makeatother
+
 
 % Pagination éditoriale. Une ligne isolée au début ou à la fin d'une page est
 % évitée, tandis que \raggedbottom autorise un blanc final raisonnable plutôt
@@ -253,6 +289,14 @@
 \BeforeBeginEnvironment{tabular}{\begin{adjustbox}{max width=\linewidth}}
 \AfterEndEnvironment{tabular}{\end{adjustbox}}
 
+% Autorise la coupure et la césure automatique des mots dans les cellules de tableau :
+% Le \raggedright standard de LaTeX désactive toute césure (\hyphenpenalty=10000).
+% \RaggedRight rétablit les règles de césure automatique de la langue (français),
+% et \hspace{0pt} permet au moteur TeX de couper automatiquement dès le premier mot d'une cellule.
+\AtBeginDocument{
+  \renewcommand{\raggedright}{\RaggedRight\hspace{0pt}}
+}
+
 % Les blocs de code restent divisibles lorsqu'ils sont longs. Cette réserve
 % empêche seulement qu'un bloc commence en bas de page avec une ou deux lignes.
 \BeforeBeginEnvironment{Shaded}{\Needspace{8\baselineskip}}
@@ -326,9 +370,9 @@
   \newcommand\listfigurename{Liste des Figures}
 \fi
 \ifdefined\listtablename
-  \renewcommand*\listtablename{Liste des Tables}
+  \renewcommand*\listtablename{Liste des tableaux}
 \else
-  \newcommand\listtablename{Liste des Tables}
+  \newcommand\listtablename{Liste des tableaux}
 \fi
 \ifdefined\figurename
   \renewcommand*\figurename{Figure}
@@ -336,9 +380,9 @@
   \newcommand\figurename{Figure}
 \fi
 \ifdefined\tablename
-  \renewcommand*\tablename{Table}
+  \renewcommand*\tablename{Tableau}
 \else
-  \newcommand\tablename{Table}
+  \newcommand\tablename{Tableau}
 \fi
 }
 \@ifpackageloaded{float}{}{\usepackage{float}}
@@ -376,7 +420,7 @@ complications\newline postopératoires}
 \begin{document}
 
 \begin{titlepage}
-\newgeometry{top=3.0cm,bottom=2.5cm,left=3.0cm,right=2.5cm}
+\newgeometry{top=3.0cm,bottom=2.5cm,left=2.2cm,right=2.2cm}
 \setlength{\parskip}{0pt}
 \setlength{\parindent}{0pt}
 
@@ -387,11 +431,11 @@ complications\newline postopératoires}
 {\LARGE\scshape Université Paris Cité\par}
 \vspace{0.20cm}
 {\large
-
+Faculté de Médecine\\
 École Doctorale Pierre Louis de Santé Publique - ED393\\
 
-HeKA (Approches fondées sur les données et modèles en santé
-pour\newline l'acquisition de connaissances), UMR-S 1346\\
+HeKA (Approches fondées sur les données et modèles en santé pour~newline
+l'acquisition de connaissances), UMR-S 1346\\
 Centre de Recherche Inria Paris, Inserm\par}
 
 \vspace{0.80cm}
@@ -404,7 +448,7 @@ complications\newline postopératoires\par}
 \rule{\textwidth}{0.8pt}\par
 
 \vspace{1.05cm}
-{\normalsize par\space}{\Large Stylianos TZEDAKIS}\par
+{\Large Stylianos TZEDAKIS}\par
 
 \vspace{1.05cm}
 {\normalsize Thèse de doctorat en Biostatistique\par}
@@ -422,19 +466,25 @@ Et co-dirigée par Pr. David FUKS\\
 {\normalsize Devant un jury composé de :\par}
 \vspace{0.80cm}
 
-\normalsize
-\renewcommand{\arraystretch}{1.065}
-\noindent\begin{tabular*}{\textwidth}{@{\hspace{6pt}}p{3.95cm}@{\hspace{12pt}}l@{\extracolsep{\fill}}r@{}}
-Sandrine KATSAHIAN & PU-PH, Université Paris Cité & Directrice de
-thèse \\
-David FUKS & PU-PH, Université Paris Cité & Co-directeur de thèse \\
-Astrid HERRERO & PU-PH, Université de Montpellier & Rapportrice \\
-Emmanuelle LERAY & DR, Université de Rennes & Rapportrice \\
-Karim BOUDJEMA & PU, Université de Rennes & Examinateur \\
-Audrey LAVENU & PU, Université de Rennes & Examinatrice \\
-Mickaël LESURTEL & PU-PH, Université Paris Cité & Examinateur \\
-Andrea LAZZATI & PU-PH, Université Sorbonne Paris Nord & Membre
-invité \\
+\small
+\renewcommand{\arraystretch}{1.15}
+\noindent\begin{tabular*}{\textwidth}{@{}l@{\hspace{12pt}}l@{\extracolsep{\fill}}r@{}}
+\mbox{Sandrine KATSAHIAN} & \mbox{PU-PH, Université Paris
+Cité} & \mbox{Directrice de thèse} \\
+\mbox{David FUKS} & \mbox{PU-PH, Université Paris
+Cité} & \mbox{Co-directeur de thèse} \\
+\mbox{Astrid HERRERO} & \mbox{PU-PH, Université de
+Montpellier} & \mbox{Rapportrice} \\
+\mbox{Emmanuelle LERAY} & \mbox{DR, Université de
+Rennes} & \mbox{Rapportrice} \\
+\mbox{Karim BOUDJEMA} & \mbox{PU, Université de
+Rennes} & \mbox{Examinateur} \\
+\mbox{Audrey LAVENU} & \mbox{PU, Université de
+Rennes} & \mbox{Examinatrice} \\
+\mbox{Mickaël LESURTEL} & \mbox{PU-PH, Université Paris
+Cité} & \mbox{Examinateur} \\
+\mbox{Andrea LAZZATI} & \mbox{PU-PH, Université Sorbonne Paris
+Nord} & \mbox{Membre invité} \\
 \end{tabular*}
 
 \end{center}
@@ -454,7 +504,7 @@ invité \\
 \renewcommand*\contentsname{Table des matières}
 {
 \hypersetup{linkcolor=}
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{3}
 \tableofcontents
 }
 

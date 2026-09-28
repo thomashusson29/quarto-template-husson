@@ -63,22 +63,10 @@ end
 
 local function process_latex(doc)
 
-  -- Helper pour recuperer une metadonnee au niveau racine ou sous format / husson-pdf
-  local function get_meta_field(key)
-    if doc.meta[key] ~= nil then return doc.meta[key] end
-    if doc.meta["husson-pdf"] and type(doc.meta["husson-pdf"]) == "table" and doc.meta["husson-pdf"][key] ~= nil then
-      return doc.meta["husson-pdf"][key]
-    end
-    if doc.meta["format"] and type(doc.meta["format"]) == "table" and doc.meta["format"]["husson-pdf"] and type(doc.meta["format"]["husson-pdf"]) == "table" and doc.meta["format"]["husson-pdf"][key] ~= nil then
-      return doc.meta["format"]["husson-pdf"][key]
-    end
-    return nil
-  end
-
   -- Extraction des metadonnees pour le pied de page (auteur et titre)
-  local doc_title = extract_meta_text(get_meta_field("short-title") or get_meta_field("footer-title") or get_meta_field("title"))
-  local doc_author = extract_meta_text(get_meta_field("footer-author") or get_meta_field("author"))
-  local footer_left = extract_meta_text(get_meta_field("footer-left"))
+  local doc_title = extract_meta_text(doc.meta["short-title"] or doc.meta["footer-title"] or doc.meta.title)
+  local doc_author = extract_meta_text(doc.meta["footer-author"] or doc.meta.author)
+  local footer_left = extract_meta_text(doc.meta["footer-left"])
 
   local footer_defs = {}
   if doc_title ~= "" then

@@ -1,6 +1,5 @@
 ---
 title: "Validation de la barre de navigation"
-short-title: "Barre de navigation"
 subtitle: "Tests exhaustifs des niveaux H1 à H5, nav-title et transitions de page"
 author: "Thomas Husson"
 format:

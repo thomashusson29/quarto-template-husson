@@ -64,22 +64,11 @@ $endfor$
 $endif$
 
 $-- Date et annonce du jury
-$if(thesis.date)$
 \vspace{1.30cm}
-{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$ $elseif(thesis.jury)$Présentée et soutenue publiquement le $endif$$thesis.date$\par}
-$elseif(date)$
-\vspace{1.30cm}
-{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$ $elseif(thesis.jury)$Présentée et soutenue publiquement le $endif$$date$\par}
-$endif$
+{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$$else$Présentée et soutenue publiquement le$endif$ $if(thesis.date)$$thesis.date$$else$$date$$endif$\par}
 
 $if(thesis.jury)$
-$if(thesis.date)$
 \vspace{0.20cm}
-$elseif(date)$
-\vspace{0.20cm}
-$else$
-\vspace{1.30cm}
-$endif$
 {\normalsize Devant un jury composé de :\par}
 \vspace{0.80cm}
 

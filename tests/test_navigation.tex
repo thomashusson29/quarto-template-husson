@@ -483,23 +483,6 @@
 }
 \ExplSyntaxOff
 
-% Fallback automatique sur \@title et \@author si non definis par le filtre Lua
-\makeatletter
-\AddToHook{begindocument/before}{%
-  \ExplSyntaxOn
-  \tl_if_empty:NT \g_husson_title_tl
-    {
-      \tl_if_empty:NF \@title
-        { \tl_gset:Nn \g_husson_title_tl { \@title } }
-    }
-  \tl_if_empty:NT \g_husson_author_tl
-    {
-      \tl_if_empty:NF \@author
-        { \tl_gset:Nn \g_husson_author_tl { \@author } }
-    }
-  \ExplSyntaxOff
-}
-\makeatother
 
 % Configuration du style de page avec scrlayer-scrpage
 \clearpairofpagestyles
@@ -599,7 +582,7 @@ de page}
 
 
 % Metadonnees du pied de page Husson
-\hussondoctitle{Validation de la barre de navigation}
+\hussondoctitle{Barre de navigation}
 \hussondocauthor{Thomas Husson}
 
 % Definitions des etats de la barre de navigation Husson

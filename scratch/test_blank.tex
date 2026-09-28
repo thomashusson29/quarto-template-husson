@@ -1,0 +1,64 @@
+
+\documentclass{scrartcl}
+\title{Test Carlito}
+% Pas d author!
+
+\ExplSyntaxOn
+\tl_new:N \g_husson_title_tl
+\tl_new:N \g_husson_author_tl
+\tl_new:N \g_husson_footerleft_tl
+
+\NewDocumentCommand{\hussondocauthor}{m}{
+  \tl_gset:Nn \g_husson_author_tl {#1}
+}
+\NewDocumentCommand{\hussondoctitle}{m}{
+  \tl_gset:Nn \g_husson_title_tl {#1}
+}
+\NewDocumentCommand{\hussondocfooterleft}{m}{
+  \tl_gset:Nn \g_husson_footerleft_tl {#1}
+}
+
+\cs_new:Npn \husson_render_footer_left: {
+  \tl_if_blank:eTF { \g_husson_footerleft_tl }
+    {
+      \tl_if_blank:eTF { \g_husson_author_tl }
+        {
+          \tl_if_blank:eTF { \g_husson_title_tl }
+            { }
+            { \textit{ \tl_use:N \g_husson_title_tl } }
+        }
+        {
+          \tl_use:N \g_husson_author_tl
+          \tl_if_blank:eTF { \g_husson_title_tl }
+            { }
+            { ~--~ \textit{ \tl_use:N \g_husson_title_tl } }
+        }
+    }
+    {
+      \tl_use:N \g_husson_footerleft_tl
+    }
+}
+
+\NewDocumentCommand{\hussongetfooterleft}{}{
+  \husson_render_footer_left:
+}
+\ExplSyntaxOff
+
+\makeatletter
+\AddToHook{begindocument/before}{%
+  \ifx\@title\@undefined\else
+    \ifx\@title\@empty\else
+      \hussondoctitle{\@title}%
+    \fi
+  \fi
+  \ifx\@author\@undefined\else
+    \ifx\@author\@empty\else
+      \hussondocauthor{\@author}%
+    \fi
+  \fi
+}
+\makeatother
+
+\begin{document}
+RESULT: [\hussongetfooterleft]
+\end{document}

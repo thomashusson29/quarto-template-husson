@@ -230,3 +230,18 @@
     \endgroup
   }
 }
+
+% Bibliographie compacte et soignee (citeproc CSLReferences & natbib)
+\makeatletter
+\AtBeginDocument{
+  \@ifpackageloaded{etoolbox}{
+    \AtBeginEnvironment{CSLReferences}{%
+      \footnotesize
+      \setlength{\itemsep}{1.5pt}%
+      \setlength{\parskip}{0pt}%
+    }%
+  }{}%
+  \@ifundefined{bibsep}{}{\setlength{\bibsep}{1.5pt}}
+}
+\makeatother
+

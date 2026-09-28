@@ -184,3 +184,58 @@ body.quarto-dark .reveal .slides section.scrollable > :is(h1, h2):first-of-type 
   border-bottom: 1px solid #333333 !important;
 }
 
+/* ── Optimisation de l'espace vertical et protection du pied de page ─────── */
+
+/* Rapproche sobrement le premier titre pour eviter l'effet de decrochage */
+.reveal .slides section > :is(h1, h2):first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Espacement sobre entre titre et paragraphe introductif */
+.reveal .slides section > :is(h1, h2):first-child + p {
+  margin-top: 0.35em;
+  margin-bottom: 0.4em;
+}
+
+/* Reduit la marge sous les conteneurs de figures pour preserver l'espace vertical */
+.reveal .slides section:not(.scrollable) div.quarto-figure {
+  margin-bottom: 0.25em;
+}
+
+/* Plafonne la hauteur des figures pour preserver l'espace du pied de page et des logos */
+.reveal .slides section:not(.scrollable) img:not(.slide-logo) {
+  max-height: 480px;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Diapositives standards avec texte/liste et figure : plafond securise */
+.reveal .slides section:not(.scrollable):not(.smaller) p + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section:not(.scrollable):not(.smaller) ul + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section:not(.scrollable):not(.smaller) ol + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section:not(.scrollable):not(.smaller) p + figure img:not(.slide-logo),
+.reveal .slides section:not(.scrollable):not(.smaller) p + p img:not(.slide-logo) {
+  max-height: 410px;
+}
+
+/* Diapositives .smaller avec texte/liste et figure */
+.reveal .slides section.smaller:not(.scrollable) img:not(.slide-logo) {
+  max-height: 480px;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.reveal .slides section.smaller:not(.scrollable) p + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section.smaller:not(.scrollable) ul + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section.smaller:not(.scrollable) ol + div.quarto-figure img:not(.slide-logo),
+.reveal .slides section.smaller:not(.scrollable) p + figure img:not(.slide-logo),
+.reveal .slides section.smaller:not(.scrollable) p + p img:not(.slide-logo) {
+  max-height: 440px;
+}
+
+

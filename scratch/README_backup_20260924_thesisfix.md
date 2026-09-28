@@ -164,12 +164,6 @@ thesis:
       role: "Président du jury"
 ```
 
-- **Adaptation intelligente aux informations renseignées** :
-  - **Sans jury ni date** (ex. mémoire d'étape, document de travail ou rapport préliminaire) : la mention « Présentée et soutenue publiquement le » est automatiquement supprimée. La page de garde s'arrête sobrement après la mention des directeurs.
-  - **Avec date seule (sans jury)** : la date apparaît sobrement et directement, sans formule de soutenance solennelle.
-  - **Avec jury** : la formule rituelle (« Présentée et soutenue publiquement le [date] devant un jury composé de : ») s'affiche au millimètre au-dessus du tableau du jury.
-  - **Accroche personnalisée (`date_prefix`)** : pour modifier ou adapter la formule, précisez `date_prefix: "Soutenue le "` ou `date_prefix: "Date : "` dans le bloc `thesis:`.
-
 ## Ajustement universel des tableaux (pleine largeur et hauteur minimale)
 
 Le template garantit de façon **systématique et transparente** que tous les tableaux (`gt`, `gtsummary`, `knitr::kable`, tibbles, tableaux Markdown) respectent les contraintes suivantes :
@@ -182,55 +176,11 @@ Le template garantit de façon **systématique et transparente** que tous les ta
 7. **Respect de la typographie du document** : réduction de police plafonnée à 25 % maximum (`\small` ~10pt par défaut, `\footnotesize` ~9pt pour les tableaux $\ge 6$ colonnes).
 8. **Zéro configuration requise** : fonctionne nativement au niveau du filtre Pandoc Lua (`table-column-widths.lua`) et du préambule LaTeX (`pdf-header.tex`), sans code R dédié obligatoire.
 
-### Module R avancé : `gt-page-fit.R`
-
-Pour les documents contenant des tableaux R générés par `gt`, `gtsummary`, ou des `data.frame` / `tibble`, le module `gt-page-fit.R` fournit une optimisation typographique poussée dès l'étape d'évaluation knitr.
-
-#### Activation dans le document Quarto
-
-Dans le chunk d'initialisation (`setup`) de votre document :
-
+Pour un contrôle encore plus fin à l'évaluation R (avec `gt` et `gtsummary`), le module `gt-page-fit.R` peut être activé :
 ```r
 source("_extensions/husson/gt-page-fit.R")
 husson_tables_on()
 ```
-
-Une fois activé, le module intercepte automatiquement l'impression des tableaux dans les sorties LaTeX/PDF sans nécessiter de retoucher vos chunks existants.
-
-#### Fonctionnalités assurées automatiquement
-
-1. **Interception universelle des tableaux R** :
-   - Tableaux `gt` natifs et objets `gtsummary` convertis (`as_gt()`).
-   - Objets `data.frame` et `tibble` affichés dans un chunk : automatiquement transformés en tableaux `gt` optimisés pleine page.
-
-2. **Minimisation de la hauteur et équilibrage des en-têtes (2 lignes maximum)** :
-   - Analyse combinatoire du texte des en-têtes pour calculer le point de césure optimal en 2 lignes (`best_2line_len`).
-   - Détection des sous-lignes multi-mots (`has_multiword_line`) : garantit une largeur suffisante pour que les en-têtes composés (ex. *« Nombre de décharges »*) tiennent sur 2 lignes sans isoler un mot sur une 3e ligne (*Nombre* / *de* / *décharges*).
-   - Insertion automatique d'un espace avant les parenthèses d'unités lorsqu'il est omis (ex. `CellSaver(mL)` transformé en `CellSaver (mL)`).
-
-3. **Planchers minimaux garantis par profil de colonne (`min_pcts`)** :
-   - **Colonnes descriptives / narratives** (libellés de résection, descriptions cliniques) : plancher garanti ($\ge 23\%-24\%$) pour éviter les retours à la ligne intempestifs dans les cellules de données.
-   - **Identifiants courts** (ex. *« Pièce 1 »*, *« Foie 07/07 »*) : plancher dédié ($\ge 8\%$) maintenant l'identifiant sur une seule ligne.
-   - **En-têtes longs ou composés** : planchers stricts ($\ge 11\%-15\%$).
-   - **Colonnes compactes** (valeurs numériques, pourcentages, délais) : planchers réduits ($\ge 6\%$) libérant de l'espace pour les colonnes complexes.
-
-4. **Allocation entière Hamilton-Hare (100 % strict)** :
-   - Répartition du budget résiduel par la méthode des plus forts restes (Hamilton-Hare), produisant des pourcentages strictement entiers dont la somme fait exactement 100 %, sans dérive d'arrondi lors de la conversion en `\linewidth`.
-
-5. **Inférence automatique des alignements typographiques** :
-   - Nombres et pourcentages formés (`17,2`, `1 987`, `50 %`) : alignés à droite (`right`).
-   - Codes courts, plages de valeurs, stades de fibrose et statuts binaires (`90–120`, `H23`, `F0`, `Oui`, `Non`) : centrés (`center`).
-   - Intitulés textuels et termes narratifs : alignés à gauche (`left`).
-
-6. **Neutralisation des largeurs fixes conflictuelles** :
-   - Remplacement automatique des largeurs fixes en pixels (`px()`) qui provoquent des débordements hors page en LaTeX par la répartition optimale en pourcentages.
-   - Respect strict des pourcentages manuels fournis par l'auteur si leur total équivaut déjà à 100 %.
-
-7. **Désactivation temporaire ou locale** :
-   ```r
-   husson_tables_off()
-   ```
-
 
 ## Navigation d'en-tête et pied de page (PDF & RevealJS)
 
@@ -419,26 +369,12 @@ Dépendances R de cet exemple : `reticulate`, `ggplot2` et `knitr`.
 
 ## Bibliographie
 
-Le template prend en charge nativement les deux modes de citation de Quarto :
+Le format PDF configure `natbib` et le style `unsrturl`, mais n'impose aucun
+fichier bibliographique. Chaque document peut déclarer son propre fichier :
 
-### 1. Mode Citeproc (avec feuille de style CSL)
-
-Pour utiliser un fichier de style CSL (ex. AMA, Vancouver, Lancet) :
-```yaml
-bibliography: references.bib
-csl: american-medical-association.csl
-cite-method: citeproc
-```
-- **Typographie compacte automatique** : le préambule LaTeX (`pdf-header.tex`) configure automatiquement l'environnement `CSLReferences` en taille `\footnotesize` (9pt), avec un interligne simple et un espacement vertical inter-items compact de `1.5pt` (`\itemsep`). Cela optimise considérablement l'encombrement des références tout en conservant une lisibilité académique rigoureuse.
-- **Recommandation pour le style AMA** : tronquer la liste des auteurs à 3 noms suivis de *et al.* (`et-al-min="4" et-al-use-first="3"`) dans le fichier CSL pour éviter que les articles multicentriques comptant des dizaines de co-auteurs n'allongent inutilement la bibliographie.
-
-### 2. Mode Natbib (par défaut)
-
-Par défaut, `husson-pdf` configure `natbib` et le style `unsrturl` :
 ```yaml
 bibliography: references.bib
 ```
-L'espacement entre les entrées (`\bibsep`) est également calibré automatiquement à `1.5pt`.
 
 ## Origine du thème HTML
 
