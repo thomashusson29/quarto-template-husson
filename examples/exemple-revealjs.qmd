@@ -1,0 +1,213 @@
+---
+title: "Perfusion Hépatique Normothermique"
+subtitle: "Évaluation dynamique et biomarqueurs de viabilité du greffon"
+author: "Dr Thomas Husson"
+date: "2026-10-02"
+lang: fr
+format:
+  husson-revealjs: default
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+setup_script <- if (file.exists("_extensions/husson/auto-dark-setup.R")) {
+  "_extensions/husson/auto-dark-setup.R"
+} else {
+  "../_extensions/husson/auto-dark-setup.R"
+}
+if (file.exists(setup_script)) {
+  source(setup_script)
+  auto_dark_on(transparent_figures = TRUE)
+}
+
+library(ggplot2)
+library(dplyr)
+```
+
+# Contexte clinique {nav-title="CONTEXTE"}
+
+## Problématique du don à critères élargis {nav-title="Donneurs"}
+
+- **Pénurie d'organes** : nécessité d'utiliser des greffons de donneurs âgés ou décédés par arrêt circulatoire (DDAC).
+- **Vulnérabilité accrue** à l'ischémie-reperfusion froide conventionnelle à +4 °C.
+- **Risque d'échec primaire** du greffon (*Primary Non-Function*) ou de dysfonction précoce (*Early Allograft Dysfunction*).
+
+::: {.callout-note}
+### Enjeu clé
+Comment tester la fonction hépatique **in vitro** avant de prendre la décision irréversible d'implanter le greffon ?
+:::
+
+## Principe de la machine de perfusion {nav-title="Machine"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Préservation active à 37 °C
+- Apport continu en oxygène et nutriments
+- Maintien du métabolisme aérobie
+- Restauration des réserves en ATP
+:::
+
+::: {.column width="50%"}
+### Évaluation dynamique
+- Clairance active des lactates
+- Synthèse de bile de qualité
+- Débits artériels et portes stables
+:::
+
+::::
+
+# Méthodologie {nav-title="MÉTHODOLOGIE"}
+
+## Design expérimental {nav-title="Design"}
+
+Comparaison de deux protocoles sur un modèle préclinique standardisé :
+
+| Paramètre | Protocole Standard | Protocole Optimisé Husson |
+|:---|:---:|:---:|
+| Température cible | 37.0 °C | 37.0 °C |
+| Transporteur d'O2 | CGR lavés | CGR + Décharge autologue |
+| Oxygénation pO2 | 200–250 mmHg | 280–320 mmHg |
+| Tamponnage pH | Bicarbonate continu | Régulation automatisée |
+
+## Critères décisionnels de viabilité {nav-title="Critères"}
+
+- **Lactates perfusat** : chute sous $2{,}5\text{ mmol/L}$ à H2 ou H4
+- **Production de bile** : $> 10\text{ mL}$ à 4 heures avec pH biliaire $> 7{,}50$
+- **Résistances vasculaires** :
+  - Débit artériel $> 150\text{ mL/min}$
+  - Débit portal $> 500\text{ mL/min}$
+
+# Résultats biologiques {nav-title="RÉSULTATS"}
+
+## Cinétique de clairance des lactates {nav-title="Lactates"}
+
+```{r}
+#| label: fig-slides-lactates
+#| fig-width: 9.5
+#| fig-height: 4.8
+set.seed(123)
+temps <- c(0, 1, 2, 3, 4, 6)
+df_lact <- data.frame(
+  Temps = rep(temps, 2),
+  Groupe = rep(c("Protocole Optimisé", "Protocole Standard"), each = length(temps)),
+  Lactate = c(9.2, 5.1, 2.2, 1.4, 1.1, 0.9, 9.4, 7.8, 5.9, 4.3, 3.2, 2.4),
+  SD = c(0.8, 0.6, 0.3, 0.2, 0.2, 0.1, 0.9, 0.8, 0.7, 0.5, 0.4, 0.3)
+)
+
+ggplot(df_lact, aes(x = Temps, y = Lactate, color = Groupe, group = Groupe)) +
+  geom_ribbon(aes(ymin = Lactate - SD, ymax = Lactate + SD, fill = Groupe), alpha = 0.18, color = NA) +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 3.5) +
+  geom_hline(yintercept = 2.5, linetype = "dashed", color = "#e06c75", linewidth = 0.9) +
+  annotate("text", x = 5.2, y = 2.9, label = "Seuil de viabilité (2.5 mmol/L)", color = "#e06c75", fontface = "bold", size = 4.2) +
+  scale_color_manual(values = c("Protocole Optimisé" = "#61afef", "Protocole Standard" = "#98c379")) +
+  scale_fill_manual(values = c("Protocole Optimisé" = "#61afef", "Protocole Standard" = "#98c379")) +
+  scale_x_continuous(breaks = temps) +
+  labs(
+    title = "Élimination des lactates en cours de perfusion",
+    subtitle = "Normalisation significativement plus rapide avec le protocole optimisé",
+    x = "Heures de perfusion",
+    y = "Lactate perfusat (mmol/L)",
+    color = "Groupe",
+    fill = "Groupe"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    panel.background = element_rect(fill = "transparent", colour = NA),
+    legend.position = "top",
+    legend.text = element_text(size = 12),
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "#abb2bf", linetype = "dotted", linewidth = 0.4)
+  )
+```
+
+## Débits vasculaires et oxygénation {nav-title="Débits"}
+
+```{r}
+#| label: fig-slides-vasc
+#| fig-width: 9.5
+#| fig-height: 4.8
+set.seed(456)
+cohortes <- data.frame(
+  Organe = paste0("Greffon #", sprintf("%02d", 1:12)),
+  Groupe = rep(c("Standard", "Optimisé"), each = 6),
+  DebitArt = c(110, 125, 95, 140, 120, 105, 185, 210, 175, 190, 225, 195),
+  ProductionBile = c(4.2, 5.1, 3.8, 6.0, 4.9, 4.5, 12.4, 14.2, 11.8, 15.0, 16.5, 13.9)
+)
+
+ggplot(cohortes, aes(x = Groupe, y = ProductionBile, fill = Groupe)) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA, width = 0.45) +
+  geom_jitter(width = 0.12, size = 3.5, alpha = 0.9, aes(color = Groupe)) +
+  scale_fill_manual(values = c("Standard" = "#d19a66", "Optimisé" = "#c678dd")) +
+  scale_color_manual(values = c("Standard" = "#d19a66", "Optimisé" = "#c678dd")) +
+  labs(
+    title = "Production cumulée de bile à 4 heures",
+    subtitle = "Marqueur direct de la fonction exocrine hépatocytaire et cholangiocytaire",
+    x = "Protocole de perfusion",
+    y = "Volume de bile recueilli (mL)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    panel.background = element_rect(fill = "transparent", colour = NA),
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "#abb2bf", linetype = "dotted", linewidth = 0.4)
+  )
+```
+
+## Données individuelles {.scrollable nav-title="Données"}
+
+Le tableau ci-dessous illustre le titre fixe (`sticky`) sur diapositive défilable :
+
+| Identifiant | Protocole | Lactate H0 | Lactate H2 | Lactate H4 | Débit Artériel | Bile (mL) | Décision |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **G-01** | Standard | 9.8 | 8.2 | 4.8 | 110 | 4.2 | Récalcitrant |
+| **G-02** | Standard | 9.1 | 7.5 | 4.1 | 125 | 5.1 | Validé tardif |
+| **G-03** | Standard | 9.5 | 8.0 | 4.5 | 95 | 3.8 | Non validé |
+| **G-04** | Standard | 8.9 | 7.1 | 3.9 | 140 | 6.0 | Validé |
+| **G-05** | Standard | 9.7 | 8.3 | 4.4 | 120 | 4.9 | Validé tardif |
+| **G-06** | Standard | 9.4 | 7.9 | 4.2 | 105 | 4.5 | Validé |
+| **G-07** | Optimisé | 9.2 | 2.1 | 1.1 | 185 | 12.4 | Validé précoce |
+| **G-08** | Optimisé | 8.8 | 1.9 | 0.9 | 210 | 14.2 | Validé précoce |
+| **G-09** | Optimisé | 9.5 | 2.4 | 1.2 | 175 | 11.8 | Validé précoce |
+| **G-10** | Optimisé | 9.0 | 2.0 | 1.0 | 190 | 15.0 | Validé précoce |
+| **G-11** | Optimisé | 9.6 | 2.2 | 0.8 | 225 | 16.5 | Validé précoce |
+| **G-12** | Optimisé | 9.1 | 2.3 | 1.1 | 195 | 13.9 | Validé précoce |
+
+# Conclusion & Perspectives {nav-title="SYNTHÈSE"}
+
+## Synthèse comparative
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Atouts observés
+- Récupération métabolique dès la 2e heure
+- Débits vasculaires stables sans vasospasme
+- Évaluation fonctionnelle en toute sécurité
+:::
+
+::: {.column width="50%"}
+### Perspectives de transfert
+- Extension aux greffons stéatosiques
+- Standardisation du recueil automatisé
+- Déploiement en routine clinique
+:::
+
+::::
+
+## Points à retenir
+
+1. La NMP transforme un organe passif en un organe fonctionnel évaluable.
+2. Le basculement sombre/clair One Dark Pro s'applique instantanément au diapo et aux graphiques R.
+3. Le fil d'Ariane interactif assure un repérage immédiat au cours de la présentation.

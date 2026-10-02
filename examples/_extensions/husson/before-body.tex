@@ -98,19 +98,134 @@ $endif$
 \end{titlepage}
 
 $-- Page blanche au verso (pour impression recto-verso)
+$if(frontmatter.blank-page)$
 \newpage
 \thispagestyle{empty}
 \mbox{}
 \newpage
+$endif$
 
-$-- Début de la numérotation romaine pour les liminaires (TOC, etc.)
-\pagenumbering{roman}
+$-- Pages liminaires facultatives. Elles restent en chiffres romains et ne
+$-- consomment aucune page du texte principal.
+\pagenumbering{Roman}
 \setcounter{page}{1}
+$if(frontmatter.table-of-contents)$
+\hussoncustomfrontmattertrue
+$endif$
+$if(frontmatter.markdown)$
+\hussoncustomfrontmattertrue
+$else$
 
 $if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
+\clearpage
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
+\vspace{0.25\baselineskip}
+\begin{center}
+\setlength{\fboxsep}{14pt}
+\setlength{\fboxrule}{0.6pt}
+\fcolorbox{headingblue}{white}{%
+  \begin{minipage}{0.90\textwidth}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{7pt}
+  \normalsize
+  $abstract$
+  \vspace{0.16\textheight}
+  \end{minipage}%
+}
+\end{center}
+$endif$
+
+$if(frontmatter.summary)$
+\clearpage
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
+\vspace{0.25\baselineskip}
+\begin{center}
+\setlength{\fboxsep}{14pt}
+\setlength{\fboxrule}{0.6pt}
+\fcolorbox{headingblue}{white}{%
+  \begin{minipage}{0.90\textwidth}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{7pt}
+  \normalsize
+  $frontmatter.summary$
+  \vspace{0.16\textheight}
+  \end{minipage}%
+}
+\end{center}
+$endif$
+
+$if(frontmatter.acknowledgements)$
+\clearpage
+\section*{Remerciements}
+\addcontentsline{toc}{section}{Remerciements}
+$frontmatter.acknowledgements$
+$endif$
+
+$if(frontmatter.scientific-valorization)$
+\clearpage
+\section*{Valorisation scientifique}
+\addcontentsline{toc}{section}{Valorisation scientifique}
+$frontmatter.scientific-valorization$
+$endif$
+
+$if(frontmatter.table-of-contents)$
+\clearpage
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\tableofcontents
+\endgroup
+$endif$
+
+$if(frontmatter.list-of-figures)$
+\clearpage
+\renewcommand{\listfigurename}{Liste des figures}
+\addcontentsline{toc}{section}{Liste des figures}
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\listoffigures
+\endgroup
+$endif$
+
+$if(frontmatter.list-of-tables)$
+\clearpage
+\renewcommand{\listtablename}{Liste des tableaux}
+\addcontentsline{toc}{section}{Liste des tableaux}
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\listoftables
+\endgroup
+$endif$
+
+$if(frontmatter.abbreviations)$
+\clearpage
+\section*{Liste des abréviations}
+\addcontentsline{toc}{section}{Liste des abréviations}
+\begin{description}
+$for(frontmatter.abbreviations)$
+\item[\textbf{$it.term$}] $it.definition$
+$endfor$
+\end{description}
+$endif$
+
+$-- Le texte principal commence toujours ici à la page 1.
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
 $endif$
 
 $else$

@@ -11,6 +11,7 @@
 local FULL_LINE_CHARACTERS = 92
 local ABSOLUTE_MINIMUM = 0.065
 local ABSOLUTE_MAXIMUM = 0.60
+local TWO_COLUMN_MAXIMUM = 0.88
 
 local function unicode_length(text)
   local length = utf8.len(text)
@@ -53,11 +54,13 @@ local function content_metrics(tbl, column_count)
   local totals = {}
   local counts = {}
   local longest_words = {}
+  local longest_cells = {}
 
   for column = 1, column_count do
     totals[column] = 0
     counts[column] = 0
     longest_words[column] = 0
+    longest_cells[column] = 0
   end
 
   for _, row in ipairs(table_rows(tbl)) do
@@ -65,6 +68,7 @@ local function content_metrics(tbl, column_count)
       if column <= column_count then
         local text = normalise_text(cell.contents)
         local length = unicode_length(text)
+        longest_cells[column] = math.max(longest_cells[column], length)
 
         if length > 0 then
           totals[column] = totals[column] + length
@@ -89,10 +93,10 @@ local function content_metrics(tbl, column_count)
     end
   end
 
-  return totals, counts, longest_words
+  return totals, counts, longest_words, longest_cells
 end
 
-local function bounded_proportions(scores, minimums)
+local function bounded_proportions(scores, minimums, maximum)
   local widths = {}
   local active = {}
   local remaining_width = 1
@@ -133,9 +137,9 @@ local function bounded_proportions(scores, minimums)
   local excess = 0
   local recipients = 0
   for column, width in ipairs(widths) do
-    if width > ABSOLUTE_MAXIMUM then
-      excess = excess + width - ABSOLUTE_MAXIMUM
-      widths[column] = ABSOLUTE_MAXIMUM
+    if width > maximum then
+      excess = excess + width - maximum
+      widths[column] = maximum
     else
       recipients = recipients + 1
     end
@@ -143,7 +147,7 @@ local function bounded_proportions(scores, minimums)
 
   if excess > 0 and recipients > 0 then
     for column, width in ipairs(widths) do
-      if width < ABSOLUTE_MAXIMUM then
+      if width < maximum then
         widths[column] = width + excess / recipients
       end
     end
@@ -168,23 +172,33 @@ function Table(tbl)
     return nil
   end
 
-  local totals, counts, longest_words = content_metrics(tbl, column_count)
+  local totals, counts, longest_words, longest_cells = content_metrics(tbl, column_count)
   local scores = {}
   local minimums = {}
 
   for column = 1, column_count do
     local average = totals[column] / math.max(counts[column], 1)
 
-    -- La racine carrée empêche une cellule exceptionnellement longue de
-    -- monopoliser la largeur tout en favorisant les colonnes narratives.
-    scores[column] = math.sqrt(math.max(average, 1))
+    -- Dans un tableau à deux colonnes, une colonne de repères courts doit
+    -- rester étroite pour laisser l'essentiel de la ligne au texte narratif.
+    -- Pour les tableaux plus larges, la racine carrée évite qu'une colonne
+    -- exceptionnellement longue monopolise la page.
+    scores[column] = math.max(average, 1) ^ (column_count == 2 and 0.8 or 0.5)
     minimums[column] = math.max(
       ABSOLUTE_MINIMUM,
       math.min(0.24, (longest_words[column] + 1) / FULL_LINE_CHARACTERS)
     )
+    if column_count == 2 and longest_cells[column] <= 20 then
+      -- Conserve sur une ligne les repères tels que « T + 3 h 30 ».
+      minimums[column] = math.max(
+        minimums[column],
+        math.min(0.22, (longest_cells[column] + 2) / FULL_LINE_CHARACTERS)
+      )
+    end
   end
 
-  local widths = bounded_proportions(scores, minimums)
+  local maximum = column_count == 2 and TWO_COLUMN_MAXIMUM or ABSOLUTE_MAXIMUM
+  local widths = bounded_proportions(scores, minimums, maximum)
 
   for column, colspec in ipairs(tbl.colspecs) do
     tbl.colspecs[column] = {colspec[1], widths[column]}
@@ -262,4 +276,3 @@ function RawInline(el)
   end
   return nil
 end
-

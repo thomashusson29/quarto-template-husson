@@ -19,14 +19,27 @@ figure-pdf/
 /auto-dark-system.js
 /auto-dark-reveal-init.js
 /auto-dark-reveal.js
+/navigation-header.tex
+/navigation-reveal.css
+/navigation-reveal.js
 /examples/auto-dark-renderings.js
 /examples/auto-dark-system.js
 /examples/auto-dark-reveal-init.js
 /examples/auto-dark-reveal.js
+/examples/navigation-header.tex
+/examples/navigation-reveal.css
+/examples/navigation-reveal.js
 /tests/auto-dark-renderings.js
 /tests/auto-dark-system.js
 /tests/auto-dark-reveal-init.js
 /tests/auto-dark-reveal.js
+/tests/navigation-header.tex
+/tests/navigation-reveal.css
+/tests/navigation-reveal.js
 
 /.quarto/
 **/*.quarto_ipynb
+
+# GitHub Pages
+!docs/
+!docs/**

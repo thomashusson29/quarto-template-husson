@@ -36,6 +36,27 @@ quarto render --to husson-docx
 quarto render --to husson-revealjs
 ```
 
+## Galerie et Démonstrations en Ligne (GitHub Pages)
+
+Une galerie complète présentant chaque format en conditions réelles est intégrée dans le dossier `docs/` et déployée automatiquement sur GitHub Pages :
+
+- **Rendu HTML statique (`exemple-article.html`)** : page web complète avec table des matières dynamique, bascule clair/sombre One Dark automatique (adaptée aux préférences système), équations LaTeX, encadrés Quarto (callouts), tableaux pleine page et graphiques R intégrés ;
+- **Rendu RevealJS (`exemple-revealjs.html`)** : présentation interactive avec diaporama complet, fil d'Ariane hiérarchique en haut d'écran, titre sticky sur diapositive défilable, bascule One Dark Pro et graphiques R ggplot2 à fond transparent avec images compagnes automatiques ;
+- **Rendu PDF Thèse complet (`exemple-these.pdf`)** : document de 16 pages au format thèse universitaire (A4, XeLaTeX, Times New Roman 11pt, interligne 1.15) comprenant la page de garde officielle conforme, le jury complet, les pages liminaires (résumé, remerciements, valorisation scientifique, table des matières, liste des figures, liste des tableaux, abréviations), la reprise à la page 1 en chiffres arabes, les tableaux optimisés à 100 % de la largeur utile et l'insertion d'une planche en paysage ;
+- **Rendu Word DOCX (`exemple-article.docx`)** : document Word appliquant directement le modèle éditorial embarqué (`template.docx`), avec styles typographiques calibrés, alignements de tableaux et légendes francisées.
+
+L'index d'accueil (`docs/index.html`) est conçu de façon sobre et épurée (sans CSS lourd ni artifice externe, compatible avec les modes clair et sombre du système) pour explorer directement les démonstrations et télécharger leurs codes sources `.qmd`.
+
+Pour prévisualiser la galerie localement, ouvrez simplement le fichier `docs/index.html` dans un navigateur.
+
+```bash
+# Commandes de régénération des démonstrations pour GitHub Pages
+quarto render examples/exemple-article.qmd --to husson-html --output-dir docs --output exemple-article.html
+quarto render examples/exemple-revealjs.qmd --to husson-revealjs --output-dir docs --output exemple-revealjs.html
+quarto render examples/exemple-these.qmd --to husson-pdf --output-dir docs --output exemple-these.pdf
+quarto render examples/exemple-article.qmd --to husson-docx --output-dir docs --output exemple-article.docx
+```
+
 ## Interface Graphique Interactive : Quarto Husson Studio
 
 Pour configurer visuellement vos options, pré-remplir le YAML, activer les modes Thèse ou Tableaux et visualiser la compilation en streaming temps réel, lancez l'application graphique :
@@ -472,30 +493,53 @@ l'extension : les styles Word du modèle sont appliqués automatiquement.
 
 Le format `husson-revealjs` reprend le thème `auto-dark-clean` et ses ressources
 locales. Il suit le thème du système au premier chargement, propose une bascule
-clair/sombre et mémorise le choix dans le navigateur.
+clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dark Pro.
 
-## Exemple R et Python
+### Graphiques R et compatibilité One Dark Pro
 
-`examples/r-python-reticulate.qmd` montre un flux complet piloté par `knitr` :
+Pour assurer une intégration visuelle parfaite des figures `ggplot2` lors de la bascule entre le mode clair et le mode One Dark Pro :
 
-1. création d'un tableau dans R ;
-2. déclaration de `statsmodels` avec `reticulate::py_require()` ;
-3. accès à l'objet R depuis Python avec `r.model_data` ;
-4. estimation dans Python ;
-5. récupération dans R avec `py$model_data_py` ;
-6. visualisation finale avec `ggplot2`.
+1. Activez le module auto-dark dans votre bloc d'initialisation :
+   ```r
+   source("_extensions/husson/auto-dark-setup.R")
+   auto_dark_on(transparent_figures = TRUE)
+   ```
+2. Configurez les graphiques avec un fond transparent (`theme(plot.background = element_rect(fill = "transparent", colour = NA), panel.background = element_rect(fill = "transparent", colour = NA))`).
+3. Le module génère automatiquement des images compagnes adaptées au thème sombre (`*-auto-dark.png`) via le package `magick`, ou applique un filtre CSS contrasté en cas d'absence de `magick`.
 
-Rendu explicite :
+## Exemples et démonstrations inclus dans le dépôt
 
-```bash
-quarto render examples/r-python-reticulate.qmd
-```
+Le dossier `examples/` contient des cas d'usage complets prêts à être rendus :
 
-L'exemple est conservé dans le projet, mais exclu de `quarto render`. Sa
-commande explicite produit un HTML autonome et exécute toute la chaîne
-R → Python → R.
+1. **`examples/exemple-article.qmd`** :
+   - Rendu HTML statique (`husson-html`) avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt` et graphique `ggplot2`.
+   - Rendu Word (`husson-docx`) appliquant le modèle éditorial embarqué.
+   - Commandes :
+     ```bash
+     quarto render examples/exemple-article.qmd --to husson-html
+     quarto render examples/exemple-article.qmd --to husson-docx
+     ```
 
-Dépendances R de cet exemple : `reticulate`, `ggplot2` et `knitr`.
+2. **`examples/exemple-revealjs.qmd`** :
+   - Présentation complète RevealJS (`husson-revealjs`) avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux et figures `ggplot2` compatibles One Dark Pro.
+   - Commande :
+     ```bash
+     quarto render examples/exemple-revealjs.qmd --to husson-revealjs
+     ```
+
+3. **`examples/exemple-these.qmd`** :
+   - Thèse universitaire complète de 16 pages (`husson-pdf`) avec page de garde officielle (Université Paris Cité), jury complet, pages liminaires (résumé, remerciements, valorisation scientifique, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, en-tête et pied de page soignés, tableaux ajustés et planche en paysage (`pdflscape`).
+   - Commande :
+     ```bash
+     quarto render examples/exemple-these.qmd --to husson-pdf
+     ```
+
+4. **`examples/r-python-reticulate.qmd`** :
+   - Démonstration d'interopérabilité R et Python via `reticulate` et `knitr`.
+   - Commande :
+     ```bash
+     quarto render examples/r-python-reticulate.qmd
+     ```
 
 ## Bibliographie
 

@@ -1,0 +1,165 @@
+---
+title: "Évaluation multicentrique de la perfusion hépatique normothermique"
+subtitle: "Analyse observationnelle des biomarqueurs et cinétiques de récupération fonctionnelle"
+author:
+  - name: "Dr Thomas Husson"
+    affiliations:
+      - "Service de Chirurgie Hépato-Biliaire, AP-HP"
+      - "Université Paris Cité"
+date: "2026-10-02"
+lang: fr
+format:
+  husson-html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+  husson-docx:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+source(if (file.exists("_extensions/husson/gt-page-fit.R")) "_extensions/husson/gt-page-fit.R" else "../_extensions/husson/gt-page-fit.R")
+if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
+
+library(ggplot2)
+library(dplyr)
+```
+
+## Résumé
+
+La perfusion hépatique normothermique (*Normothermic Machine Perfusion*, NMP) s'impose comme une technique de référence pour l'évaluation dynamique de la viabilité des greffons hépatiques à critères élargis. Cette étude observationnelle collige les cinétiques de clairance des lactates, le métabolisme du glucose et l'évolution des résistances vasculaires hépatiques sur une cohorte consécutive de 48 greffons.
+
+## Introduction
+
+La préservation statique en hypothermie (+4 °C) limite la durée d'ischémie froide tolérable et ne permet aucune évaluation fonctionnelle active avant l'implantation. La perfusion normothermique extracorporelle maintient l'organe dans des conditions physiologiques actives (37 °C, oxygénation normoxique, substrats énergétiques).
+
+::: {.callout-note}
+### Critère principal de viabilité
+La clairance rapide des lactates avec un taux perfusat $\le 2{,}5\text{ mmol/L}$ dans les premières 4 heures de perfusion constitue le marqueur prédictif le plus robuste de bon fonctionnement précoce post-transplantation.
+:::
+
+## Matériels et Méthodes
+
+### Modèle expérimental et recueil
+
+Les perfusions ont été réalisées sur le dispositif standardisé avec un hématocrite cible de 15 à 20 % via l'utilisation de transporteurs d'oxygène érythrocytaires.
+
+L'indice de résistance vasculaire de l'artère hépatique ($IR_{AH}$) est défini par la relation :
+
+$$
+IR_{AH} = \frac{P_{art} - P_{vein}}{Q_{art}} \times 80
+$$
+
+où $P_{art}$ représente la pression artérielle moyenne en mmHg et $Q_{art}$ le débit mesuré en mL/min.
+
+### Données de perfusion
+
+```{r}
+#| label: sim-data
+# Données simulées représentatives d'une cohorte NMP
+set.seed(42)
+temps <- c(0, 1, 2, 4, 6)
+n_per_group <- 24
+
+df_cinetique <- expand.grid(
+  Temps_h = temps,
+  Groupe = c("Protocole Optimisé", "Protocole Standard"),
+  ID = 1:n_per_group
+) |>
+  mutate(
+    Lactates = case_when(
+      Groupe == "Protocole Optimisé" ~ 8.5 * exp(-0.45 * Temps_h) + rnorm(n(), 0, 0.4),
+      Groupe == "Protocole Standard" ~ 8.7 * exp(-0.25 * Temps_h) + rnorm(n(), 0, 0.5)
+    ),
+    Lactates = pmax(0.8, Lactates)
+  )
+
+df_resume <- df_cinetique |>
+  group_by(Groupe, Temps_h) |>
+  summarise(
+    Moyenne = round(mean(Lactates), 2),
+    EcartType = round(sd(Lactates), 2),
+    Mediane = round(median(Lactates), 2),
+    .groups = "drop"
+  )
+```
+
+## Résultats
+
+### Synthèse quantitative des lactates
+
+Le @tbl-lactates résume l'évolution moyenne et la dispersion des lactates sanguins au fil du temps selon le protocole appliqué.
+
+```{r}
+#| label: tbl-lactates
+#| tbl-cap: "Évolution de la lactatémie moyenne (mmol/L) au cours de la perfusion hépatique"
+if (requireNamespace("gt", quietly = TRUE)) {
+  df_resume |>
+    gt::gt() |>
+    gt::cols_label(
+      Groupe = "Protocole appliqué",
+      Temps_h = "Temps (h)",
+      Moyenne = "Moyenne (mmol/L)",
+      EcartType = "Écart-type",
+      Mediane = "Médiane"
+    ) |>
+    gt::tab_header(
+      title = "Cinétique de clairance des lactates"
+    )
+} else {
+  knitr::kable(df_resume, col.names = c("Protocole", "Temps (h)", "Moyenne", "Écart-type", "Médiane"))
+}
+```
+
+### Cinétique comparative
+
+La @fig-lactates illustre la diminution accélérée des lactates dans le groupe ayant bénéficié du protocole optimisé, atteignant le seuil de viabilité dès la 2e heure.
+
+```{r}
+#| label: fig-lactates
+#| fig-cap: "Cinétique de lactatémie selon le groupe d'étude (moyenne ± écart-type)"
+#| fig-width: 8
+#| fig-height: 4.5
+df_resume |>
+  ggplot(aes(x = Temps_h, y = Moyenne, color = Groupe, group = Groupe)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = pmax(0, Moyenne - EcartType), ymax = Moyenne + EcartType), width = 0.2, alpha = 0.6) +
+  geom_hline(yintercept = 2.5, linetype = "dashed", color = "#e06c75", linewidth = 0.8) +
+  annotate("text", x = 5.2, y = 2.7, label = "Seuil viabilité (2.5 mmol/L)", color = "#e06c75", size = 3.5, fontface = "italic") +
+  scale_color_manual(values = c("Protocole Optimisé" = "#17365D", "Protocole Standard" = "#61afef")) +
+  scale_x_continuous(breaks = temps) +
+  labs(
+    x = "Temps de perfusion (heures)",
+    y = "Lactatémie moyenne (mmol/L)",
+    color = "Protocole"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    panel.background = element_rect(fill = "transparent", colour = NA),
+    legend.position = "top",
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Discussion
+
+L'utilisation du protocole optimisé démontre une accélération marquée de la métabolisation des lactates hépatiques, traduisant une reprise précoce de la phosphorylation oxydative mitochondriale et du cycle de Krebs. Les paramètres hémodynamiques et la production biliaire concordent avec ce rétablissement métabolique précoce.
+
+::: {.callout-tip}
+### Application en pratique clinique
+La standardisation des prélèvements horaires à la console de perfusion permet de valider le greffon sans allonger inutilement le temps de perfusion au-delà de 4 heures lorsque les critères sont validés.
+:::
+
+## Conclusion
+
+Ce document illustre la mise en page d'un article scientifique avec le template Husson, incluant l'intégration des tableaux, graphiques vectoriels, équations et annotations méthodologiques.

@@ -56,14 +56,19 @@ contributes:
           crossref-tbl-prefix: "Tableau"
           crossref-lot-title: "Liste des tableaux"
       filters:
+        - frontmatter.lua
         - heading-levels.lua
+        - navigation-header.lua
         - code-language.lua
         - typography.lua
         - table-column-widths.lua
-      include-in-header: pdf-header.tex
+      include-in-header:
+        - pdf-header.tex
+        - navigation-header.tex
       template-partials:
         - before-body.tex
       format-resources:
+        - navigation-header.tex
         - logo-universite-paris-cite.png
         - logo-universite-paris-saclay.png
         - biblio_shared.bib
@@ -95,12 +100,15 @@ contributes:
       date-format: long
       tbl-colwidths: false
       html-math-method: katex
+      filters:
+        - navigation-header.lua
       css:
         - auto-dark.css
         - auto-dark-reveal.css
         - auto-dark-plot-filter.css
         - auto-dark-gt-reveal.css
         - auto-dark-switch.css
+        - navigation-reveal.css
       include-in-header:
         - text: |
             <script src="auto-dark-reveal-init.js"></script>
@@ -109,7 +117,11 @@ contributes:
             <script src="auto-dark-reveal.js"></script>
         - text: |
             <script src="auto-dark-renderings.js"></script>
+        - text: |
+            <script src="navigation-reveal.js"></script>
       format-resources:
         - auto-dark-reveal-init.js
         - auto-dark-reveal.js
         - auto-dark-renderings.js
+        - navigation-reveal.js
+        - navigation-reveal.css

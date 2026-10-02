@@ -1,0 +1,229 @@
+---
+title: "Évaluation dynamique et préservation active en perfusion normothermique : Application aux greffons hépatiques à critères élargis"
+short-title: "Perfusion hépatique normothermique"
+footer-author: "T. Husson"
+author: "Thomas HUSSON"
+lang: fr
+format:
+  husson-pdf:
+    font: "Times New Roman"
+    toc: false
+thesis:
+  university: "Université Paris Cité"
+  faculty: "Faculté de Santé"
+  school: "École Doctorale Pierre Louis de Santé Publique - ED 393"
+  laboratory: "HeKA, Inria Paris, Inserm UMR-S 1346"
+  degree: "Thèse de doctorat en Médecine"
+  date: "15 octobre 2026"
+  logo: "logo-universite-paris-cite.png"
+  directors:
+    - name: "Pr Claire GOUMARD"
+      role: "Directrice de thèse"
+    - name: "Dr Thomas HUSSON"
+      role: "Co-directeur de thèse"
+  jury:
+    - name: "Pr Jean DUPONT"
+      title: "PU-PH, Sorbonne Université"
+      role: "Président du jury"
+    - name: "Pr Claire GOUMARD"
+      title: "PU-PH, Université Paris Cité"
+      role: "Directrice de thèse"
+    - name: "Pr Marc MOREAU"
+      title: "PU-PH, Université Claude Bernard Lyon 1"
+      role: "Rapporteur"
+    - name: "Pr Sophie BERNARD"
+      title: "PU-PH, Aix-Marseille Université"
+      role: "Rapportrice"
+    - name: "Dr Jérémie GAUTHERON"
+      title: "CR, Inserm UMR-S 938"
+      role: "Examinateur"
+    - name: "Pr David FUKS"
+      title: "PU-PH, Université Paris Cité"
+      role: "Membre invité"
+
+frontmatter:
+  blank-page: true
+  summary: |
+    La pénurie structurelle de greffons hépatiques conduit à l'utilisation croissante de donneurs à critères élargis, particulièrement sensibles à l'ischémie froide conventionnelle. La perfusion hépatique normothermique (*Normothermic Machine Perfusion*, NMP) restaure le métabolisme physiologique ex vivo à 37 °C et permet une évaluation objective de la viabilité fonctionnelle avant implantation. Ce travail de thèse analyse les cinétiques métaboliques, les résistances vasculaires et la sécrétion biliaire sur une série de greffons humains et modèles expérimentaux. Les résultats confirment la valeur pronostique déterminante de la clairance précoce des lactates et de l'alcalinisation biliaire.
+  acknowledgements: |
+    À Madame la Professeure Claire GOUMARD, pour m'avoir guidé avec une rigueur scientifique exemplaire, une bienveillance constante et une disponibilité sans faille tout au long de ce projet de recherche.
+
+    Aux membres du jury, Madame et Messieurs les Professeurs et Docteurs Jean DUPONT, Marc MOREAU, Sophie BERNARD, Jérémie GAUTHERON et David FUKS, pour l'honneur qu'ils me font d'examiner et d'évaluer ce travail.
+
+    À l'ensemble de l'équipe chirurgicale et paramédicale du bloc opératoire, des coordinateurs de prélèvement d'organes, et aux équipes de recherche Inserm et Inria pour leur collaboration quotidienne.
+
+    À ma famille et à mes proches, pour leur soutien inconditionnel et leurs encouragements constants.
+  scientific-valorization: |
+    **Articles originaux publiés :**
+    - Husson T, Goumard C, Gautheron J, et al. *Normothermic machine perfusion as a dynamic platform for liver allograft assessment: a prospective study.* J Hepatol, 2026; 84(2): 312-321.
+    - Husson T, Dupont J, Fuks D. *Machine perfusion in liver transplantation: from bench to clinical implementation.* Ann Surg, 2025; 282(4): 745-753.
+
+    **Communications orales internationales :**
+    - Husson T, et al. *Lactate clearance kinetics during normothermic liver machine perfusion.* ILTS Annual Congress, Singapour, 2026.
+    - Husson T, et al. *Bile composition and viability assessment in marginal donor livers.* ESOT Congress, Londres, 2025.
+  table-of-contents: true
+  list-of-figures: true
+  list-of-tables: true
+  abbreviations:
+    - term: "NMP"
+      definition: "Normothermic machine perfusion (Perfusion normothermique sur machine)"
+    - term: "HOPE"
+      definition: "Hypothermic oxygenated perfusion (Perfusion hypothermique oxygénée)"
+    - term: "CGR"
+      definition: "Concentré de globules rouges"
+    - term: "EAD"
+      definition: "Early allograft dysfunction (Dysfonction précoce du greffon)"
+    - term: "PNF"
+      definition: "Primary non-function (Échec primaire de transplantation)"
+    - term: "ATP"
+      definition: "Adénosine triphosphate"
+    - term: "ASAT"
+      definition: "Aspartate aminotransférase"
+    - term: "ALAT"
+      definition: "Alanine aminotransférase"
+    - term: "DDAC"
+      definition: "Donneur décédé après arrêt circulatoire"
+    - term: "MELD"
+      definition: "Model for End-Stage Liver Disease"
+
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+source(if (file.exists("_extensions/husson/gt-page-fit.R")) "_extensions/husson/gt-page-fit.R" else "../_extensions/husson/gt-page-fit.R")
+if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
+
+library(ggplot2)
+library(dplyr)
+```
+
+# Introduction générale {nav-title="INTRODUCTION"}
+
+## Contexte clinique et épidémiologique {nav-title="Contexte"}
+
+La transplantation hépatique demeure l'unique traitement curatif de l'insuffisance hépatique terminale et des carcinomes hépatocellulaires sélectionnés. Cependant, la disparité persistante entre le nombre de candidats inscrits sur liste d'attente et le nombre d'organes disponibles impose le recours systématique aux donneurs dits « à critères élargis » (*Extended Criteria Donors*, ECD). Ces greffons cumulent souvent un âge avancé, une stéatose modérée ou des temps d'ischémie chaude prolongés dans le cadre des dons après arrêt circulatoire (DDAC).
+
+## Limites de la conservation statique hypothermique {nav-title="Ischémie froide"}
+
+Depuis plus de quatre décennies, la méthode standard de conservation repose sur le stockage statique en glacière à 4 °C dans une solution de préservation (UW, IGL-1 ou Custodiol). Bien que simple et logistiquement éprouvée, cette approche bloque l'activité enzymatique tout en maintenant un métabolisme anaérobie résiduel délétère.
+
+À la reperfusion chez le receveur, la déplétion en ATP, l'accumulation de succinate et l'activation des cellules de Kupffer déclenchent un orage radicalaire responsable du syndrome d'ischémie-reperfusion.
+
+# Hypothèse et Objectifs de recherche {nav-title="OBJECTIFS"}
+
+## Hypothèse physiopathologique {nav-title="Hypothèse"}
+
+La perfusion normothermique ex vivo (37 °C) avec transporteurs d'oxygène permet d'interrompre l'ischémie, de restaurer la respiration mitochondriale et de tester la fonctionnalité hépatique de manière objective avant la décision de greffe.
+
+## Objectifs du travail {nav-title="Objectifs"}
+
+1. **Objectif 1** : Caractériser la cinétique de clairance des lactates comme prédicteur de la reprise de fonction précoce.
+2. **Objectif 2** : Quantifier les profils hémodynamiques artériels et portaux lors de la phase d'évaluation.
+3. **Objectif 3** : Établir un score décisionnel combinant critères biochimiques et hémodynamiques.
+
+# Matériels et Méthodes {nav-title="MÉTHODES"}
+
+## Modèle expérimental et dispositif de perfusion {nav-title="Dispositif"}
+
+Le protocole standardisé associe une double perfusion pulsatile artérielle (pression moyenne 65–75 mmHg) et continue portale (pression 8–10 mmHg). L'oxygénation est assurée par un oxygénateur à membrane polymère sous mélange gazeux contrôlé ($pO_2$ cible 250–300 mmHg).
+
+| Caractéristique du circuit | Spécification technique | Justification physiologique |
+|---|---|---|
+| **Ligne artérielle** | Flux pulsatile (60 bpm), PAM 70 mmHg | Maintien de la compliance vasculaire et de la perfusion biliaire |
+| **Ligne portale** | Flux continu non pulsatile, pression $\le 10$ mmHg | Prévention du barotraumatisme sinusoïdal |
+| **Oxygénateur** | Fibre creuse polymère microporeuse | Dissolution physiologique de l'oxygène sans hémolyse |
+| **Thermorégulation** | Échangeur d'eau chaude régulé à 37.0 °C | Activité optimale des enzymes de phosphorylation oxydative |
+| **Perfusat de base** | CGR déleucocytés + albumine 20 % | Maintien de la pression oncotique et hématocrite 18 % |
+
+: Paramètres opératoires et techniques du banc de perfusion normothermique {#tbl-dispositif}
+
+## Analyses biochimiques {nav-title="Analyses"}
+
+Les prélèvements sanguins sont répétés toutes les heures (H0 à H6) à l'entrée et à la sortie de l'organe pour évaluer l'extraction de l'oxygène, la production de métabolites et la viabilité cellulaire.
+
+# Résultats expérimentaux {nav-title="RÉSULTATS"}
+
+## Cinétique métabolique des lactates {nav-title="Lactates"}
+
+Sur la cohorte analysée ($n = 48$), les organes répondant favorablement au protocole optimisé présentent une réduction exponentielle de la lactatémie dès les deux premières heures.
+
+```{r}
+#| label: fig-these-lact
+#| fig-cap: "Cinétique de clairance de la lactatémie perfusat au cours de 6 heures de perfusion"
+#| fig-width: 6.5
+#| fig-height: 3.8
+set.seed(789)
+temps <- c(0, 1, 2, 4, 6)
+d <- data.frame(
+  Temps = rep(temps, 2),
+  Groupe = rep(c("Greffons viables (n=38)", "Greffons non validés (n=10)"), each = length(temps)),
+  Lactate = c(9.1, 4.2, 1.8, 1.2, 0.9, 9.5, 8.4, 7.6, 6.9, 6.2),
+  SD = c(0.8, 0.5, 0.3, 0.2, 0.1, 0.9, 0.8, 0.8, 0.7, 0.7)
+)
+
+ggplot(d, aes(x = Temps, y = Lactate, color = Groupe)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin = Lactate - SD, ymax = Lactate + SD), width = 0.2) +
+  geom_hline(yintercept = 2.5, linetype = "dashed", color = "#B22222") +
+  scale_color_manual(values = c("Greffons viables (n=38)" = "#17365D", "Greffons non validés (n=10)" = "#B22222")) +
+  scale_x_continuous(breaks = temps) +
+  labs(
+    x = "Temps de perfusion (heures)",
+    y = "Lactatémie moyenne (mmol/L)",
+    color = "Statut"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "top")
+```
+
+Comme le montre la @fig-these-lact, le seuil de $2{,}5\text{ mmol/L}$ sépare nettement les greffons viables des organes récalcitrants.
+
+## Tableau comparatif des biomarqueurs à 4 heures {nav-title="Biomarqueurs"}
+
+Le @tbl-comparatif compare les critères majeurs de viabilité entre les deux groupes.
+
+| Paramètre mesuré | Greffons viables ($n=38$) | Greffons non validés ($n=10$) | Seuil décisionnel | Valeur p |
+|---|:---:|:---:|:---:|:---:|
+| **Lactates à H2 (mmol/L)** | 1.8 ± 0.3 | 7.6 ± 0.8 | $\le 2{,}5$ | < 0.001 |
+| **Lactates à H4 (mmol/L)** | 1.2 ± 0.2 | 6.9 ± 0.7 | $\le 2{,}5$ | < 0.001 |
+| **Production de bile à H4 (mL)** | 14.5 ± 2.8 | 2.1 ± 1.1 | $\ge 10$ | < 0.001 |
+| **pH biliaire à H4** | 7.62 ± 0.08 | 7.15 ± 0.12 | $\ge 7{,}50$ | < 0.001 |
+| **Débit artériel (mL/min)** | 195 ± 25 | 110 ± 22 | $\ge 150$ | < 0.001 |
+| **Débit portal (mL/min)** | 720 ± 60 | 480 ± 55 | $\ge 500$ | < 0.001 |
+
+: Comparaison multidimensionnelle des critères de viabilité à 4 heures {#tbl-comparatif}
+
+::: {.landscape}
+# Données multicentriques en orientation paysage {nav-title="PAYSAGE"}
+
+Cette page illustre l'insertion d'une section en paysage via le bloc `::: {.landscape}` du template Husson. Le lecteur PDF applique automatiquement une rotation à 90° sans manipulation manuelle.
+
+| Centre investigateur | Inclusions | Procédure | Durée NMP moyenne | Taux de transplantation | EAD (%) | Survie greffon à 1 an (%) | Survie patient à 1 an (%) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **CHU Bicêtre (Paris-Saclay)** | 18 | DBD / DCD | 6.2 ± 1.1 h | 88.9 % (16/18) | 6.2 % | 93.8 % | 93.8 % |
+| **Hôpital Beaujon (Paris Cité)** | 14 | DBD ECD | 5.8 ± 0.9 h | 85.7 % (12/14) | 8.3 % | 91.7 % | 100.0 % |
+| **Hôpital Paul-Brousse (Paris-Saclay)** | 16 | DCD Maastricht III | 6.5 ± 1.4 h | 81.2 % (13/16) | 7.7 % | 92.3 % | 92.3 % |
+| **Total cohorte combinée** | **48** | **Multicentrique** | **6.2 ± 1.2 h** | **85.4 % (41/48)** | **7.3 %** | **92.7 %** | **95.1 %** |
+
+: Synthèse multicentrique des résultats cliniques et de survie post-transplantation {#tbl-multicentre}
+:::
+
+# Discussion générale {nav-title="DISCUSSION"}
+
+## Apport de l'évaluation dynamique {nav-title="Apport NMP"}
+
+Ce travail démontre que la perfusion normothermique ne constitue pas seulement une modalité de conservation, mais un véritable laboratoire biologique ex vivo. Elle permet d'étendre en toute sécurité le pool de donneurs sans compromettre la survie post-opératoire des receveurs.
+
+## Perspectives translationnelles {nav-title="Perspectives"}
+
+Les développements futurs visent la délivrance ciblée de thérapies ex vivo (antioxydants, vecteurs géniques, délipidation pharmacologique) pour réhabiliter les greffons initialement récusés.
+
+# Conclusion générale {nav-title="CONCLUSION"}
+
+La perfusion hépatique normothermique transforme le paradigme de la préservation d'organes. En associant évaluation métabolique rigoureuse et conditions physiologiques actives, elle permet de sauver davantage de patients en attente de greffe hépatique.

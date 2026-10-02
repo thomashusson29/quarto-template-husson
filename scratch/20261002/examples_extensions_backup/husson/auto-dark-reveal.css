@@ -1,0 +1,529 @@
+/*
+ * auto-dark-reveal.css
+ *
+ * One Dark Pro dark-mode overrides for auto-dark-clean-revealjs.
+ *
+ * DESIGN RULE: This file scopes ALL colour changes to
+ *   html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark
+ * ONLY. The light theme is the unmodified auto-dark-clean.scss (clean theme).
+ *
+ * WHY !important: RevealJS themes are compiled from SCSS — colours like
+ *   #131516 and #107895 are baked into the CSS as literal values.
+ *   CSS custom-property overrides alone cannot reach them; !important on
+ *   the specific selectors is the correct and minimal fix.
+ *
+ * One Dark Pro palette used here:
+ *   Background   #282c34   Soft bg    #2c313a   Panel      #21252b
+ *   Border       #3e4451   Text       #abb2bf   Text strong #e6edf3
+ *   Text muted   #8b949e   Blue       #61afef   Cyan       #56b6c2
+ *   Green        #98c379   Yellow     #e5c07b   Orange     #d19a66
+ *   Red          #e06c75   Purple     #c678dd
+ *
+ * Sections:
+ *   1.  Figure captions (both modes — Reveal doesn't inherit colour)
+ *   2.  Background (html/body, slide-background)
+ *   3.  Reveal.js CSS variable overrides
+ *   4.  Body text and slides container
+ *   5.  Headings (h1–h6)
+ *   6.  Title slide
+ *   7.  Links
+ *   8.  List markers
+ *   9.  Blockquotes
+ *  10.  Markdown tables
+ *  11.  Code blocks / cell output
+ *  12.  Slide number
+ *  13.  Alerts / .fg / .bg utilities
+ *  14.  Companion image visibility helpers
+ *  15.  ☾/☀ toggle button
+ */
+
+
+/* ── 1. Figure captions ──────────────────────────────────────────────────── */
+/*
+ * Reveal does not propagate --r-main-color to p.caption / figcaption, so
+ * both modes need explicit colour.
+ */
+
+html.auto-dark-theme-dark .reveal p.caption,
+html.auto-dark-theme-dark .reveal figcaption,
+html.auto-dark-theme-dark .reveal .quarto-float-caption,
+html.auto-dark-theme-dark .reveal .figure-caption,
+body.auto-dark-theme-dark .reveal p.caption,
+body.auto-dark-theme-dark .reveal figcaption,
+body.auto-dark-theme-dark .reveal .quarto-float-caption,
+body.auto-dark-theme-dark .reveal .figure-caption,
+body.quarto-dark .reveal p.caption,
+body.quarto-dark .reveal figcaption,
+body.quarto-dark .reveal .quarto-float-caption,
+body.quarto-dark .reveal .figure-caption {
+  color: #8b949e !important;
+  font-size: 0.72em;
+}
+
+html.auto-dark-theme-light .reveal p.caption,
+html.auto-dark-theme-light .reveal figcaption,
+html.auto-dark-theme-light .reveal .quarto-float-caption,
+html.auto-dark-theme-light .reveal .figure-caption,
+body.auto-dark-theme-light .reveal p.caption,
+body.auto-dark-theme-light .reveal figcaption,
+body.auto-dark-theme-light .reveal .quarto-float-caption,
+body.auto-dark-theme-light .reveal .figure-caption {
+  color: #57606a !important;
+  font-size: 0.72em;
+}
+
+
+/* ── 2. Background ───────────────────────────────────────────────────────── */
+
+html.auto-dark-theme-dark,
+body.auto-dark-theme-dark,
+body.quarto-dark {
+  background-color: var(--auto-dark-bg) !important;
+}
+
+html.auto-dark-theme-dark .reveal .slide-background,
+html.auto-dark-theme-dark .reveal .backgrounds,
+body.auto-dark-theme-dark .reveal .slide-background,
+body.auto-dark-theme-dark .reveal .backgrounds,
+body.quarto-dark .reveal .slide-background,
+body.quarto-dark .reveal .backgrounds {
+  background-color: var(--auto-dark-bg) !important;
+}
+
+
+/* ── 3. Reveal.js CSS variable overrides ─────────────────────────────────── */
+/*
+ * These cover all elements that correctly use the --r-* variables.
+ * For elements with baked-in SCSS colours, see sections 4–13.
+ */
+
+html.auto-dark-theme-dark .reveal,
+body.auto-dark-theme-dark .reveal,
+body.quarto-dark .reveal {
+  --r-background-color:           #282c34;
+  --r-main-color:                 #abb2bf;
+  --r-heading-color:              #e6edf3;
+  --r-link-color:                 #61afef;
+  --r-link-color-hover:           #98c379;
+  --r-selection-background-color: #3e4451;
+  --r-selection-color:            #e6edf3;
+}
+
+
+/* ── 4. Body text and slides container ───────────────────────────────────── */
+/*
+ * $body-color: #131516 is baked in → needs !important override.
+ */
+
+html.auto-dark-theme-dark .reveal,
+html.auto-dark-theme-dark .reveal .slides,
+body.auto-dark-theme-dark .reveal,
+body.auto-dark-theme-dark .reveal .slides,
+body.quarto-dark .reveal,
+body.quarto-dark .reveal .slides {
+  color: #abb2bf !important;
+}
+
+/* Reveal computes has-dark-background / has-light-background only at startup.
+ * The JavaScript synchronizes these classes after a theme switch. These light
+ * rules are a defensive fallback for browsers that repaint before the class
+ * synchronization has completed. Slides with an explicit background keep
+ * Reveal's own contrast handling. */
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .slides section.has-dark-background:not([data-background-color]):not([data-background-image]):not([data-background-video]):not([data-background-iframe]):not([data-background-gradient]) {
+  color: #131516 !important;
+}
+
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .slides section.has-dark-background:not([data-background-color]):not([data-background-image]):not([data-background-video]):not([data-background-iframe]):not([data-background-gradient])
+  :is(h1, h2, h5, h6) {
+  color: #131516 !important;
+}
+
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .slides section.has-dark-background:not([data-background-color]):not([data-background-image]):not([data-background-video]):not([data-background-iframe]):not([data-background-gradient]) h3 {
+  color: #107895 !important;
+}
+
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .slides section.has-dark-background:not([data-background-color]):not([data-background-image]):not([data-background-video]):not([data-background-iframe]):not([data-background-gradient]) h4 {
+  color: #9a2515 !important;
+}
+
+
+/* ── 5. Headings ─────────────────────────────────────────────────────────── */
+/*
+ * $presentation-heading-color: $jet (#131516) → baked in.
+ * h3: $accent (#107895), h4: $accent2 (#9a2515) → baked in.
+ */
+
+html.auto-dark-theme-dark .reveal h1,
+html.auto-dark-theme-dark .reveal h2,
+html.auto-dark-theme-dark .reveal h5,
+html.auto-dark-theme-dark .reveal h6,
+body.auto-dark-theme-dark .reveal h1,
+body.auto-dark-theme-dark .reveal h2,
+body.auto-dark-theme-dark .reveal h5,
+body.auto-dark-theme-dark .reveal h6,
+body.quarto-dark .reveal h1,
+body.quarto-dark .reveal h2,
+body.quarto-dark .reveal h5,
+body.quarto-dark .reveal h6 {
+  color: #e6edf3 !important;
+}
+
+/* h3 → One Dark blue */
+html.auto-dark-theme-dark .reveal h3,
+body.auto-dark-theme-dark .reveal h3,
+body.quarto-dark .reveal h3 {
+  color: #61afef !important;
+}
+
+/* h4 → One Dark yellow/gold (replaces the clean theme's red $accent2) */
+html.auto-dark-theme-dark .reveal h4,
+body.auto-dark-theme-dark .reveal h4,
+body.quarto-dark .reveal h4 {
+  color: #e5c07b !important;
+}
+
+
+/* ── 6. Title slide ──────────────────────────────────────────────────────── */
+/*
+ * All colours in #title-slide are baked in via SCSS.
+ */
+
+html.auto-dark-theme-dark #title-slide .title,
+body.auto-dark-theme-dark #title-slide .title,
+body.quarto-dark #title-slide .title {
+  color: #e6edf3 !important;
+}
+
+html.auto-dark-theme-dark #title-slide .subtitle,
+body.auto-dark-theme-dark #title-slide .subtitle,
+body.quarto-dark #title-slide .subtitle {
+  color: #61afef !important;  /* One Dark blue — replaces $accent #107895 */
+}
+
+html.auto-dark-theme-dark #title-slide .author,
+html.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+html.auto-dark-theme-dark #title-slide .institute,
+html.auto-dark-theme-dark #title-slide .quarto-title-affiliation,
+html.auto-dark-theme-dark #title-slide .quarto-title-author-email,
+body.auto-dark-theme-dark #title-slide .author,
+body.auto-dark-theme-dark #title-slide .quarto-title-author-name,
+body.auto-dark-theme-dark #title-slide .institute,
+body.auto-dark-theme-dark #title-slide .quarto-title-affiliation,
+body.auto-dark-theme-dark #title-slide .quarto-title-author-email,
+body.quarto-dark #title-slide .author,
+body.quarto-dark #title-slide .quarto-title-author-name,
+body.quarto-dark #title-slide .institute,
+body.quarto-dark #title-slide .quarto-title-affiliation,
+body.quarto-dark #title-slide .quarto-title-author-email {
+  color: #abb2bf !important;
+}
+
+
+/* ── 7. Links ────────────────────────────────────────────────────────────── */
+
+html.auto-dark-theme-dark .reveal a,
+body.auto-dark-theme-dark .reveal a,
+body.quarto-dark .reveal a {
+  color: #61afef !important;
+}
+
+html.auto-dark-theme-dark .reveal a:hover,
+body.auto-dark-theme-dark .reveal a:hover,
+body.quarto-dark .reveal a:hover {
+  color: #98c379 !important;
+}
+
+
+/* ── 8. List markers ─────────────────────────────────────────────────────── */
+/*
+ * mix($accent, white, 70%) = #57a4b8 (baked in) → override with One Dark blue.
+ * Nested ul arrow (::before) also needs override.
+ */
+
+html.auto-dark-theme-dark .reveal ul li::marker,
+body.auto-dark-theme-dark .reveal ul li::marker,
+body.quarto-dark .reveal ul li::marker {
+  color: #61afef !important;
+}
+
+html.auto-dark-theme-dark .reveal ul ul li:before,
+body.auto-dark-theme-dark .reveal ul ul li:before,
+body.quarto-dark .reveal ul ul li:before {
+  color: #98c379 !important;  /* nested → green for visual depth */
+}
+
+html.auto-dark-theme-dark .reveal ol li::marker,
+body.auto-dark-theme-dark .reveal ol li::marker,
+body.quarto-dark .reveal ol li::marker {
+  color: #61afef !important;
+}
+
+
+/* ── 9. Blockquotes ──────────────────────────────────────────────────────── */
+
+html.auto-dark-theme-dark .reveal blockquote,
+body.auto-dark-theme-dark .reveal blockquote,
+body.quarto-dark .reveal blockquote {
+  background-color: #21252b !important;
+  border-left: 4px solid #61afef !important;
+  color: #abb2bf !important;
+}
+
+
+/* ── 10. Markdown tables ─────────────────────────────────────────────────── */
+/*
+ * border-bottom: 2px solid #D3D3D3 is baked in.
+ */
+
+html.auto-dark-theme-dark .reveal table:not(.gt_table),
+body.auto-dark-theme-dark .reveal table:not(.gt_table),
+body.quarto-dark .reveal table:not(.gt_table) {
+  color: #abb2bf !important;
+}
+
+html.auto-dark-theme-dark .reveal table:not(.gt_table) thead th,
+html.auto-dark-theme-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+html.auto-dark-theme-dark .reveal .slides table:not(.gt_table),
+body.auto-dark-theme-dark .reveal table:not(.gt_table) thead th,
+body.auto-dark-theme-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+body.auto-dark-theme-dark .reveal .slides table:not(.gt_table),
+body.quarto-dark .reveal table:not(.gt_table) thead th,
+body.quarto-dark .reveal .slides table:not(.gt_table) tr:last-child td,
+body.quarto-dark .reveal .slides table:not(.gt_table) {
+  border-bottom-color: #3e4451 !important;
+}
+
+html.auto-dark-theme-dark .reveal table caption,
+body.auto-dark-theme-dark .reveal table caption,
+body.quarto-dark .reveal table caption {
+  color: #8b949e !important;
+}
+
+/* ── Callout text ────────────────────────────────────────────────────────── */
+
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .callout,
+:is(html.auto-dark-theme-light, body.auto-dark-theme-light, body.quarto-light)
+  .reveal .callout :is(.callout-title, .callout-title p, .callout-content, .callout-content p) {
+  color: #131516 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .callout,
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .callout :is(.callout-title, .callout-title p, .callout-content, .callout-content p) {
+  color: #abb2bf !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .callout .callout-title {
+  color: #e6edf3 !important;
+  background-color: #2c313a !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .callout .callout-content {
+  color: #abb2bf !important;
+  background-color: #21252b !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .callout :is(.callout-title p, .callout-title strong, .callout-content strong) {
+  color: #e6edf3 !important;
+}
+
+/* gt table font sizing (both modes) */
+.reveal .gt_table { font-size: 0.92em !important; }
+
+.reveal .gt_table .gt_footnotes,
+.reveal .gt_table .gt_source_notes,
+.reveal .gt_table .gt_sourcenotes,
+.reveal .gt_table .gt_footnote,
+.reveal .gt_table .gt_source_note {
+  font-size: 0.86em !important;
+}
+
+
+/* ── 11. Code blocks / cell output ───────────────────────────────────────── */
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal :is(div.sourceCode, pre, pre code, .cell-output pre, .cell-output pre code) {
+  color:            #abb2bf !important;
+  background-color: #282c34 !important; /* One Dark Pro editor.background */
+  border-color:     #3e4451 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal :is(code.sourceCode, pre.sourceCode code, code.sourceCode span) {
+  color: #abb2bf !important;
+  background-color: transparent !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .cell-output {
+  color: #abb2bf !important;
+}
+
+/* Pandoc/Quarto token classes mapped to One Dark Pro / Atom One Dark. */
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.co, .cv, .do) {
+  color: #5c6370 !important;
+  font-style: italic;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.an, .in, .wa) {
+  color: #5c6370 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.kw, .cf, .im, .pp) {
+  color: #c678dd !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.op, .ot, .sc) {
+  color: #56b6c2 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.st, .vs, .ss, .ch) {
+  color: #98c379 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.fu, .ex) {
+  color: #61afef !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.bu, .dt) {
+  color: #e5c07b !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.at, .dv, .fl, .bn, .cn) {
+  color: #d19a66 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span.va {
+  color: #e06c75 !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal code span:is(.al, .er) {
+  color: #e06c75 !important;
+}
+
+
+/* ── 12. Slide number ────────────────────────────────────────────────────── */
+/*
+ * #777777 is baked in with !important in clean.scss → override it.
+ */
+
+html.auto-dark-theme-dark .slide-number,
+html.auto-dark-theme-dark .reveal.has-logo .slide-number,
+body.auto-dark-theme-dark .slide-number,
+body.auto-dark-theme-dark .reveal.has-logo .slide-number,
+body.quarto-dark .slide-number,
+body.quarto-dark .reveal.has-logo .slide-number {
+  color: #5c6370 !important;
+}
+
+
+/* ── 13. Alerts / utilities ──────────────────────────────────────────────── */
+/*
+ * .alert colour ($accent2: #9a2515) is baked in.
+ */
+
+html.auto-dark-theme-dark .reveal .alert,
+body.auto-dark-theme-dark .reveal .alert,
+body.quarto-dark .reveal .alert {
+  color: #e06c75 !important;  /* One Dark red — replaces $accent2 */
+}
+
+html.auto-dark-theme-dark .reveal .footer,
+body.auto-dark-theme-dark .reveal .footer,
+body.quarto-dark .reveal .footer {
+  color: #5c6370 !important;  /* dimmed footer in dark mode */
+}
+
+
+/* ── 14. Companion image visibility ──────────────────────────────────────── */
+
+html.auto-dark-theme-light .auto-dark-render-dark,
+body.auto-dark-theme-light .auto-dark-render-dark,
+html.auto-dark-theme-dark  .auto-dark-render-light,
+body.auto-dark-theme-dark  .auto-dark-render-light {
+  display: none !important;
+}
+
+html.auto-dark-theme-light .auto-dark-render-light,
+body.auto-dark-theme-light .auto-dark-render-light,
+html.auto-dark-theme-dark  .auto-dark-render-dark,
+body.auto-dark-theme-dark  .auto-dark-render-dark {
+  display: block;
+}
+
+
+/* ── 15. ☾/☀ toggle button ───────────────────────────────────────────────── */
+
+.auto-dark-switch {
+  position: fixed;
+  top: 8px;
+  right: 38px;
+  z-index: 10000;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: #57606a;
+  font: 400 16px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+  opacity: 0.72;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease, opacity 120ms ease;
+}
+
+.auto-dark-switch[data-auto-dark-target="dark"]  .auto-dark-switch-icon::before { content: "☾"; }
+.auto-dark-switch[data-auto-dark-target="light"] .auto-dark-switch-icon::before { content: "☀"; }
+
+.auto-dark-switch:hover,
+.auto-dark-switch:focus-visible {
+  outline: none;
+  border-color: #61afef;
+  background: rgba(97, 175, 239, 0.1);
+  color: #61afef;
+  opacity: 1;
+}
+
+html.auto-dark-theme-dark .auto-dark-switch,
+body.auto-dark-theme-dark .auto-dark-switch,
+body.quarto-dark .auto-dark-switch {
+  color: #8b949e;
+}
+
+html.auto-dark-theme-dark .auto-dark-switch:hover,
+html.auto-dark-theme-dark .auto-dark-switch:focus-visible,
+body.auto-dark-theme-dark .auto-dark-switch:hover,
+body.auto-dark-theme-dark .auto-dark-switch:focus-visible,
+body.quarto-dark .auto-dark-switch:hover,
+body.quarto-dark .auto-dark-switch:focus-visible {
+  background: rgba(97, 175, 239, 0.12);
+  color: #61afef;
+  border-color: rgba(97, 175, 239, 0.36);
+}
+
+@media print {
+  .auto-dark-switch { display: none !important; }
+}

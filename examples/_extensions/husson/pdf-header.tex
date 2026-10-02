@@ -25,11 +25,17 @@
 \providecommand{\addtokomafont}[2]{}
 \providecommand{\RedeclareSectionCommand}[2][]{}
 
-% Transition automatique de numerotation : chiffres romains pour les liminaires (TOC), puis reprise en chiffres arabes des le corps du texte
+% Transition automatique de numerotation : chiffres romains pour les liminaires
+% puis reprise en chiffres arabes des le corps du texte. Le mode frontmatter
+% personnalisé réalise lui-même cette transition après les listes.
+\newif\ifhussoncustomfrontmatter
+\hussoncustomfrontmatterfalse
 \AddToHook{cmd/tableofcontents/after}{%
-  \clearpage
-  \pagenumbering{arabic}%
-  \setcounter{page}{1}%
+  \ifhussoncustomfrontmatter\else
+    \clearpage
+    \pagenumbering{arabic}%
+    \setcounter{page}{1}%
+  \fi
 }
 
 \definecolor{headingblue}{HTML}{17365D}
@@ -230,3 +236,17 @@
     \endgroup
   }
 }
+
+% Bibliographie compacte et soignee (citeproc CSLReferences & natbib)
+\makeatletter
+\AtBeginDocument{
+  \@ifpackageloaded{etoolbox}{
+    \AtBeginEnvironment{CSLReferences}{%
+      \footnotesize
+      \setlength{\itemsep}{1.5pt}%
+      \setlength{\parskip}{0pt}%
+    }%
+  }{}%
+  \@ifundefined{bibsep}{}{\setlength{\bibsep}{1.5pt}}
+}
+\makeatother
