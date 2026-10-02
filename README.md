@@ -1,4 +1,5 @@
-"Je hais Microsoft et les logiciels propriétaires" (adapté depuis l'incipit de "Tristes Tropiques", Claude Lévi-Strauss, 1955)
+> ### "Je hais Microsoft et les logiciels propriétaires"
+> *(adapté depuis l'incipit de "Tristes Tropiques", Claude Lévi-Strauss, 1955)*
 
 # Quarto Template Husson
 
