@@ -1,3 +1,5 @@
+"Je hais Microsoft et les logiciels propriétaires" (adapté depuis l'incipit de "Tristes Tropiques", Claude Lévi-Strauss, 1955)
+
 # Quarto Template Husson
 
 Extension Quarto personnelle fournissant quatre formats cohérents :
