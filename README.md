@@ -44,7 +44,8 @@ Une galerie complète présentant chaque format en conditions réelles est inté
 - **Rendu HTML statique (`exemple-article.html`)** : page web complète avec table des matières dynamique, bascule clair/sombre One Dark automatique (adaptée aux préférences système), équations LaTeX, encadrés Quarto (callouts), tableaux pleine page et graphiques R intégrés ;
 - **Rendu RevealJS (`exemple-revealjs.html`)** : présentation interactive avec diaporama complet, fil d'Ariane hiérarchique en haut d'écran, titre sticky sur diapositive défilable, bascule One Dark Pro et graphiques R ggplot2 à fond transparent avec images compagnes automatiques ;
 - **Rendu PDF Thèse complet (`exemple-these.pdf`)** : document de 16 pages au format thèse universitaire (A4, XeLaTeX, Times New Roman 11pt, interligne 1.15) comprenant la page de garde officielle conforme, le jury complet, les pages liminaires (résumé, remerciements, valorisation scientifique, table des matières, liste des figures, liste des tableaux, abréviations), la reprise à la page 1 en chiffres arabes, les tableaux optimisés à 100 % de la largeur utile et l'insertion d'une planche en paysage ;
-- **Rendu Word DOCX (`exemple-article.docx`)** : document Word appliquant directement le modèle éditorial embarqué (`template.docx`), avec styles typographiques calibrés, alignements de tableaux et légendes francisées.
+- **Rendu Word DOCX (`exemple-article.docx`)** : document Word appliquant directement le modèle éditorial embarqué (`template.docx`), avec styles typographiques calibrés, alignements de tableaux et légendes francisées ;
+- **Rendu R vers Python (`exemple-r-python.html`)** : pipeline de modélisation bidirectionnel avec `reticulate` sur le jeu de données `mtcars` (transfert R → Python → R, régression OLS et analyse des résidus avec `ggplot2`).
 
 L'index d'accueil (`docs/index.html`) est conçu de façon sobre et épurée (sans CSS lourd ni artifice externe, compatible avec les modes clair et sombre du système) pour explorer directement les démonstrations et télécharger leurs codes sources `.qmd`.
 
@@ -56,6 +57,7 @@ quarto render examples/exemple-article.qmd --to husson-html --output-dir docs --
 quarto render examples/exemple-revealjs.qmd --to husson-revealjs --output-dir docs --output exemple-revealjs.html
 quarto render examples/exemple-these.qmd --to husson-pdf --output-dir docs --output exemple-these.pdf
 quarto render examples/exemple-article.qmd --to husson-docx --output-dir docs --output exemple-article.docx
+quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
 ```
 
 ## Interface Graphique Interactive : Quarto Husson Studio
@@ -535,12 +537,22 @@ Le dossier `examples/` contient des cas d'usage complets prêts à être rendus 
      quarto render examples/exemple-these.qmd --to husson-pdf
      ```
 
-4. **`examples/r-python-reticulate.qmd`** :
-   - Démonstration d'interopérabilité R et Python via `reticulate` et `knitr`.
-   - Commande :
+4. **`examples/r-python-reticulate.qmd`** (Transfert bidirectionnel R vers Python avec reticulate sur `mtcars`) :
+   - Démontre l'interopérabilité fluide entre R et Python au sein d'un même document Quarto piloté par `knitr` :
+     1. **Préparation des données dans R** : sélection des variables d'intérêt (`mpg`, `wt`, `hp`) sur le jeu classique `mtcars` ;
+     2. **Accès direct depuis Python** : le préfixe `r.` donne un accès direct aux objets R sans écriture intermédiaire sur disque (`cars = r.cars_data.copy()`) ;
+     3. **Modélisation statistique dans Python** : calcul d'une régression multiple OLS (avec `statsmodels` ou `numpy.linalg.lstsq`) estimant les prédictions (`Predicted`) et résidus (`Residuals`) ;
+     4. **Rapatriement dans R** : le préfixe `py$` récupère le dataframe enrichi dans la session R (`cars_results <- py$cars`) ;
+     5. **Diagnostic graphique dans R** : représentation visuelle de la droite idéale ($y = x$) et des résidus avec `ggplot2`.
+   - Commandes :
      ```bash
+     # Rendu local autonome
      quarto render examples/r-python-reticulate.qmd
+
+     # Rendu pour publication GitHub Pages
+     quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
      ```
+   - Dépendances : packages R `reticulate`, `ggplot2`, `knitr`, et environnement Python 3 avec `numpy` et `pandas` (ou `statsmodels`).
 
 ## Bibliographie
 
