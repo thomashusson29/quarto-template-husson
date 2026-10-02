@@ -170,6 +170,84 @@ thesis:
   - **Avec jury** : la formule rituelle (« Présentée et soutenue publiquement le [date] devant un jury composé de : ») s'affiche au millimètre au-dessus du tableau du jury.
   - **Accroche personnalisée (`date_prefix`)** : pour modifier ou adapter la formule, précisez `date_prefix: "Soutenue le "` ou `date_prefix: "Date : "` dans le bloc `thesis:`.
 
+### Pages liminaires facultatives
+
+Le mode `thesis` fournit la page de titre. Les autres pages liminaires peuvent
+être activées individuellement avec le bloc `frontmatter:` :
+
+```yaml
+format:
+  husson-pdf:
+    toc: false # la table sera placée avec les autres pages liminaires
+
+frontmatter:
+  blank-page: true
+  summary: |
+    Le résumé de la thèse.
+  acknowledgements: |
+    Les remerciements.
+  scientific-valorization: |
+    Publications, communications et autres éléments de valorisation.
+  table-of-contents: true
+  list-of-figures: true
+  list-of-tables: true
+  abbreviations:
+    - term: "NMP"
+      definition: "Normothermic machine perfusion"
+    - term: "CGR"
+      definition: "Concentré de globules rouges"
+```
+
+L’ordre PDF est alors : page de titre, page blanche facultative, résumé,
+remerciements, valorisation scientifique, table des matières, liste des
+figures, liste des tableaux, liste des abréviations, puis le corps du document
+à la page 1 en chiffres arabes. Les listes de figures et de tableaux sont
+générées par LaTeX et récupèrent automatiquement les légendes et les numéros
+de page après compilation.
+
+Les champs `summary`, `acknowledgements`, `scientific-valorization` et
+`abbreviations` sont facultatifs. Pour utiliser la table des matières native
+de Quarto à son emplacement habituel, conserver `toc: true` et ne pas activer
+`frontmatter.table-of-contents`.
+
+#### Rédiger les pages en Markdown
+
+Pour éviter de mettre le contenu dans le YAML, activer
+`frontmatter.markdown: true` puis placer les pages sous forme de blocs Markdown
+dans le document :
+
+```markdown
+::: {.frontmatter-summary}
+## Contexte
+
+Le résumé peut contenir plusieurs paragraphes, listes, emphases et références.
+:::
+
+::: {.frontmatter-acknowledgements}
+Les remerciements peuvent être rédigés normalement en Markdown.
+:::
+
+::: {.frontmatter-scientific-valorization}
+### Publications
+
+- Article publié : ...
+- Communication : ...
+:::
+
+::: {.frontmatter-abbreviations}
+NMP
+: Perfusion normothermique
+:::
+```
+
+Les classes disponibles sont `frontmatter-summary`,
+`frontmatter-acknowledgements`, `frontmatter-scientific-valorization` et
+`frontmatter-abbreviations`. Le filtre les déplace automatiquement avant la
+table des matières, conserve leur contenu Markdown, puis redémarre le corps du
+document à la page 1. Les abréviations utilisent une liste de définitions
+Markdown et sont composées en deux colonnes à largeur fixe (libellé et
+définition), sans tableau LaTeX.
+
 ## Ajustement universel des tableaux (pleine largeur et hauteur minimale)
 
 Le template garantit de façon **systématique et transparente** que tous les tableaux (`gt`, `gtsummary`, `knitr::kable`, tibbles, tableaux Markdown) respectent les contraintes suivantes :

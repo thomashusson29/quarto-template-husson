@@ -1,0 +1,138 @@
+---
+title: "Extraction des interventions chirurgicales depuis les CSV"
+subtitle: "Extract intervention names from CSV logbooks"
+author: "Thomas Husson"
+date: "2026-09-30"
+lang: fr
+format:
+  husson-html:
+    toc: true
+    theme:
+      light: cosmo
+      dark: darkly
+    css:
+      - _extensions/husson/auto-dark.css
+      - _extensions/husson/auto-dark-os-detect.css
+      - _extensions/husson/auto-dark-plot-filter.css
+    include-in-header:
+      - text: |
+          <script src="../_extensions/husson/auto-dark-system.js"></script>
+      - text: |
+          <script src="../_extensions/husson/auto-dark-renderings.js"></script>
+  husson-pdf:
+    mainfont: "Times New Roman"
+    fontsize: 11pt
+    linestretch: 1.15
+    keep-tex: true
+    pdf-engine: xelatex
+    documentclass: scrartcl
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    language:
+      fr:
+        crossref-tbl-title: Tableau
+        crossref-tbl-prefix: Tableau
+        crossref-lot-title: Liste des tableaux
+execute:
+  enabled: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup-reticulate
+#| include: false
+library(reticulate)
+library(lubridate)
+
+# Configuration Python via reticulate
+use_python("/opt/homebrew/bin/python3")
+py_available()
+
+# Liste des fichiers CSV à traiter
+csv_files <- list.files(pattern = "\\.csv$", recursive = FALSE)
+csv_files
+```
+
+# Extraction des noms d'intervention
+
+Ce notebook extrait toutes les interventions uniques depuis la colonne `INTERVENTION` 
+de chaque fichier CSV du dossier d\logbooks_csv_totaux.
+
+```{python}
+#| label: extract-interventions-py
+#| include: false
+import pandas as pd
+import os
+
+dir_path = '.'
+csv_files = sorted([f for f in os.listdir(dir_path) if f.endswith('.csv')])
+
+all_interventions = {}
+
+for f in csv_files:
+    df = pd.read_csv(f)
+    if 'INTERVENTION' in df.columns:
+        interventions = df['INTERVENTION'].dropna().unique().tolist()
+        all_interventions[f] = interventions
+        print(f'{f}: {len(interventions)} interventions')
+    else:
+        print(f'{f}: colonne INTERVENTION non trouvée, colonnes disponibles: {df.columns.tolist()}')
+```
+
+```{r}
+#| label: extract-interventions-summary
+#| include: false
+library(reticulate)
+
+# Récupérer les résultats Python
+py_result <- py$all_interventions
+
+# Compiler le total
+total_interventions <- 0
+results_list <- list()
+
+for (f in names(py_result)) {
+    n <- length(py_result[[f]])
+    total_interventions <- total_interventions + n
+    results_list[[f]] <- paste0(f, ': ', n, ' interventions')
+}
+
+cat(sprintf("Total d'interventions uniques : %d\n", total_interventions))
+cat(sprintf("%s\n", results_list))
+```
+
+## Résumé par fichier
+
+| Fichier | Nombre d'interventions |
+|---|---|
+```{r}
+#| label: intervention-table
+knitr::kable(data.frame(
+  File = names(results_list),
+  Interventions = as.integer(gsub(".*: ", "", results_list)),
+  row.names = NULL
+), format = "html", align = "l")
+```
+```
+
+## Toutes les interventions uniques
+
+```{r}
+#| label: unique-interventions
+#| include: false
+unique_all <- unique(unlist(py_result))
+cat(sprintf("Total d'interventions uniques : %d\n", length(unique_all)))
+
+# Afficher les 20 premières par ordre alphabétique
+cat("\nPremières par ordre alphabétique:\n")
+for (interv in sort(unique_all)[1:20]) {
+  cat(sprintf("  - %s\n", interv))
+}
+
+# Sauvegarder la liste complète (conversion en caractères pour éviter l'erwriteLines)
+interventions_char <- as.character(sort(unique_all))
+writeLines(interventions_char, "interventions_uniques.txt")
+cat("\nListe sauvegardée dans interventions_uniques.txt\n")
+```
