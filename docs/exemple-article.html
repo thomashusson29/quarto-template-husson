@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Dr Thomas Husson">
+<meta name="author" content="Membre 1">
+<meta name="author" content="Membre 2">
 
-<title>Évaluation multicentrique de la perfusion hépatique normothermique</title>
+<title>Analyse statistique du jeu de données mtcars</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -293,15 +294,15 @@ window.Quarto = {
   <ul>
   <li><a href="#résumé" id="toc-résumé" class="nav-link active" data-scroll-target="#résumé"><span class="header-section-number">1</span> Résumé</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">2</span> Introduction</a></li>
-  <li><a href="#matériels-et-méthodes" id="toc-matériels-et-méthodes" class="nav-link" data-scroll-target="#matériels-et-méthodes"><span class="header-section-number">3</span> Matériels et Méthodes</a>
+  <li><a href="#méthodes" id="toc-méthodes" class="nav-link" data-scroll-target="#méthodes"><span class="header-section-number">3</span> Méthodes</a>
   <ul class="collapse">
-  <li><a href="#modèle-expérimental-et-recueil" id="toc-modèle-expérimental-et-recueil" class="nav-link" data-scroll-target="#modèle-expérimental-et-recueil"><span class="header-section-number">3.1</span> Modèle expérimental et recueil</a></li>
-  <li><a href="#données-de-perfusion" id="toc-données-de-perfusion" class="nav-link" data-scroll-target="#données-de-perfusion"><span class="header-section-number">3.2</span> Données de perfusion</a></li>
+  <li><a href="#modèle-linéaire" id="toc-modèle-linéaire" class="nav-link" data-scroll-target="#modèle-linéaire"><span class="header-section-number">3.1</span> Modèle linéaire</a></li>
+  <li><a href="#préparation-des-données" id="toc-préparation-des-données" class="nav-link" data-scroll-target="#préparation-des-données"><span class="header-section-number">3.2</span> Préparation des données</a></li>
   </ul></li>
   <li><a href="#résultats" id="toc-résultats" class="nav-link" data-scroll-target="#résultats"><span class="header-section-number">4</span> Résultats</a>
   <ul class="collapse">
-  <li><a href="#synthèse-quantitative-des-lactates" id="toc-synthèse-quantitative-des-lactates" class="nav-link" data-scroll-target="#synthèse-quantitative-des-lactates"><span class="header-section-number">4.1</span> Synthèse quantitative des lactates</a></li>
-  <li><a href="#cinétique-comparative" id="toc-cinétique-comparative" class="nav-link" data-scroll-target="#cinétique-comparative"><span class="header-section-number">4.2</span> Cinétique comparative</a></li>
+  <li><a href="#synthèse-descriptive-par-groupe" id="toc-synthèse-descriptive-par-groupe" class="nav-link" data-scroll-target="#synthèse-descriptive-par-groupe"><span class="header-section-number">4.1</span> Synthèse descriptive par groupe</a></li>
+  <li><a href="#relation-entre-poids-et-consommation" id="toc-relation-entre-poids-et-consommation" class="nav-link" data-scroll-target="#relation-entre-poids-et-consommation"><span class="header-section-number">4.2</span> Relation entre poids et consommation</a></li>
   </ul></li>
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">5</span> Discussion</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">6</span> Conclusion</a></li>
@@ -313,24 +314,32 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Évaluation multicentrique de la perfusion hépatique normothermique</h1>
-<p class="subtitle lead">Analyse observationnelle des biomarqueurs et cinétiques de récupération fonctionnelle</p>
+<h1 class="title">Analyse statistique du jeu de données mtcars</h1>
+<p class="subtitle lead">Exemple de rendu Article (HTML et DOCX)</p>
 </div>
 
 
 <div class="quarto-title-meta-author">
-  <div class="quarto-title-meta-heading">Auteur·rice</div>
+  <div class="quarto-title-meta-heading">Auteur·rice·s</div>
   <div class="quarto-title-meta-heading">Affiliations</div>
   
     <div class="quarto-title-meta-contents">
-    <p class="author">Dr Thomas Husson </p>
+    <p class="author">Membre 1 </p>
   </div>
   <div class="quarto-title-meta-contents">
         <p class="affiliation">
-            Service de Chirurgie Hépato-Biliaire, AP-HP
+            Hôpital 1
           </p>
         <p class="affiliation">
-            Université Paris Cité
+            Hôpital 2
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Membre 2 </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Hôpital 2
           </p>
       </div>
   </div>
@@ -341,7 +350,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Date de publication</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2 octobre 2026</p>
+      <p class="date">3 octobre 2026</p>
     </div>
   </div>
   
@@ -355,114 +364,109 @@ window.Quarto = {
 
 <section id="résumé" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="résumé"><span class="header-section-number">1</span> Résumé</h2>
-<p>La perfusion hépatique normothermique (<em>Normothermic Machine Perfusion</em>, NMP) s’impose comme une technique de référence pour l’évaluation dynamique de la viabilité des greffons hépatiques à critères élargis. Cette étude observationnelle collige les cinétiques de clairance des lactates, le métabolisme du glucose et l’évolution des résistances vasculaires hépatiques sur une cohorte consécutive de 48 greffons.</p>
+<p>Ce document illustre le rendu d’un article complet (formats HTML et DOCX) exclusivement basé sur le jeu de données standard <code>mtcars</code>. Nous analysons la relation entre la consommation de carburant (<code>mpg</code>), le poids (<code>wt</code>), la puissance (<code>hp</code>) et le nombre de cylindres (<code>cyl</code>).</p>
 </section>
 <section id="introduction" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2</span> Introduction</h2>
-<p>La préservation statique en hypothermie (+4 °C) limite la durée d’ischémie froide tolérable et ne permet aucune évaluation fonctionnelle active avant l’implantation. La perfusion normothermique extracorporelle maintient l’organe dans des conditions physiologiques actives (37 °C, oxygénation normoxique, substrats énergétiques).</p>
+<p>Le jeu de données <code>mtcars</code> regroupe les caractéristiques techniques de 32 modèles d’automobiles. Il permet d’illustrer la mise en forme des tableaux, des équations mathématiques, des encadrés et des graphiques adaptatifs en thème clair et sombre (One Dark Pro).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Critère principal de viabilité
+<span class="screen-reader-only">Note</span>Variable d’intérêt principale
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>La clairance rapide des lactates avec un taux perfusat <span class="math inline">\(\le 2{,}5\text{ mmol/L}\)</span> dans les premières 4 heures de perfusion constitue le marqueur prédictif le plus robuste de bon fonctionnement précoce post-transplantation.</p>
+<p>La consommation est exprimée en miles par gallon (<code>mpg</code>) et comparée selon l’architecture moteur (4, 6 ou 8 cylindres) et le type de transmission (<code>am</code>).</p>
 </div>
 </div>
 </section>
-<section id="matériels-et-méthodes" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="matériels-et-méthodes"><span class="header-section-number">3</span> Matériels et Méthodes</h2>
-<section id="modèle-expérimental-et-recueil" class="level3" data-number="3.1">
-<h3 data-number="3.1" class="anchored" data-anchor-id="modèle-expérimental-et-recueil"><span class="header-section-number">3.1</span> Modèle expérimental et recueil</h3>
-<p>Les perfusions ont été réalisées sur le dispositif standardisé avec un hématocrite cible de 15 à 20 % via l’utilisation de transporteurs d’oxygène érythrocytaires.</p>
-<p>L’indice de résistance vasculaire de l’artère hépatique (<span class="math inline">\(IR_{AH}\)</span>) est défini par la relation :</p>
+<section id="méthodes" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="méthodes"><span class="header-section-number">3</span> Méthodes</h2>
+<section id="modèle-linéaire" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="modèle-linéaire"><span class="header-section-number">3.1</span> Modèle linéaire</h3>
+<p>Nous considérons le modèle de régression linéaire multiple reliant la consommation <code>mpg</code> au poids <code>wt</code> et à la puissance <code>hp</code> :</p>
 <p><span class="math display">\[
-IR_{AH} = \frac{P_{art} - P_{vein}}{Q_{art}} \times 80
+\text{mpg}_i = \beta_0 + \beta_1 \cdot \text{wt}_i + \beta_2 \cdot \text{hp}_i + \varepsilon_i
 \]</span></p>
-<p>où <span class="math inline">\(P_{art}\)</span> représente la pression artérielle moyenne en mmHg et <span class="math inline">\(Q_{art}\)</span> le débit mesuré en mL/min.</p>
 </section>
-<section id="données-de-perfusion" class="level3" data-number="3.2">
-<h3 data-number="3.2" class="anchored" data-anchor-id="données-de-perfusion"><span class="header-section-number">3.2</span> Données de perfusion</h3>
+<section id="préparation-des-données" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="préparation-des-données"><span class="header-section-number">3.2</span> Préparation des données</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Données simulées représentatives d'une cohorte NMP</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>temps <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="ot">&lt;-</span> <span class="dv">24</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df_cinetique <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Temps_h =</span> temps,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Groupe =</span> <span class="fu">c</span>(<span class="st">"Protocole Optimisé"</span>, <span class="st">"Protocole Standard"</span>),</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span>n_per_group</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lactates =</span> <span class="fu">case_when</span>(</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      Groupe <span class="sc">==</span> <span class="st">"Protocole Optimisé"</span> <span class="sc">~</span> <span class="fl">8.5</span> <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fl">0.45</span> <span class="sc">*</span> Temps_h) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="fl">0.4</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      Groupe <span class="sc">==</span> <span class="st">"Protocole Standard"</span> <span class="sc">~</span> <span class="fl">8.7</span> <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fl">0.25</span> <span class="sc">*</span> Temps_h) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">Lactates =</span> <span class="fu">pmax</span>(<span class="fl">0.8</span>, Lactates)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>df_resume <span class="ot">&lt;-</span> df_cinetique <span class="sc">|&gt;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Groupe, Temps_h) <span class="sc">|&gt;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Moyenne =</span> <span class="fu">round</span>(<span class="fu">mean</span>(Lactates), <span class="dv">2</span>),</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">EcartType =</span> <span class="fu">round</span>(<span class="fu">sd</span>(Lactates), <span class="dv">2</span>),</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediane =</span> <span class="fu">round</span>(<span class="fu">median</span>(Lactates), <span class="dv">2</span>),</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df_cars <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Cylindres =</span> <span class="fu">factor</span>(cyl, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"4 cylindres"</span>, <span class="st">"6 cylindres"</span>, <span class="st">"8 cylindres"</span>)),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Transmission =</span> <span class="fu">factor</span>(am, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Automatique"</span>, <span class="st">"Manuelle"</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df_resume <span class="ot">&lt;-</span> df_cars <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Cylindres, Transmission) <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">Effectif =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">MPG_Moyen =</span> <span class="fu">round</span>(<span class="fu">mean</span>(mpg), <span class="dv">1</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">MPG_SD =</span> <span class="fu">round</span>(<span class="fu">sd</span>(mpg), <span class="dv">1</span>),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Poids_Moyen =</span> <span class="fu">round</span>(<span class="fu">mean</span>(wt), <span class="dv">2</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">Puissance_Moyenne =</span> <span class="fu">round</span>(<span class="fu">mean</span>(hp), <span class="dv">0</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
 <section id="résultats" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="résultats"><span class="header-section-number">4</span> Résultats</h2>
-<section id="synthèse-quantitative-des-lactates" class="level3" data-number="4.1">
-<h3 data-number="4.1" class="anchored" data-anchor-id="synthèse-quantitative-des-lactates"><span class="header-section-number">4.1</span> Synthèse quantitative des lactates</h3>
-<p>Le <a href="#tbl-lactates" class="quarto-xref">Tableau&nbsp;1</a> résume l’évolution moyenne et la dispersion des lactates sanguins au fil du temps selon le protocole appliqué.</p>
+<section id="synthèse-descriptive-par-groupe" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="synthèse-descriptive-par-groupe"><span class="header-section-number">4.1</span> Synthèse descriptive par groupe</h3>
+<p>Le <a href="#tbl-mtcars" class="quarto-xref">Tableau&nbsp;1</a> résume les caractéristiques moyennes des véhicules selon le nombre de cylindres et le type de boîte de vitesses.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">"gt"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  df_resume <span class="sc">|&gt;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_label</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">Groupe =</span> <span class="st">"Protocole appliqué"</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">Temps_h =</span> <span class="st">"Temps (h)"</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">Moyenne =</span> <span class="st">"Moyenne (mmol/L)"</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">EcartType =</span> <span class="st">"Écart-type"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">Mediane =</span> <span class="st">"Médiane"</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Cinétique de clairance des lactates"</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(df_resume, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Protocole"</span>, <span class="st">"Temps (h)"</span>, <span class="st">"Moyenne"</span>, <span class="st">"Écart-type"</span>, <span class="st">"Médiane"</span>))</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="tbl-lactates" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">Cylindres =</span> <span class="st">"Motorisation"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">Transmission =</span> <span class="st">"Transmission"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">Effectif =</span> <span class="st">"n"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">MPG_Moyen =</span> <span class="st">"MPG moyen"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">MPG_SD =</span> <span class="st">"Écart-type MPG"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">Poids_Moyen =</span> <span class="st">"Poids moyen (1000 lbs)"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">Puissance_Moyenne =</span> <span class="st">"Puissance (hp)"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Synthèse descriptive mtcars"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    df_resume,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Motorisation"</span>, <span class="st">"Transmission"</span>, <span class="st">"n"</span>, <span class="st">"MPG moyen"</span>, <span class="st">"ET MPG"</span>, <span class="st">"Poids moyen"</span>, <span class="st">"Puissance (hp)"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="tbl-mtcars" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lactates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la perfusion hépatique
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mtcars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tableau&nbsp;1: Caractéristiques descriptives du jeu de données mtcars par motorisation et transmission
 </figcaption>
-<div aria-describedby="tbl-lactates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-mtcars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="hkrawfbnea" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hkrawfbnea table {
+<div id="icpkrsxxmz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#icpkrsxxmz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hkrawfbnea thead, #hkrawfbnea tbody, #hkrawfbnea tfoot, #hkrawfbnea tr, #hkrawfbnea td, #hkrawfbnea th {
+#icpkrsxxmz thead, #icpkrsxxmz tbody, #icpkrsxxmz tfoot, #icpkrsxxmz tr, #icpkrsxxmz td, #icpkrsxxmz th {
   border-style: none;
 }
 
-#hkrawfbnea p {
+#icpkrsxxmz p {
   margin: 0;
   padding: 0;
 }
 
-#hkrawfbnea .gt_table {
+#icpkrsxxmz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -488,12 +492,12 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-left-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_caption {
+#icpkrsxxmz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hkrawfbnea .gt_title {
+#icpkrsxxmz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -505,7 +509,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-bottom-width: 0;
 }
 
-#hkrawfbnea .gt_subtitle {
+#icpkrsxxmz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -517,7 +521,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-top-width: 0;
 }
 
-#hkrawfbnea .gt_heading {
+#icpkrsxxmz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -529,13 +533,13 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-right-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_bottom_border {
+#icpkrsxxmz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_col_headings {
+#icpkrsxxmz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -550,7 +554,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-right-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_col_heading {
+#icpkrsxxmz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -570,7 +574,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   overflow-x: hidden;
 }
 
-#hkrawfbnea .gt_column_spanner_outer {
+#icpkrsxxmz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -582,15 +586,15 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 4px;
 }
 
-#hkrawfbnea .gt_column_spanner_outer:first-child {
+#icpkrsxxmz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hkrawfbnea .gt_column_spanner_outer:last-child {
+#icpkrsxxmz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hkrawfbnea .gt_column_spanner {
+#icpkrsxxmz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -602,11 +606,11 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   width: 100%;
 }
 
-#hkrawfbnea .gt_spanner_row {
+#icpkrsxxmz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hkrawfbnea .gt_group_heading {
+#icpkrsxxmz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -632,7 +636,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   text-align: left;
 }
 
-#hkrawfbnea .gt_empty_group_heading {
+#icpkrsxxmz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -647,15 +651,15 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   vertical-align: middle;
 }
 
-#hkrawfbnea .gt_from_md > :first-child {
+#icpkrsxxmz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hkrawfbnea .gt_from_md > :last-child {
+#icpkrsxxmz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hkrawfbnea .gt_row {
+#icpkrsxxmz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -674,7 +678,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   overflow-x: hidden;
 }
 
-#hkrawfbnea .gt_stub {
+#icpkrsxxmz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -687,7 +691,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 5px;
 }
 
-#hkrawfbnea .gt_stub_row_group {
+#icpkrsxxmz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -701,15 +705,15 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   vertical-align: top;
 }
 
-#hkrawfbnea .gt_row_group_first td {
+#icpkrsxxmz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hkrawfbnea .gt_row_group_first th {
+#icpkrsxxmz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hkrawfbnea .gt_summary_row {
+#icpkrsxxmz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -719,16 +723,16 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 5px;
 }
 
-#hkrawfbnea .gt_first_summary_row {
+#icpkrsxxmz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_first_summary_row.thick {
+#icpkrsxxmz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hkrawfbnea .gt_last_summary_row {
+#icpkrsxxmz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -738,7 +742,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-bottom-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_grand_summary_row {
+#icpkrsxxmz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -748,7 +752,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 5px;
 }
 
-#hkrawfbnea .gt_first_grand_summary_row {
+#icpkrsxxmz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -758,7 +762,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-top-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_last_grand_summary_row_top {
+#icpkrsxxmz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -768,11 +772,11 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-bottom-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_striped {
+#icpkrsxxmz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hkrawfbnea .gt_table_body {
+#icpkrsxxmz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -781,7 +785,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-bottom-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_footnotes {
+#icpkrsxxmz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -795,7 +799,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-right-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_footnote {
+#icpkrsxxmz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -804,7 +808,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 5px;
 }
 
-#hkrawfbnea .gt_sourcenotes {
+#icpkrsxxmz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -818,7 +822,7 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   border-right-color: #D3D3D3;
 }
 
-#hkrawfbnea .gt_sourcenote {
+#icpkrsxxmz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -826,72 +830,72 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
   padding-right: 5px;
 }
 
-#hkrawfbnea .gt_left {
+#icpkrsxxmz .gt_left {
   text-align: left;
 }
 
-#hkrawfbnea .gt_center {
+#icpkrsxxmz .gt_center {
   text-align: center;
 }
 
-#hkrawfbnea .gt_right {
+#icpkrsxxmz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hkrawfbnea .gt_font_normal {
+#icpkrsxxmz .gt_font_normal {
   font-weight: normal;
 }
 
-#hkrawfbnea .gt_font_bold {
+#icpkrsxxmz .gt_font_bold {
   font-weight: bold;
 }
 
-#hkrawfbnea .gt_font_italic {
+#icpkrsxxmz .gt_font_italic {
   font-style: italic;
 }
 
-#hkrawfbnea .gt_super {
+#icpkrsxxmz .gt_super {
   font-size: 65%;
 }
 
-#hkrawfbnea .gt_footnote_marks {
+#icpkrsxxmz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hkrawfbnea .gt_asterisk {
+#icpkrsxxmz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hkrawfbnea .gt_indent_1 {
+#icpkrsxxmz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hkrawfbnea .gt_indent_2 {
+#icpkrsxxmz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hkrawfbnea .gt_indent_3 {
+#icpkrsxxmz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hkrawfbnea .gt_indent_4 {
+#icpkrsxxmz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hkrawfbnea .gt_indent_5 {
+#icpkrsxxmz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#hkrawfbnea .katex-display {
+#icpkrsxxmz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#hkrawfbnea div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#icpkrsxxmz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -899,86 +903,72 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
 <table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_heading header">
-<td colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border">Cinétique de clairance des lactates</td>
+<td colspan="7" class="gt_heading gt_title gt_font_normal gt_bottom_border">Synthèse descriptive mtcars</td>
 </tr>
 <tr class="gt_col_headings even">
-<th id="Groupe" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Protocole appliqué</th>
-<th id="Temps_h" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temps (h)</th>
-<th id="Moyenne" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Moyenne (mmol/L)</th>
-<th id="EcartType" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Écart-type</th>
-<th id="Mediane" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Médiane</th>
+<th id="Cylindres" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Motorisation</th>
+<th id="Transmission" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Transmission</th>
+<th id="Effectif" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">n</th>
+<th id="MPG_Moyen" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">MPG moyen</th>
+<th id="MPG_SD" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Écart-type MPG</th>
+<th id="Poids_Moyen" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Poids moyen (1000 lbs)</th>
+<th id="Puissance_Moyenne" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Puissance (hp)</th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
 <tr class="odd">
-<td class="gt_row gt_center" headers="Groupe">Protocole Optimisé</td>
-<td class="gt_row gt_right" headers="Temps_h">0</td>
-<td class="gt_row gt_right" headers="Moyenne">8.53</td>
-<td class="gt_row gt_right" headers="EcartType">0.37</td>
-<td class="gt_row gt_right" headers="Mediane">8.53</td>
+<td class="gt_row gt_center" headers="Cylindres">4 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Automatique</td>
+<td class="gt_row gt_right" headers="Effectif">3</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">22.9</td>
+<td class="gt_row gt_right" headers="MPG_SD">1.5</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">2.94</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">85</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_center" headers="Groupe">Protocole Optimisé</td>
-<td class="gt_row gt_right" headers="Temps_h">1</td>
-<td class="gt_row gt_right" headers="Moyenne">5.39</td>
-<td class="gt_row gt_right" headers="EcartType">0.41</td>
-<td class="gt_row gt_right" headers="Mediane">5.28</td>
+<td class="gt_row gt_center" headers="Cylindres">4 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Manuelle</td>
+<td class="gt_row gt_right" headers="Effectif">8</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">28.1</td>
+<td class="gt_row gt_right" headers="MPG_SD">4.5</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">2.04</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">82</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_center" headers="Groupe">Protocole Optimisé</td>
-<td class="gt_row gt_right" headers="Temps_h">2</td>
-<td class="gt_row gt_right" headers="Moyenne">3.49</td>
-<td class="gt_row gt_right" headers="EcartType">0.34</td>
-<td class="gt_row gt_right" headers="Mediane">3.51</td>
+<td class="gt_row gt_center" headers="Cylindres">6 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Automatique</td>
+<td class="gt_row gt_right" headers="Effectif">4</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">19.1</td>
+<td class="gt_row gt_right" headers="MPG_SD">1.6</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">3.39</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">115</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_center" headers="Groupe">Protocole Optimisé</td>
-<td class="gt_row gt_right" headers="Temps_h">4</td>
-<td class="gt_row gt_right" headers="Moyenne">1.48</td>
-<td class="gt_row gt_right" headers="EcartType">0.41</td>
-<td class="gt_row gt_right" headers="Mediane">1.36</td>
+<td class="gt_row gt_center" headers="Cylindres">6 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Manuelle</td>
+<td class="gt_row gt_right" headers="Effectif">3</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">20.6</td>
+<td class="gt_row gt_right" headers="MPG_SD">0.8</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">2.76</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">132</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_center" headers="Groupe">Protocole Optimisé</td>
-<td class="gt_row gt_right" headers="Temps_h">6</td>
-<td class="gt_row gt_right" headers="Moyenne">0.84</td>
-<td class="gt_row gt_right" headers="EcartType">0.13</td>
-<td class="gt_row gt_right" headers="Mediane">0.80</td>
+<td class="gt_row gt_center" headers="Cylindres">8 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Automatique</td>
+<td class="gt_row gt_right" headers="Effectif">12</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">15.1</td>
+<td class="gt_row gt_right" headers="MPG_SD">2.8</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">4.10</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">194</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_center" headers="Groupe">Protocole Standard</td>
-<td class="gt_row gt_right" headers="Temps_h">0</td>
-<td class="gt_row gt_right" headers="Moyenne">8.72</td>
-<td class="gt_row gt_right" headers="EcartType">0.41</td>
-<td class="gt_row gt_right" headers="Mediane">8.63</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_center" headers="Groupe">Protocole Standard</td>
-<td class="gt_row gt_right" headers="Temps_h">1</td>
-<td class="gt_row gt_right" headers="Moyenne">6.86</td>
-<td class="gt_row gt_right" headers="EcartType">0.58</td>
-<td class="gt_row gt_right" headers="Mediane">6.86</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_center" headers="Groupe">Protocole Standard</td>
-<td class="gt_row gt_right" headers="Temps_h">2</td>
-<td class="gt_row gt_right" headers="Moyenne">5.23</td>
-<td class="gt_row gt_right" headers="EcartType">0.40</td>
-<td class="gt_row gt_right" headers="Mediane">5.30</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_center" headers="Groupe">Protocole Standard</td>
-<td class="gt_row gt_right" headers="Temps_h">4</td>
-<td class="gt_row gt_right" headers="Moyenne">3.07</td>
-<td class="gt_row gt_right" headers="EcartType">0.64</td>
-<td class="gt_row gt_right" headers="Mediane">3.06</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_center" headers="Groupe">Protocole Standard</td>
-<td class="gt_row gt_right" headers="Temps_h">6</td>
-<td class="gt_row gt_right" headers="Moyenne">2.00</td>
-<td class="gt_row gt_right" headers="EcartType">0.52</td>
-<td class="gt_row gt_right" headers="Mediane">2.02</td>
+<td class="gt_row gt_center" headers="Cylindres">8 cylindres</td>
+<td class="gt_row gt_center" headers="Transmission">Manuelle</td>
+<td class="gt_row gt_right" headers="Effectif">2</td>
+<td class="gt_row gt_right" headers="MPG_Moyen">15.4</td>
+<td class="gt_row gt_right" headers="MPG_SD">0.6</td>
+<td class="gt_row gt_right" headers="Poids_Moyen">3.37</td>
+<td class="gt_row gt_right" headers="Puissance_Moyenne">300</td>
 </tr>
 </tbody>
 </table>
@@ -990,36 +980,30 @@ Tableau&nbsp;1: Évolution de la lactatémie moyenne (mmol/L) au cours de la per
 </div>
 </div>
 </section>
-<section id="cinétique-comparative" class="level3" data-number="4.2">
-<h3 data-number="4.2" class="anchored" data-anchor-id="cinétique-comparative"><span class="header-section-number">4.2</span> Cinétique comparative</h3>
-<p>La <a href="#fig-lactates" class="quarto-xref">Figure&nbsp;1</a> illustre la diminution accélérée des lactates dans le groupe ayant bénéficié du protocole optimisé, atteignant le seuil de viabilité dès la 2e heure.</p>
+<section id="relation-entre-poids-et-consommation" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="relation-entre-poids-et-consommation"><span class="header-section-number">4.2</span> Relation entre poids et consommation</h3>
+<p>La <a href="#fig-mtcars-wt" class="quarto-xref">Figure&nbsp;1</a> illustre la diminution de la consommation (<code>mpg</code>) en fonction du poids (<code>wt</code>) et du nombre de cylindres. Le fond transparent et la palette One Dark Pro sont appliqués automatiquement par <code>auto_dark_on()</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_resume <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Temps_h, <span class="at">y =</span> Moyenne, <span class="at">color =</span> Groupe, <span class="at">group =</span> Groupe)) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="fu">pmax</span>(<span class="dv">0</span>, Moyenne <span class="sc">-</span> EcartType), <span class="at">ymax =</span> Moyenne <span class="sc">+</span> EcartType), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#e06c75"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">5.2</span>, <span class="at">y =</span> <span class="fl">2.7</span>, <span class="at">label =</span> <span class="st">"Seuil viabilité (2.5 mmol/L)"</span>, <span class="at">color =</span> <span class="st">"#e06c75"</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface =</span> <span class="st">"italic"</span>) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> temps) <span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Temps de perfusion (heures)"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Lactatémie moyenne (mmol/L)"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Protocole"</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_cars, <span class="fu">aes</span>(<span class="at">x =</span> wt, <span class="at">y =</span> mpg, <span class="at">color =</span> Cylindres)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.2</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Consommation en fonction du poids (mtcars)"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Régression linéaire par groupe de cylindrée"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Poids (1000 lbs)"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Consommation (miles/gallon)"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Motorisation"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="fig-lactates" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-mtcars-wt" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-lactates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="exemple-article_files/figure-html/fig-lactates-1.png" class="img-fluid figure-img" width="768">
+<div aria-describedby="fig-mtcars-wt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="exemple-article_files/figure-html/fig-mtcars-wt-1.png" class="img-fluid figure-img" width="768">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lactates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Cinétique de lactatémie selon le groupe d’étude (moyenne ± écart-type)
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mtcars-wt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Consommation (mpg) en fonction du poids (wt) et du nombre de cylindres sur mtcars
 </figcaption>
 </figure>
 </div>
@@ -1029,24 +1013,24 @@ Figure&nbsp;1: Cinétique de lactatémie selon le groupe d’étude (moyenne ± 
 </section>
 <section id="discussion" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="discussion"><span class="header-section-number">5</span> Discussion</h2>
-<p>L’utilisation du protocole optimisé démontre une accélération marquée de la métabolisation des lactates hépatiques, traduisant une reprise précoce de la phosphorylation oxydative mitochondriale et du cycle de Krebs. Les paramètres hémodynamiques et la production biliaire concordent avec ce rétablissement métabolique précoce.</p>
+<p>L’analyse descriptive et graphique de <code>mtcars</code> met en évidence l’effet conjoint de la masse du véhicule et de la cylindrée sur la consommation.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Astuce</span>Application en pratique clinique
+<span class="screen-reader-only">Astuce</span>Reproductibilité
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>La standardisation des prélèvements horaires à la console de perfusion permet de valider le greffon sans allonger inutilement le temps de perfusion au-delà de 4 heures lorsque les critères sont validés.</p>
+<p>Ce document utilise uniquement le jeu de données interne <code>mtcars</code> de R, sans dépendance à des données externes.</p>
 </div>
 </div>
 </section>
 <section id="conclusion" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">6</span> Conclusion</h2>
-<p>Ce document illustre la mise en page d’un article scientifique avec le template Husson, incluant l’intégration des tableaux, graphiques vectoriels, équations et annotations méthodologiques.</p>
+<p>Cet exemple présente les fonctionnalités de mise en page HTML et Word DOCX du template sur le jeu de données <code>mtcars</code>.</p>
 </section>
 
 </main>

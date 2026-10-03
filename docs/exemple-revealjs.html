@@ -9,8 +9,8 @@
 <link href="exemple-revealjs_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Dr Thomas Husson">
-  <title>Perfusion Hépatique Normothermique</title>
+  <meta name="author" content="Membre 1, Membre 2 — Hôpital 1, Hôpital 2">
+  <title>Analyse exploratoire de mtcars</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -150,30 +150,35 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Perfusion Hépatique Normothermique</h1>
-  <p class="subtitle">Évaluation dynamique et biomarqueurs de viabilité du greffon</p>
+  <h1 class="title">Analyse exploratoire de mtcars</h1>
+  <p class="subtitle">Présentation RevealJS avec adaptation automatique One Dark Pro</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Dr Thomas Husson 
+Membre 1, Membre 2 — Hôpital 1, Hôpital 2 
 </div>
 </div>
 </div>
 
-  <p class="date">2 octobre 2026</p>
+  <p class="date">3 octobre 2026</p>
 </section>
 <section>
-<section id="contexte-clinique" class="title-slide slide level1 center" data-nav-title="CONTEXTE" data-nav-h1="CONTEXTE" data-nav-bc="[]" data-nav-active="CONTEXTE">
-<h1>Contexte clinique</h1>
+<section id="introduction" class="title-slide slide level1 center" data-nav-title="INTRODUCTION" data-nav-h1="INTRODUCTION" data-nav-bc="[]" data-nav-active="INTRODUCTION">
+<h1>Introduction</h1>
 
 </section>
-<section id="problématique-du-don-à-critères-élargis" class="slide level2" data-nav-title="Donneurs" data-nav-h1="CONTEXTE" data-nav-bc="[&quot;Donneurs&quot;]" data-nav-active="Donneurs">
-<h2>Problématique du don à critères élargis</h2>
+<section id="présentation-du-jeu-de-données-mtcars" class="slide level2" data-nav-title="Jeu de données" data-nav-h1="INTRODUCTION" data-nav-bc="[&quot;Jeu de données&quot;]" data-nav-active="Jeu de données">
+<h2>Présentation du jeu de données mtcars</h2>
 <ul>
-<li><strong>Pénurie d’organes</strong> : nécessité d’utiliser des greffons de donneurs âgés ou décédés par arrêt circulatoire (DDAC).</li>
-<li><strong>Vulnérabilité accrue</strong> à l’ischémie-reperfusion froide conventionnelle à +4 °C.</li>
-<li><strong>Risque d’échec primaire</strong> du greffon (<em>Primary Non-Function</em>) ou de dysfonction précoce (<em>Early Allograft Dysfunction</em>).</li>
+<li><strong>Échantillon</strong> : 32 modèles d’automobiles issus du package <code>datasets</code> de R.</li>
+<li><strong>Variables étudiées</strong> :
+<ul>
+<li><code>mpg</code> : consommation en miles par gallon.</li>
+<li><code>wt</code> : poids en milliers de livres (<code>1000 lbs</code>).</li>
+<li><code>hp</code> : puissance brute en chevaux (<code>horsepower</code>).</li>
+<li><code>cyl</code> : nombre de cylindres (4, 6 ou 8).</li>
+</ul></li>
 </ul>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
@@ -181,272 +186,470 @@ Dr Thomas Husson
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Enjeu clé</strong></p>
+<p><strong>Objectif de la présentation</strong></p>
 </div>
 <div class="callout-content">
-<p>Comment tester la fonction hépatique <strong>in vitro</strong> avant de prendre la décision irréversible d’implanter le greffon ?</p>
+<p>Illustrer le rendu RevealJS du template et l’adaptation automatique des graphiques R au thème <strong>One Dark Pro</strong> uniquement sur <code>mtcars</code>.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="principe-de-la-machine-de-perfusion" class="slide level2" data-nav-title="Machine" data-nav-h1="CONTEXTE" data-nav-bc="[&quot;Machine&quot;]" data-nav-active="Machine">
-<h2>Principe de la machine de perfusion</h2>
+<section id="organisation-de-lanalyse" class="slide level2" data-nav-title="Plan" data-nav-h1="INTRODUCTION" data-nav-bc="[&quot;Plan&quot;]" data-nav-active="Plan">
+<h2>Organisation de l’analyse</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<h3 data-nav-h1="CONTEXTE" data-nav-bc="[&quot;Machine&quot;,&quot;Préservation active à 37 °C&quot;]" data-nav-active="Préservation active à 37 °C" id="préservation-active-à-37-c">Préservation active à 37 °C</h3>
+<h3 data-nav-h1="INTRODUCTION" data-nav-bc="[&quot;Plan&quot;,&quot;Volet descriptif&quot;]" data-nav-active="Volet descriptif" id="volet-descriptif">Volet descriptif</h3>
 <ul>
-<li>Apport continu en oxygène et nutriments</li>
-<li>Maintien du métabolisme aérobie</li>
-<li>Restauration des réserves en ATP</li>
+<li>Répartition par nombre de cylindres</li>
+<li>Comparaison boîte automatique vs manuelle</li>
+<li>Statistiques de position et dispersion</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<h3 data-nav-h1="CONTEXTE" data-nav-bc="[&quot;Machine&quot;,&quot;Évaluation dynamique&quot;]" data-nav-active="Évaluation dynamique" id="évaluation-dynamique">Évaluation dynamique</h3>
+<h3 data-nav-h1="INTRODUCTION" data-nav-bc="[&quot;Plan&quot;,&quot;Volet graphique&quot;]" data-nav-active="Volet graphique" id="volet-graphique">Volet graphique</h3>
 <ul>
-<li>Clairance active des lactates</li>
-<li>Synthèse de bile de qualité</li>
-<li>Débits artériels et portes stables</li>
+<li>Relation poids (<code>wt</code>) et consommation (<code>mpg</code>)</li>
+<li>Distribution de la puissance (<code>hp</code>)</li>
+<li>Tableau complet défilable (<code>sticky</code>)</li>
 </ul>
 </div></div>
 </section></section>
 <section>
-<section id="méthodologie" class="title-slide slide level1 center" data-nav-title="MÉTHODOLOGIE" data-nav-h1="MÉTHODOLOGIE" data-nav-bc="[]" data-nav-active="MÉTHODOLOGIE">
-<h1>Méthodologie</h1>
+<section id="statistiques-descriptives" class="title-slide slide level1 center" data-nav-title="DESCRIPTIF" data-nav-h1="DESCRIPTIF" data-nav-bc="[]" data-nav-active="DESCRIPTIF">
+<h1>Statistiques descriptives</h1>
 
 </section>
-<section id="design-expérimental" class="slide level2" data-nav-title="Design" data-nav-h1="MÉTHODOLOGIE" data-nav-bc="[&quot;Design&quot;]" data-nav-active="Design">
-<h2>Design expérimental</h2>
-<p>Comparaison de deux protocoles sur un modèle préclinique standardisé :</p>
+<section id="synthèse-par-motorisation" class="slide level2" data-nav-title="Motorisation" data-nav-h1="DESCRIPTIF" data-nav-bc="[&quot;Motorisation&quot;]" data-nav-active="Motorisation">
+<h2>Synthèse par motorisation</h2>
+<p>Comparaison des moyennes observées sur les 32 véhicules de <code>mtcars</code> :</p>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Paramètre</th>
-<th style="text-align: center;">Protocole Standard</th>
-<th style="text-align: center;">Protocole Optimisé Husson</th>
+<th style="text-align: left;">Groupe</th>
+<th style="text-align: center;">Effectif</th>
+<th style="text-align: center;">MPG moyen</th>
+<th style="text-align: center;">Poids moyen (1000 lbs)</th>
+<th style="text-align: center;">Puissance moyenne (hp)</th>
+<th style="text-align: center;">1/4 mile moyen (qsec)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Température cible</td>
-<td style="text-align: center;">37.0 °C</td>
-<td style="text-align: center;">37.0 °C</td>
+<td style="text-align: left;"><strong>4 cylindres</strong></td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">26.7</td>
+<td style="text-align: center;">2.29</td>
+<td style="text-align: center;">82.6</td>
+<td style="text-align: center;">19.1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Transporteur d’O2</td>
-<td style="text-align: center;">CGR lavés</td>
-<td style="text-align: center;">CGR + Décharge autologue</td>
+<td style="text-align: left;"><strong>6 cylindres</strong></td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">19.7</td>
+<td style="text-align: center;">3.12</td>
+<td style="text-align: center;">122.3</td>
+<td style="text-align: center;">18.0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Oxygénation pO2</td>
-<td style="text-align: center;">200–250 mmHg</td>
-<td style="text-align: center;">280–320 mmHg</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tamponnage pH</td>
-<td style="text-align: center;">Bicarbonate continu</td>
-<td style="text-align: center;">Régulation automatisée</td>
+<td style="text-align: left;"><strong>8 cylindres</strong></td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">15.1</td>
+<td style="text-align: center;">4.00</td>
+<td style="text-align: center;">209.2</td>
+<td style="text-align: center;">16.8</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="critères-décisionnels-de-viabilité" class="slide level2" data-nav-title="Critères" data-nav-h1="MÉTHODOLOGIE" data-nav-bc="[&quot;Critères&quot;]" data-nav-active="Critères">
-<h2>Critères décisionnels de viabilité</h2>
+<section id="paramètres-du-modèle-linéaire" class="slide level2" data-nav-title="Modèle" data-nav-h1="DESCRIPTIF" data-nav-bc="[&quot;Modèle&quot;]" data-nav-active="Modèle">
+<h2>Paramètres du modèle linéaire</h2>
 <ul>
-<li><strong>Lactates perfusat</strong> : chute sous <span class="math inline">2{,}5\text{ mmol/L}</span> à H2 ou H4</li>
-<li><strong>Production de bile</strong> : <span class="math inline">&gt; 10\text{ mL}</span> à 4 heures avec pH biliaire <span class="math inline">&gt; 7{,}50</span></li>
-<li><strong>Résistances vasculaires</strong> :
-<ul>
-<li>Débit artériel <span class="math inline">&gt; 150\text{ mL/min}</span></li>
-<li>Débit portal <span class="math inline">&gt; 500\text{ mL/min}</span></li>
-</ul></li>
+<li><strong>Équation estimée</strong> : <span class="math inline">\text{mpg} = \beta_0 + \beta_1 \cdot \text{wt} + \beta_2 \cdot \text{hp}</span></li>
+<li><strong>Effet du poids (<code>wt</code>)</strong> : baisse moyenne de <span class="math inline">-3{,}88\text{ mpg}</span> par millier de livres supplémentaire (<span class="math inline">p &lt; 0{,}001</span>).</li>
+<li><strong>Effet de la puissance (<code>hp</code>)</strong> : baisse moyenne de <span class="math inline">-0{,}032\text{ mpg}</span> par cheval supplémentaire (<span class="math inline">p &lt; 0{,}01</span>).</li>
+<li><strong>Coefficient de détermination</strong> : <span class="math inline">R^2 = 0{,}827</span>.</li>
 </ul>
 </section></section>
 <section>
-<section id="résultats-biologiques" class="title-slide slide level1 center" data-nav-title="RÉSULTATS" data-nav-h1="RÉSULTATS" data-nav-bc="[]" data-nav-active="RÉSULTATS">
-<h1>Résultats biologiques</h1>
+<section id="visualisations-r" class="title-slide slide level1 center" data-nav-title="GRAPHIQUES" data-nav-h1="GRAPHIQUES" data-nav-bc="[]" data-nav-active="GRAPHIQUES">
+<h1>Visualisations R</h1>
 
 </section>
-<section id="cinétique-de-clairance-des-lactates" class="slide level2" data-nav-title="Lactates" data-nav-h1="RÉSULTATS" data-nav-bc="[&quot;Lactates&quot;]" data-nav-active="Lactates">
-<h2>Cinétique de clairance des lactates</h2>
+<section id="consommation-selon-le-poids" class="slide level2" data-nav-title="Poids vs MPG" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Poids vs MPG&quot;]" data-nav-active="Poids vs MPG">
+<h2>Consommation selon le poids</h2>
 
-<img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-lactates-1.png" id="fig-slides-lactates" width="912" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-mpg-wt-1.png" id="fig-slides-mpg-wt" width="912" class="r-stretch quarto-figure-center"><p class="caption">
 Figure&nbsp;1
 </p></section>
-<section id="débits-vasculaires-et-oxygénation" class="slide level2" data-nav-title="Débits" data-nav-h1="RÉSULTATS" data-nav-bc="[&quot;Débits&quot;]" data-nav-active="Débits">
-<h2>Débits vasculaires et oxygénation</h2>
+<section id="distribution-de-la-puissance-par-cylindrée" class="slide level2" data-nav-title="Puissance" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Puissance&quot;]" data-nav-active="Puissance">
+<h2>Distribution de la puissance par cylindrée</h2>
 
-<img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-vasc-1.png" id="fig-slides-vasc" width="912" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-hp-cyl-1.png" id="fig-slides-hp-cyl" width="912" class="r-stretch quarto-figure-center"><p class="caption">
 Figure&nbsp;2
 </p></section>
-<section id="données-individuelles" class="slide level2 scrollable" data-nav-title="Données" data-nav-h1="RÉSULTATS" data-nav-bc="[&quot;Données&quot;]" data-nav-active="Données">
-<h2>Données individuelles</h2>
-<p>Le tableau ci-dessous illustre le titre fixe (<code>sticky</code>) sur diapositive défilable :</p>
+<section id="données-individuelles-mtcars" class="slide level2 scrollable" data-nav-title="Données" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Données&quot;]" data-nav-active="Données">
+<h2>Données individuelles mtcars</h2>
+<p>Tableau défilable avec titre fixe (<code>sticky</code>) :</p>
+<div class="cell">
+<div id="tbl-slides-scroll" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-slides-scroll-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-slides-scroll-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Identifiant</th>
-<th style="text-align: center;">Protocole</th>
-<th style="text-align: center;">Lactate H0</th>
-<th style="text-align: center;">Lactate H2</th>
-<th style="text-align: center;">Lactate H4</th>
-<th style="text-align: center;">Débit Artériel</th>
-<th style="text-align: center;">Bile (mL)</th>
-<th style="text-align: center;">Décision</th>
+<th style="text-align: left;">Modèle</th>
+<th style="text-align: right;">MPG</th>
+<th style="text-align: right;">Cyl</th>
+<th style="text-align: right;">Disp</th>
+<th style="text-align: right;">HP</th>
+<th style="text-align: right;">Poids</th>
+<th style="text-align: right;">Qsec</th>
+<th style="text-align: left;">Transmission</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-01</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">9.8</td>
-<td style="text-align: center;">8.2</td>
-<td style="text-align: center;">4.8</td>
-<td style="text-align: center;">110</td>
-<td style="text-align: center;">4.2</td>
-<td style="text-align: center;">Récalcitrant</td>
+<td style="text-align: left;">Mazda RX4</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">2.620</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: left;">Manuelle</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-02</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">9.1</td>
-<td style="text-align: center;">7.5</td>
-<td style="text-align: center;">4.1</td>
-<td style="text-align: center;">125</td>
-<td style="text-align: center;">5.1</td>
-<td style="text-align: center;">Validé tardif</td>
+<td style="text-align: left;">Mazda RX4 Wag</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">2.875</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: left;">Manuelle</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-03</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">9.5</td>
-<td style="text-align: center;">8.0</td>
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">95</td>
-<td style="text-align: center;">3.8</td>
-<td style="text-align: center;">Non validé</td>
+<td style="text-align: left;">Datsun 710</td>
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">108.0</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">2.320</td>
+<td style="text-align: right;">18.61</td>
+<td style="text-align: left;">Manuelle</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-04</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">8.9</td>
-<td style="text-align: center;">7.1</td>
-<td style="text-align: center;">3.9</td>
-<td style="text-align: center;">140</td>
-<td style="text-align: center;">6.0</td>
-<td style="text-align: center;">Validé</td>
+<td style="text-align: left;">Hornet 4 Drive</td>
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">258.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.215</td>
+<td style="text-align: right;">19.44</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-05</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">9.7</td>
-<td style="text-align: center;">8.3</td>
-<td style="text-align: center;">4.4</td>
-<td style="text-align: center;">120</td>
-<td style="text-align: center;">4.9</td>
-<td style="text-align: center;">Validé tardif</td>
+<td style="text-align: left;">Hornet Sportabout</td>
+<td style="text-align: right;">18.7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">360.0</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">3.440</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-06</strong></td>
-<td style="text-align: center;">Standard</td>
-<td style="text-align: center;">9.4</td>
-<td style="text-align: center;">7.9</td>
-<td style="text-align: center;">4.2</td>
-<td style="text-align: center;">105</td>
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">Validé</td>
+<td style="text-align: left;">Valiant</td>
+<td style="text-align: right;">18.1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">225.0</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">3.460</td>
+<td style="text-align: right;">20.22</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-07</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">9.2</td>
-<td style="text-align: center;">2.1</td>
-<td style="text-align: center;">1.1</td>
-<td style="text-align: center;">185</td>
-<td style="text-align: center;">12.4</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Duster 360</td>
+<td style="text-align: right;">14.3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">360.0</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">3.570</td>
+<td style="text-align: right;">15.84</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-08</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">8.8</td>
-<td style="text-align: center;">1.9</td>
-<td style="text-align: center;">0.9</td>
-<td style="text-align: center;">210</td>
-<td style="text-align: center;">14.2</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Merc 240D</td>
+<td style="text-align: right;">24.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">146.7</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">3.190</td>
+<td style="text-align: right;">20.00</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-09</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">9.5</td>
-<td style="text-align: center;">2.4</td>
-<td style="text-align: center;">1.2</td>
-<td style="text-align: center;">175</td>
-<td style="text-align: center;">11.8</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Merc 230</td>
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">140.8</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">3.150</td>
+<td style="text-align: right;">22.90</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-10</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">9.0</td>
-<td style="text-align: center;">2.0</td>
-<td style="text-align: center;">1.0</td>
-<td style="text-align: center;">190</td>
-<td style="text-align: center;">15.0</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Merc 280</td>
+<td style="text-align: right;">19.2</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">167.6</td>
+<td style="text-align: right;">123</td>
+<td style="text-align: right;">3.440</td>
+<td style="text-align: right;">18.30</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>G-11</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">9.6</td>
-<td style="text-align: center;">2.2</td>
-<td style="text-align: center;">0.8</td>
-<td style="text-align: center;">225</td>
-<td style="text-align: center;">16.5</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Merc 280C</td>
+<td style="text-align: right;">17.8</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">167.6</td>
+<td style="text-align: right;">123</td>
+<td style="text-align: right;">3.440</td>
+<td style="text-align: right;">18.90</td>
+<td style="text-align: left;">Automatique</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>G-12</strong></td>
-<td style="text-align: center;">Optimisé</td>
-<td style="text-align: center;">9.1</td>
-<td style="text-align: center;">2.3</td>
-<td style="text-align: center;">1.1</td>
-<td style="text-align: center;">195</td>
-<td style="text-align: center;">13.9</td>
-<td style="text-align: center;">Validé précoce</td>
+<td style="text-align: left;">Merc 450SE</td>
+<td style="text-align: right;">16.4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">275.8</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">4.070</td>
+<td style="text-align: right;">17.40</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Merc 450SL</td>
+<td style="text-align: right;">17.3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">275.8</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">3.730</td>
+<td style="text-align: right;">17.60</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Merc 450SLC</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">275.8</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">3.780</td>
+<td style="text-align: right;">18.00</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cadillac Fleetwood</td>
+<td style="text-align: right;">10.4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">472.0</td>
+<td style="text-align: right;">205</td>
+<td style="text-align: right;">5.250</td>
+<td style="text-align: right;">17.98</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lincoln Continental</td>
+<td style="text-align: right;">10.4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">460.0</td>
+<td style="text-align: right;">215</td>
+<td style="text-align: right;">5.424</td>
+<td style="text-align: right;">17.82</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Chrysler Imperial</td>
+<td style="text-align: right;">14.7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">440.0</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">5.345</td>
+<td style="text-align: right;">17.42</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fiat 128</td>
+<td style="text-align: right;">32.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">78.7</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">2.200</td>
+<td style="text-align: right;">19.47</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Honda Civic</td>
+<td style="text-align: right;">30.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">75.7</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">1.615</td>
+<td style="text-align: right;">18.52</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toyota Corolla</td>
+<td style="text-align: right;">33.9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">71.1</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">1.835</td>
+<td style="text-align: right;">19.90</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toyota Corona</td>
+<td style="text-align: right;">21.5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">120.1</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">2.465</td>
+<td style="text-align: right;">20.01</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dodge Challenger</td>
+<td style="text-align: right;">15.5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">318.0</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">3.520</td>
+<td style="text-align: right;">16.87</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AMC Javelin</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">304.0</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">3.435</td>
+<td style="text-align: right;">17.30</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Camaro Z28</td>
+<td style="text-align: right;">13.3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">350.0</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">3.840</td>
+<td style="text-align: right;">15.41</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pontiac Firebird</td>
+<td style="text-align: right;">19.2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">400.0</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">3.845</td>
+<td style="text-align: right;">17.05</td>
+<td style="text-align: left;">Automatique</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fiat X1-9</td>
+<td style="text-align: right;">27.3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">79.0</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">1.935</td>
+<td style="text-align: right;">18.90</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Porsche 914-2</td>
+<td style="text-align: right;">26.0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">120.3</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">2.140</td>
+<td style="text-align: right;">16.70</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lotus Europa</td>
+<td style="text-align: right;">30.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">95.1</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">1.513</td>
+<td style="text-align: right;">16.90</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ford Pantera L</td>
+<td style="text-align: right;">15.8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">351.0</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: right;">3.170</td>
+<td style="text-align: right;">14.50</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ferrari Dino</td>
+<td style="text-align: right;">19.7</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">145.0</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">2.770</td>
+<td style="text-align: right;">15.50</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Maserati Bora</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">301.0</td>
+<td style="text-align: right;">335</td>
+<td style="text-align: right;">3.570</td>
+<td style="text-align: right;">14.60</td>
+<td style="text-align: left;">Manuelle</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Volvo 142E</td>
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">121.0</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">2.780</td>
+<td style="text-align: right;">18.60</td>
+<td style="text-align: left;">Manuelle</td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</figure>
+</div>
+</div>
 </section></section>
 <section>
-<section id="conclusion-perspectives" class="title-slide slide level1 center" data-nav-title="SYNTHÈSE" data-nav-h1="SYNTHÈSE" data-nav-bc="[]" data-nav-active="SYNTHÈSE">
-<h1>Conclusion &amp; Perspectives</h1>
+<section id="synthèse" class="title-slide slide level1 center" data-nav-title="SYNTHÈSE" data-nav-h1="SYNTHÈSE" data-nav-bc="[]" data-nav-active="SYNTHÈSE">
+<h1>Synthèse</h1>
 
 </section>
-<section id="synthèse-comparative" class="slide level2" data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Synthèse comparative&quot;]" data-nav-active="Synthèse comparative">
-<h2>Synthèse comparative</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h3 data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Synthèse comparative&quot;,&quot;Atouts observés&quot;]" data-nav-active="Atouts observés" id="atouts-observés">Atouts observés</h3>
-<ul>
-<li>Récupération métabolique dès la 2e heure</li>
-<li>Débits vasculaires stables sans vasospasme</li>
-<li>Évaluation fonctionnelle en toute sécurité</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<h3 data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Synthèse comparative&quot;,&quot;Perspectives de transfert&quot;]" data-nav-active="Perspectives de transfert" id="perspectives-de-transfert">Perspectives de transfert</h3>
-<ul>
-<li>Extension aux greffons stéatosiques</li>
-<li>Standardisation du recueil automatisé</li>
-<li>Déploiement en routine clinique</li>
-</ul>
-</div></div>
-</section>
-<section id="points-à-retenir" class="slide level2" data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Points à retenir&quot;]" data-nav-active="Points à retenir">
-<h2>Points à retenir</h2>
+<section id="points-clés" class="slide level2" data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Points clés&quot;]" data-nav-active="Points clés">
+<h2>Points clés</h2>
 <ol type="1">
-<li>La NMP transforme un organe passif en un organe fonctionnel évaluable.</li>
-<li>Le basculement sombre/clair One Dark Pro s’applique instantanément au diapo et aux graphiques R.</li>
-<li>Le fil d’Ariane interactif assure un repérage immédiat au cours de la présentation.</li>
+<li>Toutes les figures utilisent exclusivement le jeu de données <code>mtcars</code>.</li>
+<li>Le fond transparent et la palette One Dark Pro sont appliqués automatiquement via <code>auto_dark_on()</code>.</li>
+<li>Le basculement clair/sombre permute dynamiquement les images et leur compagnon <code>*-auto-dark.png</code>.</li>
 </ol>
 
 </section></section>

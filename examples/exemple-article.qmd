@@ -1,12 +1,15 @@
 ---
-title: "Évaluation multicentrique de la perfusion hépatique normothermique"
-subtitle: "Analyse observationnelle des biomarqueurs et cinétiques de récupération fonctionnelle"
+title: "Analyse statistique du jeu de données mtcars"
+subtitle: "Exemple de rendu Article (HTML et DOCX)"
 author:
-  - name: "Dr Thomas Husson"
+  - name: "Membre 1"
     affiliations:
-      - "Service de Chirurgie Hépato-Biliaire, AP-HP"
-      - "Université Paris Cité"
-date: "2026-10-02"
+      - "Hôpital 1"
+      - "Hôpital 2"
+  - name: "Membre 2"
+    affiliations:
+      - "Hôpital 2"
+date: "2026-10-03"
 lang: fr
 format:
   husson-html:
@@ -41,128 +44,115 @@ library(dplyr)
 
 ## Résumé
 
-La perfusion hépatique normothermique (*Normothermic Machine Perfusion*, NMP) s'impose comme une technique de référence pour l'évaluation dynamique de la viabilité des greffons hépatiques à critères élargis. Cette étude observationnelle collige les cinétiques de clairance des lactates, le métabolisme du glucose et l'évolution des résistances vasculaires hépatiques sur une cohorte consécutive de 48 greffons.
+Ce document illustre le rendu d'un article complet (formats HTML et DOCX) exclusivement basé sur le jeu de données standard `mtcars`. Nous analysons la relation entre la consommation de carburant (`mpg`), le poids (`wt`), la puissance (`hp`) et le nombre de cylindres (`cyl`).
 
 ## Introduction
 
-La préservation statique en hypothermie (+4 °C) limite la durée d'ischémie froide tolérable et ne permet aucune évaluation fonctionnelle active avant l'implantation. La perfusion normothermique extracorporelle maintient l'organe dans des conditions physiologiques actives (37 °C, oxygénation normoxique, substrats énergétiques).
+Le jeu de données `mtcars` regroupe les caractéristiques techniques de 32 modèles d'automobiles. Il permet d'illustrer la mise en forme des tableaux, des équations mathématiques, des encadrés et des graphiques adaptatifs en thème clair et sombre (One Dark Pro).
 
 ::: {.callout-note}
-### Critère principal de viabilité
-La clairance rapide des lactates avec un taux perfusat $\le 2{,}5\text{ mmol/L}$ dans les premières 4 heures de perfusion constitue le marqueur prédictif le plus robuste de bon fonctionnement précoce post-transplantation.
+### Variable d'intérêt principale
+La consommation est exprimée en miles par gallon (`mpg`) et comparée selon l'architecture moteur (4, 6 ou 8 cylindres) et le type de transmission (`am`).
 :::
 
-## Matériels et Méthodes
+## Méthodes
 
-### Modèle expérimental et recueil
+### Modèle linéaire
 
-Les perfusions ont été réalisées sur le dispositif standardisé avec un hématocrite cible de 15 à 20 % via l'utilisation de transporteurs d'oxygène érythrocytaires.
-
-L'indice de résistance vasculaire de l'artère hépatique ($IR_{AH}$) est défini par la relation :
+Nous considérons le modèle de régression linéaire multiple reliant la consommation `mpg` au poids `wt` et à la puissance `hp` :
 
 $$
-IR_{AH} = \frac{P_{art} - P_{vein}}{Q_{art}} \times 80
+\text{mpg}_i = \beta_0 + \beta_1 \cdot \text{wt}_i + \beta_2 \cdot \text{hp}_i + \varepsilon_i
 $$
 
-où $P_{art}$ représente la pression artérielle moyenne en mmHg et $Q_{art}$ le débit mesuré en mL/min.
-
-### Données de perfusion
+### Préparation des données
 
 ```{r}
-#| label: sim-data
-# Données simulées représentatives d'une cohorte NMP
-set.seed(42)
-temps <- c(0, 1, 2, 4, 6)
-n_per_group <- 24
+#| label: prep-mtcars
+data(mtcars)
 
-df_cinetique <- expand.grid(
-  Temps_h = temps,
-  Groupe = c("Protocole Optimisé", "Protocole Standard"),
-  ID = 1:n_per_group
-) |>
+df_cars <- mtcars |>
   mutate(
-    Lactates = case_when(
-      Groupe == "Protocole Optimisé" ~ 8.5 * exp(-0.45 * Temps_h) + rnorm(n(), 0, 0.4),
-      Groupe == "Protocole Standard" ~ 8.7 * exp(-0.25 * Temps_h) + rnorm(n(), 0, 0.5)
-    ),
-    Lactates = pmax(0.8, Lactates)
+    Cylindres = factor(cyl, labels = c("4 cylindres", "6 cylindres", "8 cylindres")),
+    Transmission = factor(am, labels = c("Automatique", "Manuelle"))
   )
 
-df_resume <- df_cinetique |>
-  group_by(Groupe, Temps_h) |>
+df_resume <- df_cars |>
+  group_by(Cylindres, Transmission) |>
   summarise(
-    Moyenne = round(mean(Lactates), 2),
-    EcartType = round(sd(Lactates), 2),
-    Mediane = round(median(Lactates), 2),
+    Effectif = n(),
+    MPG_Moyen = round(mean(mpg), 1),
+    MPG_SD = round(sd(mpg), 1),
+    Poids_Moyen = round(mean(wt), 2),
+    Puissance_Moyenne = round(mean(hp), 0),
     .groups = "drop"
   )
 ```
 
 ## Résultats
 
-### Synthèse quantitative des lactates
+### Synthèse descriptive par groupe
 
-Le @tbl-lactates résume l'évolution moyenne et la dispersion des lactates sanguins au fil du temps selon le protocole appliqué.
+Le @tbl-mtcars résume les caractéristiques moyennes des véhicules selon le nombre de cylindres et le type de boîte de vitesses.
 
 ```{r}
-#| label: tbl-lactates
-#| tbl-cap: "Évolution de la lactatémie moyenne (mmol/L) au cours de la perfusion hépatique"
+#| label: tbl-mtcars
+#| tbl-cap: "Caractéristiques descriptives du jeu de données mtcars par motorisation et transmission"
 if (requireNamespace("gt", quietly = TRUE)) {
   df_resume |>
     gt::gt() |>
     gt::cols_label(
-      Groupe = "Protocole appliqué",
-      Temps_h = "Temps (h)",
-      Moyenne = "Moyenne (mmol/L)",
-      EcartType = "Écart-type",
-      Mediane = "Médiane"
+      Cylindres = "Motorisation",
+      Transmission = "Transmission",
+      Effectif = "n",
+      MPG_Moyen = "MPG moyen",
+      MPG_SD = "Écart-type MPG",
+      Poids_Moyen = "Poids moyen (1000 lbs)",
+      Puissance_Moyenne = "Puissance (hp)"
     ) |>
     gt::tab_header(
-      title = "Cinétique de clairance des lactates"
+      title = "Synthèse descriptive mtcars"
     )
 } else {
-  knitr::kable(df_resume, col.names = c("Protocole", "Temps (h)", "Moyenne", "Écart-type", "Médiane"))
+  knitr::kable(
+    df_resume,
+    col.names = c("Motorisation", "Transmission", "n", "MPG moyen", "ET MPG", "Poids moyen", "Puissance (hp)")
+  )
 }
 ```
 
-### Cinétique comparative
+### Relation entre poids et consommation
 
-La @fig-lactates illustre la diminution accélérée des lactates dans le groupe ayant bénéficié du protocole optimisé, atteignant le seuil de viabilité dès la 2e heure.
+La @fig-mtcars-wt illustre la diminution de la consommation (`mpg`) en fonction du poids (`wt`) et du nombre de cylindres. Le fond transparent et la palette One Dark Pro sont appliqués automatiquement par `auto_dark_on()`.
 
 ```{r}
-#| label: fig-lactates
-#| fig-cap: "Cinétique de lactatémie selon le groupe d'étude (moyenne ± écart-type)"
+#| label: fig-mtcars-wt
+#| fig-cap: "Consommation (mpg) en fonction du poids (wt) et du nombre de cylindres sur mtcars"
 #| fig-width: 8
 #| fig-height: 4.5
-df_resume |>
-  ggplot(aes(x = Temps_h, y = Moyenne, color = Groupe, group = Groupe)) +
-  geom_line(linewidth = 1.1) +
-  geom_point(size = 3) +
-  geom_errorbar(aes(ymin = pmax(0, Moyenne - EcartType), ymax = Moyenne + EcartType), width = 0.2, alpha = 0.6) +
-  geom_hline(yintercept = 2.5, linetype = "dashed", color = "#e06c75", linewidth = 0.8) +
-  annotate("text", x = 5.2, y = 2.7, label = "Seuil viabilité (2.5 mmol/L)", color = "#e06c75", size = 3.5, fontface = "italic") +
-  scale_x_continuous(breaks = temps) +
+ggplot(df_cars, aes(x = wt, y = mpg, color = Cylindres)) +
+  geom_point(size = 3.2, alpha = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
   labs(
-    x = "Temps de perfusion (heures)",
-    y = "Lactatémie moyenne (mmol/L)",
-    color = "Protocole"
+    title = "Consommation en fonction du poids (mtcars)",
+    subtitle = "Régression linéaire par groupe de cylindrée",
+    x = "Poids (1000 lbs)",
+    y = "Consommation (miles/gallon)",
+    color = "Motorisation"
   ) +
   theme_minimal(base_size = 12) +
-  theme(
-    legend.position = "top",
-    panel.grid.minor = element_blank()
-  )
+  theme(legend.position = "top")
 ```
 
 ## Discussion
 
-L'utilisation du protocole optimisé démontre une accélération marquée de la métabolisation des lactates hépatiques, traduisant une reprise précoce de la phosphorylation oxydative mitochondriale et du cycle de Krebs. Les paramètres hémodynamiques et la production biliaire concordent avec ce rétablissement métabolique précoce.
+L'analyse descriptive et graphique de `mtcars` met en évidence l'effet conjoint de la masse du véhicule et de la cylindrée sur la consommation.
 
 ::: {.callout-tip}
-### Application en pratique clinique
-La standardisation des prélèvements horaires à la console de perfusion permet de valider le greffon sans allonger inutilement le temps de perfusion au-delà de 4 heures lorsque les critères sont validés.
+### Reproductibilité
+Ce document utilise uniquement le jeu de données interne `mtcars` de R, sans dépendance à des données externes.
 :::
 
 ## Conclusion
 
-Ce document illustre la mise en page d'un article scientifique avec le template Husson, incluant l'intégration des tableaux, graphiques vectoriels, équations et annotations méthodologiques.
+Cet exemple présente les fonctionnalités de mise en page HTML et Word DOCX du template sur le jeu de données `mtcars`.

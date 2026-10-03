@@ -1,7 +1,7 @@
 ---
 title: "Exemple R et Python avec reticulate"
 subtitle: "Transfert bidirectionnel d'objets R → Python → R sur le jeu de données mtcars"
-author: "Thomas Husson"
+author: "Membre 1, Membre 2 — Hôpital 1, Hôpital 2"
 lang: fr
 format:
   husson-html:

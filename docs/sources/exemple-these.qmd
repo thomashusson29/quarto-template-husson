@@ -1,90 +1,78 @@
 ---
-title: "Évaluation dynamique et préservation active en perfusion normothermique : Application aux greffons hépatiques à critères élargis"
-short-title: "Perfusion hépatique normothermique"
-footer-author: "T. Husson"
-author: "Thomas HUSSON"
+title: "Modélisation statistique et analyse multivariée du jeu de données mtcars"
+short-title: "Analyse multivariée mtcars"
+footer-author: "Membre 1"
+author: "Membre 1"
 lang: fr
 format:
   husson-pdf:
     font: "Times New Roman"
     toc: false
 thesis:
-  university: "Université Paris Cité"
-  faculty: "Faculté de Santé"
-  school: "École Doctorale Pierre Louis de Santé Publique - ED 393"
-  laboratory: "HeKA, Inria Paris, Inserm UMR-S 1346"
-  degree: "Thèse de doctorat en Médecine"
-  date: "15 octobre 2026"
-  logo: "logo-universite-paris-cite.png"
+  university: "Université 1"
+  faculty: "Faculté 1"
+  school: "École Doctorale 1"
+  laboratory: "Hôpital 1, Hôpital 2"
+  degree: "Thèse d'exercice / Doctorat"
+  date: "3 octobre 2026"
   directors:
-    - name: "Pr Claire GOUMARD"
-      role: "Directrice de thèse"
-    - name: "Dr Thomas HUSSON"
+    - name: "Membre 2"
+      role: "Directeur de thèse"
+    - name: "Membre 3"
       role: "Co-directeur de thèse"
   jury:
-    - name: "Pr Jean DUPONT"
-      title: "PU-PH, Sorbonne Université"
+    - name: "Membre 1"
+      title: "Hôpital 1, Université 1"
       role: "Président du jury"
-    - name: "Pr Claire GOUMARD"
-      title: "PU-PH, Université Paris Cité"
-      role: "Directrice de thèse"
-    - name: "Pr Marc MOREAU"
-      title: "PU-PH, Université Claude Bernard Lyon 1"
+    - name: "Membre 2"
+      title: "Hôpital 1, Université 1"
+      role: "Directeur de thèse"
+    - name: "Membre 3"
+      title: "Hôpital 2, Université 2"
       role: "Rapporteur"
-    - name: "Pr Sophie BERNARD"
-      title: "PU-PH, Aix-Marseille Université"
-      role: "Rapportrice"
-    - name: "Dr Jérémie GAUTHERON"
-      title: "CR, Inserm UMR-S 938"
+    - name: "Membre 4"
+      title: "Hôpital 2, Université 2"
+      role: "Rapporteur"
+    - name: "Membre 5"
+      title: "Hôpital 1"
       role: "Examinateur"
-    - name: "Pr David FUKS"
-      title: "PU-PH, Université Paris Cité"
+    - name: "Membre 6"
+      title: "Hôpital 2"
       role: "Membre invité"
 
 frontmatter:
   blank-page: true
   summary: |
-    La pénurie structurelle de greffons hépatiques conduit à l'utilisation croissante de donneurs à critères élargis, particulièrement sensibles à l'ischémie froide conventionnelle. La perfusion hépatique normothermique (*Normothermic Machine Perfusion*, NMP) restaure le métabolisme physiologique ex vivo à 37 °C et permet une évaluation objective de la viabilité fonctionnelle avant implantation. Ce travail de thèse analyse les cinétiques métaboliques, les résistances vasculaires et la sécrétion biliaire sur une série de greffons humains et modèles expérimentaux. Les résultats confirment la valeur pronostique déterminante de la clairance précoce des lactates et de l'alcalinisation biliaire.
+    Ce document de démonstration présente la structure complète du mode thèse du template Quarto (`husson-pdf`) appliquée exclusivement au jeu de données standard `mtcars` (32 véhicules, 11 variables). L'analyse porte sur les déterminants de la consommation de carburant (`mpg`) en fonction du poids (`wt`), de la puissance (`hp`), de la cylindrée (`disp`) et du type de transmission (`am`).
   acknowledgements: |
-    À Madame la Professeure Claire GOUMARD, pour m'avoir guidé avec une rigueur scientifique exemplaire, une bienveillance constante et une disponibilité sans faille tout au long de ce projet de recherche.
+    Remerciements au Membre 1 (Hôpital 1) pour la présidence du jury.
 
-    Aux membres du jury, Madame et Messieurs les Professeurs et Docteurs Jean DUPONT, Marc MOREAU, Sophie BERNARD, Jérémie GAUTHERON et David FUKS, pour l'honneur qu'ils me font d'examiner et d'évaluer ce travail.
+    Remerciements au Membre 2 (Hôpital 1) et au Membre 3 (Hôpital 2) pour la direction de ce travail.
 
-    À l'ensemble de l'équipe chirurgicale et paramédicale du bloc opératoire, des coordinateurs de prélèvement d'organes, et aux équipes de recherche Inserm et Inria pour leur collaboration quotidienne.
-
-    À ma famille et à mes proches, pour leur soutien inconditionnel et leurs encouragements constants.
+    Remerciements au Membre 4, au Membre 5 et au Membre 6 (Hôpital 1, Hôpital 2) pour l'évaluation de ce manuscrit.
   scientific-valorization: |
-    **Articles originaux publiés :**
-    - Husson T, Goumard C, Gautheron J, et al. *Normothermic machine perfusion as a dynamic platform for liver allograft assessment: a prospective study.* J Hepatol, 2026; 84(2): 312-321.
-    - Husson T, Dupont J, Fuks D. *Machine perfusion in liver transplantation: from bench to clinical implementation.* Ann Surg, 2025; 282(4): 745-753.
+    **Articles d'exemple :**
+    - Membre 1, Membre 2, Membre 3. *Multivariate linear regression on the mtcars dataset.* Journal 1, 2026; 10(2): 100-110.
+    - Membre 1, Membre 4. *Comparison of automatic and manual transmissions in mtcars.* Journal 2, 2025; 5(1): 45-52.
 
-    **Communications orales internationales :**
-    - Husson T, et al. *Lactate clearance kinetics during normothermic liver machine perfusion.* ILTS Annual Congress, Singapour, 2026.
-    - Husson T, et al. *Bile composition and viability assessment in marginal donor livers.* ESOT Congress, Londres, 2025.
+    **Communications d'exemple :**
+    - Membre 1, Membre 2. *Fuel efficiency modelling using weight and horsepower.* Congrès 1, 2026.
   table-of-contents: true
   list-of-figures: true
   list-of-tables: true
   abbreviations:
-    - term: "NMP"
-      definition: "Normothermic machine perfusion (Perfusion normothermique sur machine)"
-    - term: "HOPE"
-      definition: "Hypothermic oxygenated perfusion (Perfusion hypothermique oxygénée)"
-    - term: "CGR"
-      definition: "Concentré de globules rouges"
-    - term: "EAD"
-      definition: "Early allograft dysfunction (Dysfonction précoce du greffon)"
-    - term: "PNF"
-      definition: "Primary non-function (Échec primaire de transplantation)"
-    - term: "ATP"
-      definition: "Adénosine triphosphate"
-    - term: "ASAT"
-      definition: "Aspartate aminotransférase"
-    - term: "ALAT"
-      definition: "Alanine aminotransférase"
-    - term: "DDAC"
-      definition: "Donneur décédé après arrêt circulatoire"
-    - term: "MELD"
-      definition: "Model for End-Stage Liver Disease"
+    - term: "MPG"
+      definition: "Miles per gallon (Consommation en miles par gallon)"
+    - term: "WT"
+      definition: "Weight (Poids du véhicule en milliers de livres)"
+    - term: "HP"
+      definition: "Gross horsepower (Puissance brute en chevaux)"
+    - term: "DISP"
+      definition: "Displacement (Cylindrée en pouces cubes)"
+    - term: "QSEC"
+      definition: "Quarter mile time (Temps au quart de mile en secondes)"
+    - term: "OLS"
+      definition: "Ordinary Least Squares (Moindres carrés ordinaires)"
 
 execute:
   echo: false
@@ -100,130 +88,145 @@ if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
 
 library(ggplot2)
 library(dplyr)
+data(mtcars)
+df_cars <- mtcars |>
+  mutate(
+    Modele = rownames(mtcars),
+    Cylindres = factor(cyl, labels = c("4 cylindres", "6 cylindres", "8 cylindres")),
+    Transmission = factor(am, labels = c("Automatique", "Manuelle")),
+    Architecture = factor(vs, labels = c("Architecture V", "Architecture ligne"))
+  )
 ```
 
 # Introduction générale {nav-title="INTRODUCTION"}
 
-## Contexte clinique et épidémiologique {nav-title="Contexte"}
+## Présentation du jeu de données mtcars {nav-title="Jeu mtcars"}
 
-La transplantation hépatique demeure l'unique traitement curatif de l'insuffisance hépatique terminale et des carcinomes hépatocellulaires sélectionnés. Cependant, la disparité persistante entre le nombre de candidats inscrits sur liste d'attente et le nombre d'organes disponibles impose le recours systématique aux donneurs dits « à critères élargis » (*Extended Criteria Donors*, ECD). Ces greffons cumulent souvent un âge avancé, une stéatose modérée ou des temps d'ischémie chaude prolongés dans le cadre des dons après arrêt circulatoire (DDAC).
+Le jeu de données `mtcars` (*Motor Trend Car Road Tests*) rassemble 32 modèles d'automobiles caractérisés par 11 variables quantitatives et qualitatives codées. Il constitue le jeu de référence standard dans l'écosystème R pour illustrer les méthodes de régression linéaire, d'analyse de variance et de visualisation statistique.
 
-## Limites de la conservation statique hypothermique {nav-title="Ischémie froide"}
+## Problématique statistique {nav-title="Problématique"}
 
-Depuis plus de quatre décennies, la méthode standard de conservation repose sur le stockage statique en glacière à 4 °C dans une solution de préservation (UW, IGL-1 ou Custodiol). Bien que simple et logistiquement éprouvée, cette approche bloque l'activité enzymatique tout en maintenant un métabolisme anaérobie résiduel délétère.
+L'objectif est de quantifier la part de variance de la consommation (`mpg`) expliquée par les caractéristiques mécaniques et pondérales des véhicules (`wt`, `hp`, `disp`, `cyl`, `am`).
 
-À la reperfusion chez le receveur, la déplétion en ATP, l'accumulation de succinate et l'activation des cellules de Kupffer déclenchent un orage radicalaire responsable du syndrome d'ischémie-reperfusion.
+# Objectifs de l'étude {nav-title="OBJECTIFS"}
 
-# Hypothèse et Objectifs de recherche {nav-title="OBJECTIFS"}
+## Objectif principal {nav-title="Objectif principal"}
 
-## Hypothèse physiopathologique {nav-title="Hypothèse"}
+Estimer l'effet indépendant du poids (`wt`) et de la puissance (`hp`) sur la consommation (`mpg`) par régression linéaire multiple.
 
-La perfusion normothermique ex vivo (37 °C) avec transporteurs d'oxygène permet d'interrompre l'ischémie, de restaurer la respiration mitochondriale et de tester la fonctionnalité hépatique de manière objective avant la décision de greffe.
+## Objectifs secondaires {nav-title="Objectifs secondaires"}
 
-## Objectifs du travail {nav-title="Objectifs"}
-
-1. **Objectif 1** : Caractériser la cinétique de clairance des lactates comme prédicteur de la reprise de fonction précoce.
-2. **Objectif 2** : Quantifier les profils hémodynamiques artériels et portaux lors de la phase d'évaluation.
-3. **Objectif 3** : Établir un score décisionnel combinant critères biochimiques et hémodynamiques.
+1. **Objectif 1** : Comparer les distributions de consommation et de puissance selon le nombre de cylindres (`4`, `6`, `8`).
+2. **Objectif 2** : Analyser les performances d'accélération (`qsec`) selon le type de transmission (`am`) et l'architecture moteur (`vs`).
+3. **Objectif 3** : Présenter l'intégralité des indicateurs par sous-groupe dans un tableau récapitulatif en orientation paysage.
 
 # Matériels et Méthodes {nav-title="MÉTHODES"}
 
-## Modèle expérimental et dispositif de perfusion {nav-title="Dispositif"}
+## Dictionnaire des variables {nav-title="Variables"}
 
-Le protocole standardisé associe une double perfusion pulsatile artérielle (pression moyenne 65–75 mmHg) et continue portale (pression 8–10 mmHg). L'oxygénation est assurée par un oxygénateur à membrane polymère sous mélange gazeux contrôlé ($pO_2$ cible 250–300 mmHg).
+Le @tbl-variables détaille la définition et l'unité des variables issues de `mtcars`.
 
-| Caractéristique du circuit | Spécification technique | Justification physiologique |
-|---|---|---|
-| **Ligne artérielle** | Flux pulsatile (60 bpm), PAM 70 mmHg | Maintien de la compliance vasculaire et de la perfusion biliaire |
-| **Ligne portale** | Flux continu non pulsatile, pression $\le 10$ mmHg | Prévention du barotraumatisme sinusoïdal |
-| **Oxygénateur** | Fibre creuse polymère microporeuse | Dissolution physiologique de l'oxygène sans hémolyse |
-| **Thermorégulation** | Échangeur d'eau chaude régulé à 37.0 °C | Activité optimale des enzymes de phosphorylation oxydative |
-| **Perfusat de base** | CGR déleucocytés + albumine 20 % | Maintien de la pression oncotique et hématocrite 18 % |
+| Variable | Libellé | Unité / Codage | Type statistique |
+|---|---|---|---|
+| **mpg** | Consommation | Miles / gallon US | Quantitative continue |
+| **cyl** | Nombre de cylindres | 4, 6 ou 8 | Qualitative ordinale |
+| **disp** | Cylindrée | Pouces cubes ($\text{in}^3$) | Quantitative continue |
+| **hp** | Puissance brute | Chevaux (ch) | Quantitative continue |
+| **drat** | Rapport de pont arrière | Ratio sans dimension | Quantitative continue |
+| **wt** | Poids du véhicule | Milliers de livres (1000 lbs) | Quantitative continue |
+| **qsec** | Temps sur 1/4 de mile | Secondes (s) | Quantitative continue |
+| **vs** | Architecture moteur | 0 = V, 1 = Ligne | Binaire |
+| **am** | Type de transmission | 0 = Automatique, 1 = Manuelle | Binaire |
+| **gear** | Nombre de rapports | 3, 4 ou 5 vitesses | Quantitative discrète |
+| **carb** | Nombre de carburateurs | 1 à 8 | Quantitative discrète |
 
-: Paramètres opératoires et techniques du banc de perfusion normothermique {#tbl-dispositif}
+: Dictionnaire complet des 11 variables du jeu de données mtcars {#tbl-variables}
 
-## Analyses biochimiques {nav-title="Analyses"}
+## Spécification du modèle linéaire {nav-title="Modèle OLS"}
 
-Les prélèvements sanguins sont répétés toutes les heures (H0 à H6) à l'entrée et à la sortie de l'organe pour évaluer l'extraction de l'oxygène, la production de métabolites et la viabilité cellulaire.
+Le modèle de régression linéaire multiple s'écrit :
 
-# Résultats expérimentaux {nav-title="RÉSULTATS"}
+$$
+\text{mpg}_i = \beta_0 + \beta_1 \cdot \text{wt}_i + \beta_2 \cdot \text{hp}_i + \varepsilon_i, \quad \varepsilon_i \sim \mathcal{N}(0, \sigma^2)
+$$
 
-## Cinétique métabolique des lactates {nav-title="Lactates"}
+# Résultats {nav-title="RÉSULTATS"}
 
-Sur la cohorte analysée ($n = 48$), les organes répondant favorablement au protocole optimisé présentent une réduction exponentielle de la lactatémie dès les deux premières heures.
+## Relation entre le poids, la cylindrée et la consommation {nav-title="Poids et MPG"}
+
+La @fig-these-mtcars représente l'évolution de la consommation (`mpg`) en fonction du poids (`wt`) pour chacune des trois catégories de cylindrée.
 
 ```{r}
-#| label: fig-these-lact
-#| fig-cap: "Cinétique de clairance de la lactatémie perfusat au cours de 6 heures de perfusion"
+#| label: fig-these-mtcars
+#| fig-cap: "Consommation (mpg) en fonction du poids (wt) et du nombre de cylindres sur mtcars (n = 32)"
 #| fig-width: 6.5
 #| fig-height: 3.8
-set.seed(789)
-temps <- c(0, 1, 2, 4, 6)
-d <- data.frame(
-  Temps = rep(temps, 2),
-  Groupe = rep(c("Greffons viables (n=38)", "Greffons non validés (n=10)"), each = length(temps)),
-  Lactate = c(9.1, 4.2, 1.8, 1.2, 0.9, 9.5, 8.4, 7.6, 6.9, 6.2),
-  SD = c(0.8, 0.5, 0.3, 0.2, 0.1, 0.9, 0.8, 0.8, 0.7, 0.7)
-)
-
-ggplot(d, aes(x = Temps, y = Lactate, color = Groupe)) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2.5) +
-  geom_errorbar(aes(ymin = Lactate - SD, ymax = Lactate + SD), width = 0.2) +
-  geom_hline(yintercept = 2.5, linetype = "dashed", color = "#B22222") +
-  scale_color_manual(values = c("Greffons viables (n=38)" = "#17365D", "Greffons non validés (n=10)" = "#B22222")) +
-  scale_x_continuous(breaks = temps) +
+ggplot(df_cars, aes(x = wt, y = mpg, color = Cylindres)) +
+  geom_point(size = 2.6) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
+  scale_color_manual(values = c("4 cylindres" = "#17365D", "6 cylindres" = "#2E8B57", "8 cylindres" = "#B22222")) +
   labs(
-    x = "Temps de perfusion (heures)",
-    y = "Lactatémie moyenne (mmol/L)",
-    color = "Statut"
+    x = "Poids (1000 lbs)",
+    y = "Consommation (mpg)",
+    color = "Motorisation"
   ) +
   theme_minimal(base_size = 11) +
   theme(legend.position = "top")
 ```
 
-Comme le montre la @fig-these-lact, le seuil de $2{,}5\text{ mmol/L}$ sépare nettement les greffons viables des organes récalcitrants.
+## Comparaison des caractéristiques par nombre de cylindres {nav-title="Comparaison"}
 
-## Tableau comparatif des biomarqueurs à 4 heures {nav-title="Biomarqueurs"}
+Le @tbl-comparatif-cyl compare les moyennes et écarts-types des principales variables mécaniques selon le nombre de cylindres.
 
-Le @tbl-comparatif compare les critères majeurs de viabilité entre les deux groupes.
-
-| Paramètre mesuré | Greffons viables ($n=38$) | Greffons non validés ($n=10$) | Seuil décisionnel | Valeur p |
+| Paramètre mesuré | 4 cylindres ($n=11$) | 6 cylindres ($n=7$) | 8 cylindres ($n=14$) | Total ($n=32$) |
 |---|:---:|:---:|:---:|:---:|
-| **Lactates à H2 (mmol/L)** | 1.8 ± 0.3 | 7.6 ± 0.8 | $\le 2{,}5$ | < 0.001 |
-| **Lactates à H4 (mmol/L)** | 1.2 ± 0.2 | 6.9 ± 0.7 | $\le 2{,}5$ | < 0.001 |
-| **Production de bile à H4 (mL)** | 14.5 ± 2.8 | 2.1 ± 1.1 | $\ge 10$ | < 0.001 |
-| **pH biliaire à H4** | 7.62 ± 0.08 | 7.15 ± 0.12 | $\ge 7{,}50$ | < 0.001 |
-| **Débit artériel (mL/min)** | 195 ± 25 | 110 ± 22 | $\ge 150$ | < 0.001 |
-| **Débit portal (mL/min)** | 720 ± 60 | 480 ± 55 | $\ge 500$ | < 0.001 |
+| **Consommation mpg** | 26.7 ± 4.5 | 19.7 ± 1.5 | 15.1 ± 2.6 | 20.1 ± 6.0 |
+| **Cylindrée disp ($\text{in}^3$)** | 105.1 ± 26.9 | 183.3 ± 41.6 | 353.1 ± 67.8 | 230.7 ± 123.9 |
+| **Puissance hp (ch)** | 82.6 ± 20.9 | 122.3 ± 24.3 | 209.2 ± 51.0 | 146.7 ± 68.6 |
+| **Poids wt (1000 lbs)** | 2.29 ± 0.57 | 3.12 ± 0.36 | 4.00 ± 0.76 | 3.22 ± 0.98 |
+| **Temps 1/4 mile qsec (s)** | 19.1 ± 1.6 | 18.0 ± 1.7 | 16.8 ± 1.2 | 17.8 ± 1.8 |
 
-: Comparaison multidimensionnelle des critères de viabilité à 4 heures {#tbl-comparatif}
+: Comparaison des variables de mtcars selon le nombre de cylindres {#tbl-comparatif-cyl}
 
 ::: {.landscape}
-# Données multicentriques en orientation paysage {nav-title="PAYSAGE"}
+# Synthèse stratifiée en orientation paysage {nav-title="PAYSAGE"}
 
-Cette page illustre l'insertion d'une section en paysage via le bloc `::: {.landscape}` du template Husson. Le lecteur PDF applique automatiquement une rotation à 90° sans manipulation manuelle.
+Cette section illustre l'utilisation du bloc `::: {.landscape}` pour afficher un tableau large sur le jeu de données `mtcars` (stratification croisée par centre fictif Hôpital 1 / Hôpital 2, motorisation et transmission).
 
-| Centre investigateur | Inclusions | Procédure | Durée NMP moyenne | Taux de transplantation | EAD (%) | Survie greffon à 1 an (%) | Survie patient à 1 an (%) |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **CHU Bicêtre (Paris-Saclay)** | 18 | DBD / DCD | 6.2 ± 1.1 h | 88.9 % (16/18) | 6.2 % | 93.8 % | 93.8 % |
-| **Hôpital Beaujon (Paris Cité)** | 14 | DBD ECD | 5.8 ± 0.9 h | 85.7 % (12/14) | 8.3 % | 91.7 % | 100.0 % |
-| **Hôpital Paul-Brousse (Paris-Saclay)** | 16 | DCD Maastricht III | 6.5 ± 1.4 h | 81.2 % (13/16) | 7.7 % | 92.3 % | 92.3 % |
-| **Total cohorte combinée** | **48** | **Multicentrique** | **6.2 ± 1.2 h** | **85.4 % (41/48)** | **7.3 %** | **92.7 %** | **95.1 %** |
+```{r}
+#| label: tbl-mtcars-landscape
+#| tbl-cap: "Synthèse stratifiée des variables de mtcars par groupe de motorisation et type de transmission"
+df_land <- df_cars |>
+  mutate(Site = ifelse(row_number() <= 16, "Hôpital 1", "Hôpital 2")) |>
+  group_by(Site, Cylindres, Transmission) |>
+  summarise(
+    n = n(),
+    MPG = sprintf("%.1f ± %.1f", mean(mpg), sd(mpg)),
+    Disp = sprintf("%.0f", mean(disp)),
+    HP = sprintf("%.0f", mean(hp)),
+    Poids = sprintf("%.2f", mean(wt)),
+    Qsec = sprintf("%.1f", mean(qsec)),
+    Rapports = sprintf("%.1f", mean(gear)),
+    .groups = "drop"
+  )
 
-: Synthèse multicentrique des résultats cliniques et de survie post-transplantation {#tbl-multicentre}
+knitr::kable(
+  df_land,
+  col.names = c("Site", "Cylindres", "Transmission", "n", "MPG (moy ± ET)", "Disp moyen", "HP moyen", "Poids moyen", "Qsec moyen", "Rapports moyens")
+)
+```
 :::
 
-# Discussion générale {nav-title="DISCUSSION"}
+# Discussion {nav-title="DISCUSSION"}
 
-## Apport de l'évaluation dynamique {nav-title="Apport NMP"}
+## Interprétation des coefficients {nav-title="Interprétation"}
 
-Ce travail démontre que la perfusion normothermique ne constitue pas seulement une modalité de conservation, mais un véritable laboratoire biologique ex vivo. Elle permet d'étendre en toute sécurité le pool de donneurs sans compromettre la survie post-opératoire des receveurs.
+L'ajustement linéaire sur `mtcars` confirme une diminution significative de la consommation en miles par gallon lorsque le poids (`wt`) et la puissance (`hp`) augmentent.
 
-## Perspectives translationnelles {nav-title="Perspectives"}
+## Mise en page et structure du document {nav-title="Mise en page"}
 
-Les développements futurs visent la délivrance ciblée de thérapies ex vivo (antioxydants, vecteurs géniques, délipidation pharmacologique) pour réhabiliter les greffons initialement récusés.
+Ce document valide le fonctionnement conjoint de la page de garde de thèse, de la numérotation romaine des pages liminaires, de la reprise en chiffres arabes à l'introduction, de l'ajustement des tableaux et du mode paysage automatique.
 
-# Conclusion générale {nav-title="CONCLUSION"}
+# Conclusion {nav-title="CONCLUSION"}
 
-La perfusion hépatique normothermique transforme le paradigme de la préservation d'organes. En associant évaluation métabolique rigoureuse et conditions physiologiques actives, elle permet de sauver davantage de patients en attente de greffe hépatique.
+L'ensemble des exemples du dépôt repose de manière homogène sur le jeu de données `mtcars` avec des intitulés génériques (`Hôpital 1`, `Hôpital 2`, `Membre 1`, `Membre 2`).

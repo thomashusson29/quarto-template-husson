@@ -170,7 +170,7 @@ L'activation du mode thèse (en définissant le bloc `thesis:` ou `thesis: true`
 - Une taille de corps de **11pt** (`fontsize: 11pt`).
 - Un **interligne de 1,15** (`linestretch: 1.15`).
 - Une **géométrie de page calibrée** (`top=3cm, bottom=2.5cm, left=3cm, right=2.5cm`).
-- La génération automatique de la page de garde conforme au millimètre au modèle de thèse Sorbonne / Université Paris Cité / Paris-Saclay (ref: thèse S. Tzedakis) :
+- La génération automatique de la page de garde conforme au modèle de thèse universitaire :
   - Marges de couverture calibrées (2,2 cm).
   - Centrage sobre du nom du candidat (sans préfixe « par »).
   - Tableau du jury pleine largeur avec alignement dynamique (`\extracolsep{\fill}`) empêchant tout retour à la ligne disgracieux dans les titres, affiliations ou rôles.
@@ -181,22 +181,22 @@ format:
   husson-pdf:
     font: "Times New Roman" # ou "Garamond", "Roboto", "Carlito"
 thesis:
-  university: "Université Paris Cité"
-  faculty: "Faculté de Médecine"
-  degree: "Thèse de doctorat en Médecine"
-  date: "7 octobre 2026"
+  university: "Université 1"
+  faculty: "Faculté 1"
+  degree: "Thèse de doctorat"
+  date: "3 octobre 2026"
   directors:
-    - name: "Pr Claire GOUMARD"
-      role: "Directrice de thèse"
+    - name: "Membre 1"
+      role: "Directeur de thèse"
   jury:
-    - name: "Pr Claire GOUMARD"
-      title: "PU-PH"
-      role: "Directrice de thèse"
-    - name: "Dr Jérémie GAUTHERON"
-      title: "CR, Inserm UMR-S 938"
-      role: "Co-directeur de recherche"
-    - name: "Pr Jean DUPONT"
-      title: "PU-PH, Université Paris-Saclay"
+    - name: "Membre 1"
+      title: "Hôpital 1, Université 1"
+      role: "Directeur de thèse"
+    - name: "Membre 2"
+      title: "Hôpital 2, Université 2"
+      role: "Rapporteur"
+    - name: "Membre 3"
+      title: "Hôpital 1, Université 1"
       role: "Président du jury"
 ```
 
@@ -221,17 +221,17 @@ frontmatter:
   summary: |
     Le résumé de la thèse.
   acknowledgements: |
-    Les remerciements.
+    Les remerciements (Membre 1, Membre 2, Hôpital 1, Hôpital 2).
   scientific-valorization: |
     Publications, communications et autres éléments de valorisation.
   table-of-contents: true
   list-of-figures: true
   list-of-tables: true
   abbreviations:
-    - term: "NMP"
-      definition: "Normothermic machine perfusion"
-    - term: "CGR"
-      definition: "Concentré de globules rouges"
+    - term: "MPG"
+      definition: "Miles per gallon"
+    - term: "WT"
+      definition: "Weight (1000 lbs)"
 ```
 
 L’ordre PDF est alors : page de titre, page blanche facultative, résumé,
@@ -271,8 +271,8 @@ Les remerciements peuvent être rédigés normalement en Markdown.
 :::
 
 ::: {.frontmatter-abbreviations}
-NMP
-: Perfusion normothermique
+MPG
+: Miles per gallon
 :::
 ```
 
@@ -398,15 +398,15 @@ Pour afficher un titre abrégé uniquement dans le pied de page sans altérer le
 
 ```yaml
 ---
-title: "Faisabilité et sécurité de l'utilisation de la décharge cave en perfusion normothermique hépatique"
-short-title: "Décharge cave en PNH"
-author: "Thomas Husson"
+title: "Modélisation statistique et analyse multivariée du jeu de données mtcars"
+short-title: "Analyse mtcars"
+author: "Membre 1"
 ---
 ```
 Rendu en bas de page :
 ```text
 ─────────────────────────────────────────────────────────────────────────────
-Thomas Husson – Décharge cave en PNH                                        4
+Membre 1 – Analyse mtcars                                                   4
 ```
 > **Note** : La clé alternative `footer-title: "..."` est également reconnue. Vous pouvez renseigner cette option à la racine du YAML ou directement sous la section `format: husson-pdf:`.
 
@@ -414,7 +414,7 @@ Thomas Husson – Décharge cave en PNH                                        4
 Pour abréger le prénom ou modifier la mention de l'auteur en bas de page :
 ```yaml
 ---
-footer-author: "T. Husson"
+footer-author: "Membre 1"
 ---
 ```
 
@@ -422,7 +422,7 @@ footer-author: "T. Husson"
 Pour remplacer intégralement la mention gauche par une chaîne libre (affiliation, date, projet) :
 ```yaml
 ---
-footer-left: "T. Husson (CHU Bicêtre) – Étude PNH 2026"
+footer-left: "Membre 1 (Hôpital 1, Hôpital 2) – Analyse mtcars"
 ---
 ```
 
@@ -447,9 +447,9 @@ Sur une présentation RevealJS (`husson-revealjs`), le template offre une suite 
 Les diapositives volumineuses munies de l'attribut `{.scrollable}` conservent automatiquement leur titre ancré au sommet de la vue pendant le défilement vertical du contenu :
 
 ```markdown
-## Décharge cave : recueil brut {.scrollable}
+## Données individuelles mtcars {.scrollable}
 
-| ID | Volume brut (mL) | Hématocrite (%) |
+| Modèle | MPG | Poids (1000 lbs) |
 |---|---|---|
 ... (long tableau ou figures défilantes) ...
 ```
@@ -530,10 +530,10 @@ Pour assurer une intégration visuelle parfaite des figures lors de la bascule e
 
 ## Exemples et démonstrations inclus dans le dépôt
 
-Le dossier `examples/` contient des cas d'usage complets prêts à être rendus :
+Le dossier `examples/` contient des cas d'usage complets basés exclusivement sur `mtcars` (`Hôpital 1`, `Hôpital 2`, `Membre 1`, `Membre 2`) :
 
 1. **`examples/exemple-article.qmd`** :
-   - Rendu HTML statique (`husson-html`) avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt` et graphique `ggplot2`.
+   - Rendu HTML statique (`husson-html`) sur `mtcars` avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt` et graphique `ggplot2`.
    - Rendu Word (`husson-docx`) appliquant le modèle éditorial embarqué.
    - Commandes :
      ```bash
@@ -542,14 +542,14 @@ Le dossier `examples/` contient des cas d'usage complets prêts à être rendus 
      ```
 
 2. **`examples/exemple-revealjs.qmd`** :
-   - Présentation complète RevealJS (`husson-revealjs`) avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux et figures `ggplot2` compatibles One Dark Pro.
+   - Présentation complète RevealJS (`husson-revealjs`) sur `mtcars` avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux et figures `ggplot2` compatibles One Dark Pro.
    - Commande :
      ```bash
      quarto render examples/exemple-revealjs.qmd --to husson-revealjs
      ```
 
 3. **`examples/exemple-these.qmd`** :
-   - Thèse universitaire complète de 16 pages (`husson-pdf`) avec page de garde officielle (Université Paris Cité), jury complet, pages liminaires (résumé, remerciements, valorisation scientifique, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, en-tête et pied de page soignés, tableaux ajustés et planche en paysage (`pdflscape`).
+   - Thèse complète (`husson-pdf`) sur `mtcars` avec page de garde générique (`Université 1`, `Hôpital 1`, `Hôpital 2`, `Membre 1` à `Membre 6`), pages liminaires (résumé, remerciements génériques, valorisation, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, tableaux ajustés et planche en paysage (`pdflscape`).
    - Commande :
      ```bash
      quarto render examples/exemple-these.qmd --to husson-pdf

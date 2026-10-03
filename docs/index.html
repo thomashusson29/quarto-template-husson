@@ -3,380 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quarto Template Husson - Démonstrations et Formats</title>
-  <meta name="description" content="Galerie de démonstration des formats PDF, HTML, RevealJS et DOCX du template Quarto Husson.">
+  <title>Quarto Template - Exemples</title>
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #212529;
-      --text-muted: #6c757d;
-      --primary: #17365D;
-      --primary-hover: #0f233d;
-      --accent: #205493;
-      --card-bg: #f8f9fa;
-      --card-border: #e9ecef;
-      --code-bg: #f1f3f5;
-      --tag-bg: #e2e8f0;
-      --tag-text: #1e293b;
-      --btn-bg: #17365D;
-      --btn-text: #ffffff;
-      --btn-secondary-bg: #e9ecef;
-      --btn-secondary-text: #212529;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1e2227;
-        --text: #abb2bf;
-        --text-muted: #7f848e;
-        --primary: #61afef;
-        --primary-hover: #4fa0e0;
-        --accent: #98c379;
-        --card-bg: #282c34;
-        --card-border: #3b4048;
-        --code-bg: #21252b;
-        --tag-bg: #353b45;
-        --tag-text: #dcdfe4;
-        --btn-bg: #61afef;
-        --btn-text: #1e2227;
-        --btn-secondary-bg: #353b45;
-        --btn-secondary-text: #abb2bf;
-      }
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: sans-serif;
+      max-width: 680px;
+      margin: 2rem auto;
+      padding: 0 1rem;
       line-height: 1.6;
-      color: var(--text);
-      background-color: var(--bg);
-      padding: 2.5rem 1.25rem;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    header {
-      border-bottom: 2px solid var(--card-border);
-      padding-bottom: 2rem;
-      margin-bottom: 2.5rem;
-    }
-
-    h1 {
-      font-size: 2.2rem;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      margin-bottom: 1.2rem;
-    }
-
-    .meta-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      background-color: var(--tag-bg);
-      color: var(--tag-text);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .intro-text {
-      margin-bottom: 2.5rem;
-      font-size: 1.05rem;
-      color: var(--text);
-    }
-
-    .section-title {
-      font-size: 1.45rem;
-      color: var(--primary);
-      margin-bottom: 1.25rem;
-      font-weight: 600;
-      border-bottom: 1px solid var(--card-border);
-      padding-bottom: 0.4rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-    }
-
-    @media (min-width: 768px) {
-      .grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .card-header {
-      margin-bottom: 1rem;
-    }
-
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .card h2 {
-      font-size: 1.25rem;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .card-desc {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-bottom: 1.25rem;
-      flex-grow: 1;
-    }
-
-    .card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-    }
-
-    .btn {
-      display: inline-block;
-      font-size: 0.88rem;
-      font-weight: 600;
-      text-decoration: none;
-      padding: 0.5rem 0.95rem;
-      border-radius: 4px;
-      transition: opacity 0.15s ease-in-out;
-      text-align: center;
-    }
-
-    .btn:hover {
-      opacity: 0.88;
-    }
-
-    .btn-primary {
-      background-color: var(--btn-bg);
-      color: var(--btn-text);
-    }
-
-    .btn-secondary {
-      background-color: var(--btn-secondary-bg);
-      color: var(--btn-secondary-text);
-    }
-
-    .cli-box {
-      background-color: var(--code-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      padding: 1.25rem;
-      margin-bottom: 2.5rem;
-      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.9rem;
-      overflow-x: auto;
-    }
-
-    .cli-box p {
-      margin-bottom: 0.5rem;
-      color: var(--text-muted);
-      font-family: inherit;
-    }
-
-    .cli-box code {
-      color: var(--text);
-      display: block;
-      white-space: pre;
-    }
-
-    footer {
-      border-top: 1px solid var(--card-border);
-      padding-top: 1.5rem;
-      margin-top: 3rem;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Quarto Template Husson</h1>
-      <p class="subtitle">Extension de publication scientifique multi-format pour Quarto</p>
-      <div class="meta-bar">
-        <span class="badge">Version 1.3.0</span>
-        <span class="badge">Quarto &gt;= 1.8</span>
-        <span class="badge">XeLaTeX / Typographie</span>
-        <span class="badge">Auto Dark One Dark Pro</span>
-      </div>
-    </header>
+  <h1>Quarto Template — Exemples de rendus (mtcars)</h1>
 
-    <div class="intro-text">
-      <p>
-        Ce dépôt fournit un ensemble cohérent de formats Quarto calibrés pour la recherche biomédicale, les thèses universitaires, les rapports cliniques et les présentations scientifiques. Retrouvez ci-dessous les démonstrations interactives de chaque format produites à partir des sources du projet.
-      </p>
-    </div>
+  <ul>
+    <li>
+      <a href="exemple-article.html">Rendu HTML statique (page)</a>
+      — <a href="sources/exemple-article.qmd">source .qmd</a>
+    </li>
+    <li>
+      <a href="exemple-revealjs.html">Rendu HTML vers RevealJS (diaporama One Dark Pro)</a>
+      — <a href="sources/exemple-revealjs.qmd">source .qmd</a>
+    </li>
+    <li>
+      <a href="exemple-these.pdf">Rendu PDF Thèse complet</a>
+      — <a href="sources/exemple-these.qmd">source .qmd</a>
+    </li>
+    <li>
+      <a href="exemple-article.docx">Rendu DOCX Article</a>
+      — <a href="sources/exemple-article.qmd">source .qmd</a>
+    </li>
+    <li>
+      <a href="exemple-r-python.html">Rendu R vers Python avec reticulate (mtcars)</a>
+      — <a href="sources/r-python-reticulate.qmd">source .qmd</a>
+    </li>
+  </ul>
 
-    <h2 class="section-title">Galerie des Démonstrations</h2>
-
-    <div class="grid">
-      <!-- 1. HTML STATIQUE -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-tags">
-            <span class="badge">Format HTML</span>
-            <span class="badge">Auto Dark</span>
-          </div>
-          <h2>Rendu HTML Statique (Article)</h2>
-        </div>
-        <p class="card-desc">
-          Document web dynamique avec bascule claire/sombre One Dark calquée sur les préférences de l'OS, table des matières flottante, blocs d'encadrés Quarto, équations LaTeX, tableaux gt optimisés et visualisations R ggplot2 intégrées.
-        </p>
-        <div class="card-actions">
-          <a class="btn btn-primary" href="exemple-article.html">Consulter la page HTML</a>
-          <a class="btn btn-secondary" href="sources/exemple-article.qmd">Source .qmd</a>
-        </div>
-      </div>
-
-      <!-- 2. REVEALJS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-tags">
-            <span class="badge">Format RevealJS</span>
-            <span class="badge">One Dark Pro</span>
-            <span class="badge">Graphiques R</span>
-          </div>
-          <h2>Rendu HTML vers RevealJS</h2>
-        </div>
-        <p class="card-desc">
-          Présentation RevealJS avec fil d'Ariane hiérarchique en haut d'écran, titre sticky sur diapositives défilables, bascule claire/sombre One Dark Pro avec génération d'images compagnes pour les figures R ggplot2 à fond transparent.
-        </p>
-        <div class="card-actions">
-          <a class="btn btn-primary" href="exemple-revealjs.html">Lancer la présentation</a>
-          <a class="btn btn-secondary" href="sources/exemple-revealjs.qmd">Source .qmd</a>
-        </div>
-      </div>
-
-      <!-- 3. THÈSE PDF -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-tags">
-            <span class="badge">Format PDF</span>
-            <span class="badge">Mode Thèse</span>
-            <span class="badge">16 Pages</span>
-          </div>
-          <h2>Rendu PDF Thèse Complet</h2>
-        </div>
-        <p class="card-desc">
-          Document XeLaTeX complet au format thèse (A4, Times New Roman 11pt, interligne 1.15) : page de garde officielle avec jury complet, résumé encadré, remerciements, valorisation scientifique, TOC, listes de figures et tableaux, abréviations, corps de texte à la page 1, tableaux pleine page et planche en paysage.
-        </p>
-        <div class="card-actions">
-          <a class="btn btn-primary" href="exemple-these.pdf" target="_blank">Consulter le PDF Thèse</a>
-          <a class="btn btn-secondary" href="sources/exemple-these.qmd">Source .qmd</a>
-        </div>
-      </div>
-
-      <!-- 4. DOCX ARTICLE -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-tags">
-            <span class="badge">Format DOCX</span>
-            <span class="badge">Modèle Éditorial</span>
-          </div>
-          <h2>Rendu DOCX Article</h2>
-        </div>
-        <p class="card-desc">
-          Document Word généré avec le modèle éditorial embarqué dans l'extension (styles typographiques calibrés, alignements de tableaux, légendes automatiques francisées), conforme aux soumissions d'articles biomédicaux.
-        </p>
-        <div class="card-actions">
-          <a class="btn btn-primary" href="exemple-article.docx" download>Télécharger le DOCX</a>
-          <a class="btn btn-secondary" href="sources/exemple-article.qmd">Source .qmd</a>
-        </div>
-      </div>
-
-      <!-- 5. R ET PYTHON RETICULATE -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-tags">
-            <span class="badge">R &amp; Python</span>
-            <span class="badge">reticulate</span>
-            <span class="badge">mtcars</span>
-          </div>
-          <h2>Rendu R vers Python (reticulate)</h2>
-        </div>
-        <p class="card-desc">
-          Pipeline bidirectionnel complet sur le jeu de données mtcars : préparation dans R, passage direct à Python (r.cars_data), ajustement d'une régression OLS en Python, rapatriement des résidus dans R (py$cars) et graphique diagnostique ggplot2.
-        </p>
-        <div class="card-actions">
-          <a class="btn btn-primary" href="exemple-r-python.html">Consulter l'exemple R-Python</a>
-          <a class="btn btn-secondary" href="sources/r-python-reticulate.qmd">Source .qmd</a>
-        </div>
-      </div>
-    </div>
-
-    <h2 class="section-title">Utilisation Rapide</h2>
-
-    <div class="cli-box">
-      <p># Créer un nouveau projet prêt à l'emploi</p>
-      <code>quarto use template thomashusson29/quarto-template-husson mon-projet</code>
-      <br>
-      <p># Ajouter l'extension à un projet Quarto existant</p>
-      <code>quarto add thomashusson29/quarto-template-husson</code>
-      <br>
-      <p># Lancer la compilation des formats</p>
-      <code>quarto render mon-document.qmd --to husson-html
-quarto render mon-document.qmd --to husson-revealjs
-quarto render mon-document.qmd --to husson-pdf
-quarto render mon-document.qmd --to husson-docx</code>
-    </div>
-
-    <footer>
-      <span>Quarto Template Husson &mdash; Thomas Husson</span>
-      <span><a href="https://github.com/thomashusson29/quarto-template-husson">Dépôt GitHub</a></span>
-    </footer>
-  </div>
+  <p>
+    <a href="https://github.com/thomashusson29/quarto-template-husson">Dépôt GitHub</a>
+  </p>
 </body>
 </html>
