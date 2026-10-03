@@ -40,6 +40,16 @@ if (file.exists(setup_dark)) {
 
 library(ggplot2)
 library(dplyr)
+
+if (knitr::is_html_output() && requireNamespace("reticulate", quietly = TRUE)) {
+  py_path <- Sys.which("python3")
+  has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, plotly'"), stdout = FALSE, stderr = FALSE) == 0
+  if (has_deps) {
+    reticulate::use_python(py_path, required = FALSE)
+  } else {
+    reticulate::py_require(c("numpy", "pandas", "plotly"))
+  }
+}
 ```
 
 ## Résumé
@@ -48,7 +58,7 @@ Ce document illustre le rendu d'un article complet (formats HTML et DOCX) exclus
 
 ## Introduction
 
-Le jeu de données `mtcars` regroupe les caractéristiques techniques de 32 modèles d'automobiles. Il permet d'illustrer la mise en forme des tableaux, des équations mathématiques, des encadrés et des graphiques adaptatifs en thème clair et sombre (One Dark Pro).
+Le jeu de données `mtcars` regroupe les caractéristiques techniques de 32 modèles d'automobiles. Il permet d'illustrer la mise en forme des tableaux, des équations mathématiques, des encadrés et des graphiques 2D et 3D interactifs adaptatifs en thème clair et sombre (One Dark Pro).
 
 ::: {.callout-note}
 ### Variable d'intérêt principale
@@ -73,6 +83,7 @@ data(mtcars)
 
 df_cars <- mtcars |>
   mutate(
+    Modele = rownames(mtcars),
     Cylindres = factor(cyl, labels = c("4 cylindres", "6 cylindres", "8 cylindres")),
     Transmission = factor(am, labels = c("Automatique", "Manuelle"))
   )
@@ -144,6 +155,68 @@ ggplot(df_cars, aes(x = wt, y = mpg, color = Cylindres)) +
   theme(legend.position = "top")
 ```
 
+::: {.content-visible when-format="html"}
+### Visualisations 3D interactives (R et Python)
+
+En format HTML, les graphiques 3D interactifs produits avec `plotly` en **R** comme en **Python** adoptent automatiquement un fond transparent et la palette **One Dark Pro** via `auto_dark_on()`.
+
+#### Nuage 3D interactif dans R (`plotly::plot_ly`)
+
+```{r}
+#| label: fig-mtcars-3d-r
+#| eval: !expr knitr::is_html_output()
+library(plotly)
+
+plot_ly(
+  data = df_cars,
+  x = ~wt,
+  y = ~hp,
+  z = ~mpg,
+  color = ~Cylindres,
+  text = ~Modele,
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 6, opacity = 0.9),
+  height = 480
+) |>
+  layout(
+    title = "Relation 3D Poids - Puissance - Consommation (R / plotly)",
+    scene = list(
+      xaxis = list(title = "Poids (1000 lbs)"),
+      yaxis = list(title = "Puissance (hp)"),
+      zaxis = list(title = "Consommation (mpg)")
+    )
+  )
+```
+
+#### Nuage 3D interactif dans Python (`plotly.express.scatter_3d`)
+
+```{python}
+#| label: fig-mtcars-3d-py
+#| eval: !expr knitr::is_html_output()
+import plotly.express as px
+
+df_py = r.df_cars.copy()
+fig_py = px.scatter_3d(
+    df_py,
+    x="wt",
+    y="hp",
+    z="mpg",
+    color="Cylindres",
+    hover_name="Modele",
+    title="Relation 3D Poids - Puissance - Consommation (Python / plotly.express)",
+    labels={
+        "wt": "Poids (1000 lbs)",
+        "hp": "Puissance (hp)",
+        "mpg": "Consommation (mpg)",
+        "Cylindres": "Motorisation"
+    },
+    height=480
+).update_traces(marker=dict(size=6, opacity=0.9))
+fig_py
+```
+:::
+
 ## Discussion
 
 L'analyse descriptive et graphique de `mtcars` met en évidence l'effet conjoint de la masse du véhicule et de la cylindrée sur la consommation.
@@ -156,3 +229,4 @@ Ce document utilise uniquement le jeu de données interne `mtcars` de R, sans d�
 ## Conclusion
 
 Cet exemple présente les fonctionnalités de mise en page HTML et Word DOCX du template sur le jeu de données `mtcars`.
+

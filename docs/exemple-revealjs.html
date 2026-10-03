@@ -143,6 +143,14 @@
       margin-right: 0; 
     }
   </style>
+  <script src="exemple-revealjs_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <script src="exemple-revealjs_files/libs/plotly-binding-4.12.1/plotly.js"></script>
+  <script src="exemple-revealjs_files/libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="exemple-revealjs_files/libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="exemple-revealjs_files/libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+  <script src="exemple-revealjs_files/libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+  <link href="exemple-revealjs_files/libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet">
+  <script src="exemple-revealjs_files/libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
   <script src="auto-dark-reveal-init.js"></script>
 </head>
 <body class="quarto-light">
@@ -189,7 +197,7 @@ Membre 1, Membre 2 — Hôpital 1, Hôpital 2
 <p><strong>Objectif de la présentation</strong></p>
 </div>
 <div class="callout-content">
-<p>Illustrer le rendu RevealJS du template et l’adaptation automatique des graphiques R au thème <strong>One Dark Pro</strong> uniquement sur <code>mtcars</code>.</p>
+<p>Illustrer le rendu RevealJS du template et l’adaptation automatique des graphiques 2D et 3D (R et Python) au thème <strong>One Dark Pro</strong> uniquement sur <code>mtcars</code>.</p>
 </div>
 </div>
 </div>
@@ -207,8 +215,8 @@ Membre 1, Membre 2 — Hôpital 1, Hôpital 2
 </div><div class="column" style="width:50%;">
 <h3 data-nav-h1="INTRODUCTION" data-nav-bc="[&quot;Plan&quot;,&quot;Volet graphique&quot;]" data-nav-active="Volet graphique" id="volet-graphique">Volet graphique</h3>
 <ul>
-<li>Relation poids (<code>wt</code>) et consommation (<code>mpg</code>)</li>
-<li>Distribution de la puissance (<code>hp</code>)</li>
+<li>Relation 2D poids (<code>wt</code>) et consommation (<code>mpg</code>)</li>
+<li>Nuages 3D interactifs R (<code>plotly</code>) et Python (<code>plotly.express</code>)</li>
 <li>Tableau complet défilable (<code>sticky</code>)</li>
 </ul>
 </div></div>
@@ -270,22 +278,53 @@ Membre 1, Membre 2 — Hôpital 1, Hôpital 2
 </ul>
 </section></section>
 <section>
-<section id="visualisations-r" class="title-slide slide level1 center" data-nav-title="GRAPHIQUES" data-nav-h1="GRAPHIQUES" data-nav-bc="[]" data-nav-active="GRAPHIQUES">
-<h1>Visualisations R</h1>
+<section id="visualisations-2d-et-3d" class="title-slide slide level1 center" data-nav-title="GRAPHIQUES" data-nav-h1="GRAPHIQUES" data-nav-bc="[]" data-nav-active="GRAPHIQUES">
+<h1>Visualisations 2D et 3D</h1>
 
 </section>
-<section id="consommation-selon-le-poids" class="slide level2" data-nav-title="Poids vs MPG" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Poids vs MPG&quot;]" data-nav-active="Poids vs MPG">
-<h2>Consommation selon le poids</h2>
+<section id="consommation-selon-le-poids-2d-r" class="slide level2" data-nav-title="Poids vs MPG" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Poids vs MPG&quot;]" data-nav-active="Poids vs MPG">
+<h2>Consommation selon le poids (2D R)</h2>
 
 <img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-mpg-wt-1.png" id="fig-slides-mpg-wt" width="912" class="r-stretch quarto-figure-center"><p class="caption">
 Figure&nbsp;1
 </p></section>
-<section id="distribution-de-la-puissance-par-cylindrée" class="slide level2" data-nav-title="Puissance" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Puissance&quot;]" data-nav-active="Puissance">
-<h2>Distribution de la puissance par cylindrée</h2>
+<section id="distribution-de-la-puissance-par-cylindrée-2d-r" class="slide level2" data-nav-title="Puissance" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Puissance&quot;]" data-nav-active="Puissance">
+<h2>Distribution de la puissance par cylindrée (2D R)</h2>
 
 <img data-src="exemple-revealjs_files/figure-revealjs/fig-slides-hp-cyl-1.png" id="fig-slides-hp-cyl" width="912" class="r-stretch quarto-figure-center"><p class="caption">
 Figure&nbsp;2
 </p></section>
+<section id="nuage-3d-interactif-dans-r-plotly" class="slide level2" data-nav-title="3D R" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;3D R&quot;]" data-nav-active="3D R">
+<h2>Nuage 3D interactif dans R (<code>plotly</code>)</h2>
+<div class="cell">
+<div id="fig-slides-3d-r" class="cell-output-display quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-slides-3d-r-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="htmlwidget-020bee94fd6a76a22949" style="width:960px;height:460px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-020bee94fd6a76a22949">{"x":{"visdat":{"1186b3a57e14f":["function () ","plotlyVisDat"]},"cur_data":"1186b3a57e14f","attrs":{"1186b3a57e14f":{"x":{},"y":{},"z":{},"text":{},"mode":"markers","marker":{"size":6,"opacity":0.90000000000000002},"color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"height":460,"margin":{"b":40,"l":60,"t":25,"r":10},"title":{"text":"Espace 3D interactif : Poids, Puissance et Consommation (R / plotly)","font":{"color":"#e6edf3"}},"scene":{"xaxis":{"title":{"text":"Poids (1000 lbs)","font":{"color":"#e6edf3"}},"backgroundcolor":"rgba(0,0,0,0)","showbackground":false,"gridcolor":"rgba(128,128,128,0.28)","zerolinecolor":"rgba(128,128,128,0.45)","linecolor":"rgba(128,128,128,0.45)","tickfont":{"color":"#abb2bf"}},"yaxis":{"title":{"text":"Puissance (hp)","font":{"color":"#e6edf3"}},"backgroundcolor":"rgba(0,0,0,0)","showbackground":false,"gridcolor":"rgba(128,128,128,0.28)","zerolinecolor":"rgba(128,128,128,0.45)","linecolor":"rgba(128,128,128,0.45)","tickfont":{"color":"#abb2bf"}},"zaxis":{"title":{"text":"Consommation (mpg)","font":{"color":"#e6edf3"}},"backgroundcolor":"rgba(0,0,0,0)","showbackground":false,"gridcolor":"rgba(128,128,128,0.28)","zerolinecolor":"rgba(128,128,128,0.45)","linecolor":"rgba(128,128,128,0.45)","tickfont":{"color":"#abb2bf"}},"bgcolor":"rgba(0,0,0,0)"},"hovermode":"closest","showlegend":true,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","colorway":["#61afef","#98c379","#e06c75","#c678dd","#d19a66","#56b6c2","#e5c07b"],"font":{"color":"#abb2bf"},"legend":{"title":{"font":{"color":"#e6edf3"}},"bgcolor":"rgba(0,0,0,0)","bordercolor":"rgba(0,0,0,0)","font":{"color":"#abb2bf"}},"xaxis":{"title":{"font":{"color":"#e6edf3"}},"gridcolor":"rgba(128,128,128,0.22)","zerolinecolor":"rgba(128,128,128,0.35)","linecolor":"rgba(128,128,128,0.35)","tickfont":{"color":"#abb2bf"}},"yaxis":{"title":{"font":{"color":"#e6edf3"}},"gridcolor":"rgba(128,128,128,0.22)","zerolinecolor":"rgba(128,128,128,0.35)","linecolor":"rgba(128,128,128,0.35)","tickfont":{"color":"#abb2bf"}}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[2.3199999999999998,3.1899999999999999,3.1499999999999999,2.2000000000000002,1.615,1.835,2.4649999999999999,1.9350000000000001,2.1400000000000001,1.5129999999999999,2.7799999999999998],"y":[93,62,95,66,52,65,97,66,91,113,109],"z":[22.800000000000001,24.399999999999999,22.800000000000001,32.399999999999999,30.399999999999999,33.899999999999999,21.5,27.300000000000001,26,30.399999999999999,21.399999999999999],"text":["Datsun 710","Merc 240D","Merc 230","Fiat 128","Honda Civic","Toyota Corolla","Toyota Corona","Fiat X1-9","Porsche 914-2","Lotus Europa","Volvo 142E"],"mode":"markers+lines","marker":{"color":"#61afef","size":6,"opacity":0.90000000000000002,"line":{"color":"rgba(102,194,165,1)"}},"type":"scatter3d","name":"4 cyl.","textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"#61afef"},"frame":null},{"x":[2.6200000000000001,2.875,3.2149999999999999,3.46,3.4399999999999999,3.4399999999999999,2.77],"y":[110,110,110,105,123,123,175],"z":[21,21,21.399999999999999,18.100000000000001,19.199999999999999,17.800000000000001,19.699999999999999],"text":["Mazda RX4","Mazda RX4 Wag","Hornet 4 Drive","Valiant","Merc 280","Merc 280C","Ferrari Dino"],"mode":"markers+lines","marker":{"color":"#98c379","size":6,"opacity":0.90000000000000002,"line":{"color":"rgba(252,141,98,1)"}},"type":"scatter3d","name":"6 cyl.","textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"#98c379"},"frame":null},{"x":[3.4399999999999999,3.5699999999999998,4.0700000000000003,3.73,3.7799999999999998,5.25,5.4240000000000004,5.3449999999999998,3.52,3.4350000000000001,3.8399999999999999,3.8450000000000002,3.1699999999999999,3.5699999999999998],"y":[175,245,180,180,180,205,215,230,150,150,245,175,264,335],"z":[18.699999999999999,14.300000000000001,16.399999999999999,17.300000000000001,15.199999999999999,10.4,10.4,14.699999999999999,15.5,15.199999999999999,13.300000000000001,19.199999999999999,15.800000000000001,15],"text":["Hornet Sportabout","Duster 360","Merc 450SE","Merc 450SL","Merc 450SLC","Cadillac Fleetwood","Lincoln Continental","Chrysler Imperial","Dodge Challenger","AMC Javelin","Camaro Z28","Pontiac Firebird","Ford Pantera L","Maserati Bora"],"mode":"markers+lines","marker":{"color":"#e06c75","size":6,"opacity":0.90000000000000002,"line":{"color":"rgba(141,160,203,1)"}},"type":"scatter3d","name":"8 cyl.","textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"#e06c75"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slides-3d-r-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="nuage-3d-interactif-dans-python-plotly.express" class="slide level2" data-nav-title="3D Python" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;3D Python&quot;]" data-nav-active="3D Python">
+<h2>Nuage 3D interactif dans Python (<code>plotly.express</code>)</h2>
+<div class="cell">
+<div id="fig-slides-3d-py" class="cell-output-display quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-slides-3d-py-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="plotly-py-726e0c63dbde" class="plotly-graph-div js-plotly-plot auto-dark-no-filter" style="height:460px; width:100%;"></div><script>(function(){var spec={"data": [{"hovertemplate": "<b>%{hovertext}</b><br><br>Motorisation=6 cyl.<br>Poids (1000 lbs)=%{x}<br>Puissance (hp)=%{y}<br>Consommation (mpg)=%{z}<extra></extra>", "hovertext": ["Mazda RX4", "Mazda RX4 Wag", "Hornet 4 Drive", "Valiant", "Merc 280", "Merc 280C", "Ferrari Dino"], "legendgroup": "6 cyl.", "marker": {"color": "#61afef", "symbol": "circle", "opacity": 0.9, "size": 6}, "mode": "markers", "name": "6 cyl.", "scene": "scene", "showlegend": true, "x": [2.62, 2.875, 3.215, 3.46, 3.44, 3.44, 2.77], "y": [110.0, 110.0, 110.0, 105.0, 123.0, 123.0, 175.0], "z": [21.0, 21.0, 21.4, 18.1, 19.2, 17.8, 19.7], "type": "scatter3d"}, {"hovertemplate": "<b>%{hovertext}</b><br><br>Motorisation=4 cyl.<br>Poids (1000 lbs)=%{x}<br>Puissance (hp)=%{y}<br>Consommation (mpg)=%{z}<extra></extra>", "hovertext": ["Datsun 710", "Merc 240D", "Merc 230", "Fiat 128", "Honda Civic", "Toyota Corolla", "Toyota Corona", "Fiat X1-9", "Porsche 914-2", "Lotus Europa", "Volvo 142E"], "legendgroup": "4 cyl.", "marker": {"color": "#98c379", "symbol": "circle", "opacity": 0.9, "size": 6}, "mode": "markers", "name": "4 cyl.", "scene": "scene", "showlegend": true, "x": [2.32, 3.19, 3.15, 2.2, 1.615, 1.835, 2.465, 1.935, 2.14, 1.513, 2.78], "y": [93.0, 62.0, 95.0, 66.0, 52.0, 65.0, 97.0, 66.0, 91.0, 113.0, 109.0], "z": [22.8, 24.4, 22.8, 32.4, 30.4, 33.9, 21.5, 27.3, 26.0, 30.4, 21.4], "type": "scatter3d"}, {"hovertemplate": "<b>%{hovertext}</b><br><br>Motorisation=8 cyl.<br>Poids (1000 lbs)=%{x}<br>Puissance (hp)=%{y}<br>Consommation (mpg)=%{z}<extra></extra>", "hovertext": ["Hornet Sportabout", "Duster 360", "Merc 450SE", "Merc 450SL", "Merc 450SLC", "Cadillac Fleetwood", "Lincoln Continental", "Chrysler Imperial", "Dodge Challenger", "AMC Javelin", "Camaro Z28", "Pontiac Firebird", "Ford Pantera L", "Maserati Bora"], "legendgroup": "8 cyl.", "marker": {"color": "#e06c75", "symbol": "circle", "opacity": 0.9, "size": 6}, "mode": "markers", "name": "8 cyl.", "scene": "scene", "showlegend": true, "x": [3.44, 3.57, 4.07, 3.73, 3.78, 5.25, 5.424, 5.345, 3.52, 3.435, 3.84, 3.845, 3.17, 3.57], "y": [175.0, 245.0, 180.0, 180.0, 180.0, 205.0, 215.0, 230.0, 150.0, 150.0, 245.0, 175.0, 264.0, 335.0], "z": [18.7, 14.3, 16.4, 17.3, 15.2, 10.4, 10.4, 14.7, 15.5, 15.2, 13.3, 19.2, 15.8, 15.0], "type": "scatter3d"}], "layout": {"scene": {"domain": {"x": [0.0, 1.0], "y": [0.0, 1.0]}, "xaxis": {"title": {"text": "Poids (1000 lbs)", "font": {"color": "#e6edf3"}}, "backgroundcolor": "rgba(0,0,0,0)", "showbackground": false, "gridcolor": "rgba(128,128,128,0.28)", "zerolinecolor": "rgba(128,128,128,0.45)", "linecolor": "rgba(128,128,128,0.45)", "tickfont": {"color": "#abb2bf"}}, "yaxis": {"title": {"text": "Puissance (hp)", "font": {"color": "#e6edf3"}}, "backgroundcolor": "rgba(0,0,0,0)", "showbackground": false, "gridcolor": "rgba(128,128,128,0.28)", "zerolinecolor": "rgba(128,128,128,0.45)", "linecolor": "rgba(128,128,128,0.45)", "tickfont": {"color": "#abb2bf"}}, "zaxis": {"title": {"text": "Consommation (mpg)", "font": {"color": "#e6edf3"}}, "backgroundcolor": "rgba(0,0,0,0)", "showbackground": false, "gridcolor": "rgba(128,128,128,0.28)", "zerolinecolor": "rgba(128,128,128,0.45)", "linecolor": "rgba(128,128,128,0.45)", "tickfont": {"color": "#abb2bf"}}, "bgcolor": "rgba(0,0,0,0)"}, "legend": {"title": {"text": "Motorisation", "font": {"color": "#e6edf3"}}, "tracegroupgap": 0, "bgcolor": "rgba(0,0,0,0)", "bordercolor": "rgba(0,0,0,0)", "font": {"color": "#abb2bf"}}, "title": {"text": "Espace 3D interactif : Poids, Puissance et Consommation (Python / plotly.express)", "font": {"color": "#e6edf3"}}, "height": 460, "paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "colorway": ["#61afef", "#98c379", "#e06c75", "#c678dd", "#d19a66", "#56b6c2", "#e5c07b"], "font": {"color": "#abb2bf"}}};function render(){var el=document.getElementById("plotly-py-726e0c63dbde");if(!el||!window.Plotly)return;window.Plotly.newPlot(el,spec.data,spec.layout,{responsive:true});window.dispatchEvent(new CustomEvent("auto-dark-change"));}if(window.Plotly){render();}else{var s=document.querySelector("script[data-auto-dark-plotly-cdn]");if(!s){s=document.createElement("script");s.src="https://cdn.plot.ly/plotly-2.35.2.min.js";s.setAttribute("data-auto-dark-plotly-cdn","true");document.head.appendChild(s);}s.addEventListener("load",render);window.addEventListener("DOMContentLoaded",render);window.addEventListener("load",render);}})();</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slides-3d-py-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
 <section id="données-individuelles-mtcars" class="slide level2 scrollable" data-nav-title="Données" data-nav-h1="GRAPHIQUES" data-nav-bc="[&quot;Données&quot;]" data-nav-active="Données">
 <h2>Données individuelles mtcars</h2>
 <p>Tableau défilable avec titre fixe (<code>sticky</code>) :</p>
@@ -647,9 +686,9 @@ Table&nbsp;1
 <section id="points-clés" class="slide level2" data-nav-h1="SYNTHÈSE" data-nav-bc="[&quot;Points clés&quot;]" data-nav-active="Points clés">
 <h2>Points clés</h2>
 <ol type="1">
-<li>Toutes les figures utilisent exclusivement le jeu de données <code>mtcars</code>.</li>
+<li>Toutes les figures 2D et 3D (R et Python) utilisent exclusivement le jeu de données <code>mtcars</code>.</li>
 <li>Le fond transparent et la palette One Dark Pro sont appliqués automatiquement via <code>auto_dark_on()</code>.</li>
-<li>Le basculement clair/sombre permute dynamiquement les images et leur compagnon <code>*-auto-dark.png</code>.</li>
+<li>Le basculement clair/sombre adapte dynamiquement les images statiques (<code>*-auto-dark.png</code>) et les scènes 3D interactives (<code>Plotly.relayout</code>).</li>
 </ol>
 
 </section></section>

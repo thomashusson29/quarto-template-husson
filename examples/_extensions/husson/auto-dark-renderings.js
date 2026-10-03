@@ -142,10 +142,85 @@
   }
 
 
-  /* -- 6. Boot and theme observation ------------------------------------- */
+  /* -- 6. Interactive Plotly (2D & 3D) synchronization -------------------- */
+
+  function syncPlotlyElement(el) {
+    if (!el) return;
+    el.classList.add("auto-dark-no-filter");
+
+    if (!window.Plotly || typeof window.Plotly.relayout !== "function") return;
+    if (!el._fullLayout && !el.data) return;
+
+    var dark = isDarkMode();
+    var themeKey = dark ? "dark" : "light";
+    var fg = dark ? "#abb2bf" : "#212529";
+    var fgStrong = dark ? "#e6edf3" : "#131516";
+    var grid2d = dark ? "rgba(128,128,128,0.22)" : "rgba(128,128,128,0.20)";
+    var line2d = "rgba(128,128,128,0.35)";
+    var grid3d = dark ? "rgba(128,128,128,0.28)" : "rgba(128,128,128,0.25)";
+    var line3d = "rgba(128,128,128,0.45)";
+
+    if (el.dataset.autoDarkPlotlyTheme === themeKey) return;
+    el.dataset.autoDarkPlotlyTheme = themeKey;
+
+    var update = {
+      "paper_bgcolor": "rgba(0,0,0,0)",
+      "plot_bgcolor": "rgba(0,0,0,0)",
+      "font.color": fg,
+      "title.font.color": fgStrong,
+      "legend.bgcolor": "rgba(0,0,0,0)",
+      "legend.bordercolor": "rgba(0,0,0,0)",
+      "legend.font.color": fg,
+      "legend.title.font.color": fgStrong
+    };
+
+    if (el._fullLayout && el._fullLayout.scene) {
+      update["scene.bgcolor"] = "rgba(0,0,0,0)";
+      ["xaxis", "yaxis", "zaxis"].forEach(function (ax) {
+        update["scene." + ax + ".backgroundcolor"] = "rgba(0,0,0,0)";
+        update["scene." + ax + ".showbackground"] = false;
+        update["scene." + ax + ".gridcolor"] = grid3d;
+        update["scene." + ax + ".zerolinecolor"] = line3d;
+        update["scene." + ax + ".linecolor"] = line3d;
+        update["scene." + ax + ".tickfont.color"] = fg;
+        update["scene." + ax + ".title.font.color"] = fgStrong;
+      });
+    } else {
+      ["xaxis", "yaxis"].forEach(function (ax) {
+        update[ax + ".gridcolor"] = grid2d;
+        update[ax + ".zerolinecolor"] = line2d;
+        update[ax + ".linecolor"] = line2d;
+        update[ax + ".tickfont.color"] = fg;
+        update[ax + ".title.font.color"] = fgStrong;
+      });
+    }
+
+    try {
+      window.Plotly.relayout(el, update);
+    } catch (e) {}
+  }
+
+  function syncPlotlyWidgets(forceResize) {
+    var nodes = document.querySelectorAll(".js-plotly-plot, .plotly-graph-div, .plotly.html-widget");
+    nodes.forEach(function (el) {
+      if (forceResize) {
+        delete el.dataset.autoDarkPlotlyTheme;
+        if (window.Plotly && window.Plotly.Plots && typeof window.Plotly.Plots.resize === "function") {
+          try {
+            window.Plotly.Plots.resize(el);
+          } catch (e) {}
+        }
+      }
+      syncPlotlyElement(el);
+    });
+  }
+
+
+  /* -- 7. Boot and theme observation ------------------------------------- */
 
   function boot() {
     document.querySelectorAll("img[src], img[data-src]").forEach(installForImage);
+    syncPlotlyWidgets(false);
   }
 
   function observeThemeChanges() {
@@ -162,18 +237,40 @@
         attributeFilter: ["class", "data-auto-dark-theme"]
       });
     }
+
+    if (window.HTMLWidgets && typeof window.HTMLWidgets.addPostRenderHandler === "function") {
+      window.HTMLWidgets.addPostRenderHandler(function () {
+        syncPlotlyWidgets(false);
+        setTimeout(function () { syncPlotlyWidgets(false); }, 120);
+      });
+    }
+
+    if (window.Reveal && typeof window.Reveal.on === "function") {
+      window.Reveal.on("ready", function () {
+        setTimeout(function () { syncPlotlyWidgets(true); }, 100);
+      });
+      window.Reveal.on("slidechanged", function () {
+        setTimeout(function () { syncPlotlyWidgets(true); }, 60);
+      });
+    }
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
       boot();
       observeThemeChanges();
+      setTimeout(function () { syncPlotlyWidgets(false); }, 250);
     });
   } else {
     boot();
     observeThemeChanges();
+    setTimeout(function () { syncPlotlyWidgets(false); }, 250);
   }
 
-  window.addEventListener("load", boot);
+  window.addEventListener("load", function () {
+    boot();
+    setTimeout(function () { syncPlotlyWidgets(true); }, 200);
+  });
   window.addEventListener("auto-dark-change", boot);
 })();
+

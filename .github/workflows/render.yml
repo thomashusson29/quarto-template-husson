@@ -31,7 +31,7 @@ jobs:
       - name: Install Python dependencies for reticulate example
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install numpy pandas statsmodels matplotlib pillow
+          python3 -m pip install numpy pandas statsmodels matplotlib pillow plotly
 
       - uses: r-lib/actions/setup-r-dependencies@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
         with:
@@ -40,6 +40,7 @@ jobs:
             any::ggplot2
             any::knitr
             any::magick
+            any::plotly
             any::reticulate
             any::rmarkdown
 

@@ -59,6 +59,7 @@ auto_dark_state$include_graphics_original  <- NULL
 auto_dark_state$flowchart_installed       <- FALSE
 auto_dark_state$flowchart_original        <- NULL
 auto_dark_state$ggplot2_installed         <- FALSE
+auto_dark_state$plotly_installed          <- FALSE
 auto_dark_state$python_hook_installed     <- FALSE
 
 
@@ -318,17 +319,174 @@ auto_dark_install_ggplot2_adapter <- function(pal = auto_dark_palette()) {
 }
 
 
-# ── 9c. Python / matplotlib adapter via reticulate ───────────────────────────
+# ── 9c. Plotly adapter (R & Python 2D/3D interactive figures) ─────────────────
 #
-# Automatically configures matplotlib in Python chunks with transparent
-# backgrounds and the One Dark Pro colour cycle. Rendered Python figures then
-# pass through knitr's standard `plot` hook (section 7), where `magick`
-# (`auto_dark_make_dark_image`) automatically creates the `*-auto-dark.png`
-# companion image using the exact same pipeline as R figures.
+# Automatically styles R `plotly` htmlwidgets and Python `plotly` figures with
+# transparent paper/plot/3D-scene backgrounds and the One Dark Pro discrete
+# colour cycle. Browser-side `auto-dark-renderings.js` then synchronizes text,
+# legend, and 2D/3D axis colours whenever the page switches between light and
+# One Dark Pro dark mode.
+
+auto_dark_normalize_plotly_title <- function(obj) {
+  if (is.character(obj)) {
+    return(list(text = obj))
+  }
+  if (is.list(obj)) {
+    return(obj)
+  }
+  list()
+}
+
+auto_dark_style_plotly_widget <- function(x, pal = auto_dark_palette(), force_recolor = FALSE) {
+  if (!requireNamespace("plotly", quietly = TRUE)) {
+    return(x)
+  }
+
+  had_user_colors <- FALSE
+  if (!is.null(x$x$attrs) && is.list(x$x$attrs)) {
+    for (i in seq_along(x$x$attrs)) {
+      if (!is.null(x$x$attrs[[i]]$colors)) {
+        had_user_colors <- TRUE
+      }
+    }
+    x <- tryCatch(
+      suppressWarnings(suppressMessages(plotly::plotly_build(x))),
+      error = function(e) x
+    )
+  }
+
+  if ((!had_user_colors || isTRUE(force_recolor)) &&
+      !is.null(x$x$data) && is.list(x$x$data)) {
+    n_cycle <- length(pal$cycle)
+    for (i in seq_along(x$x$data)) {
+      col_i <- pal$cycle[((i - 1) %% n_cycle) + 1]
+      mc <- x$x$data[[i]]$marker$color
+      if (is.character(mc) && length(mc) == 1) {
+        x$x$data[[i]]$marker$color <- col_i
+      }
+      lc <- x$x$data[[i]]$line$color
+      if (is.character(lc) && length(lc) == 1) {
+        x$x$data[[i]]$line$color <- col_i
+      }
+    }
+  }
+
+  layout <- x$x$layout %||% list()
+  layout$template      <- NULL
+  layout$paper_bgcolor <- "rgba(0,0,0,0)"
+  layout$plot_bgcolor  <- "rgba(0,0,0,0)"
+  layout$colorway      <- pal$cycle
+  layout$font          <- utils::modifyList(layout$font %||% list(), list(color = pal$text))
+
+  layout$title <- utils::modifyList(
+    auto_dark_normalize_plotly_title(layout$title),
+    list(font = list(color = pal$text_strong))
+  )
+
+  legend <- layout$legend %||% list()
+  legend$title <- auto_dark_normalize_plotly_title(legend$title)
+  layout$legend <- utils::modifyList(
+    legend,
+    list(
+      bgcolor     = "rgba(0,0,0,0)",
+      bordercolor = "rgba(0,0,0,0)",
+      font        = list(color = pal$text),
+      title       = list(font = list(color = pal$text_strong))
+    )
+  )
+
+  axis_2d <- list(
+    gridcolor     = "rgba(128,128,128,0.22)",
+    zerolinecolor = "rgba(128,128,128,0.35)",
+    linecolor     = "rgba(128,128,128,0.35)",
+    tickfont      = list(color = pal$text),
+    title         = list(font = list(color = pal$text_strong))
+  )
+  for (ax_name in c("xaxis", "yaxis")) {
+    ax <- layout[[ax_name]] %||% list()
+    ax$title <- auto_dark_normalize_plotly_title(ax$title)
+    layout[[ax_name]] <- utils::modifyList(ax, axis_2d)
+  }
+
+  axis_3d <- list(
+    backgroundcolor = "rgba(0,0,0,0)",
+    showbackground  = FALSE,
+    gridcolor       = "rgba(128,128,128,0.28)",
+    zerolinecolor   = "rgba(128,128,128,0.45)",
+    linecolor       = "rgba(128,128,128,0.45)",
+    tickfont        = list(color = pal$text),
+    title           = list(font = list(color = pal$text_strong))
+  )
+  scene <- layout$scene %||% list()
+  scene$bgcolor <- "rgba(0,0,0,0)"
+  for (ax_name in c("xaxis", "yaxis", "zaxis")) {
+    ax <- scene[[ax_name]] %||% list()
+    ax$title <- auto_dark_normalize_plotly_title(ax$title)
+    scene[[ax_name]] <- utils::modifyList(ax, axis_3d)
+  }
+  layout$scene <- scene
+
+  x$x$layout <- layout
+  x
+}
+
+auto_dark_install_plotly_adapter <- function(pal = auto_dark_palette()) {
+  if (!auto_dark_html_output() ||
+      !requireNamespace("knitr", quietly = TRUE) ||
+      isTRUE(auto_dark_state$plotly_installed)) {
+    return(invisible(FALSE))
+  }
+
+  # 1. R plotly htmlwidget adapter
+  r_wrapper <- function(x, ..., options = NULL) {
+    if (isTRUE(getOption("auto_dark.active", FALSE)) &&
+        isTRUE(getOption("auto_dark.transparent_figures", TRUE)) &&
+        auto_dark_html_output()) {
+      pal_cur <- getOption("auto_dark.palette", auto_dark_palette())
+      x <- auto_dark_style_plotly_widget(x, pal = pal_cur)
+    }
+    if (requireNamespace("htmlwidgets", quietly = TRUE)) {
+      orig_hw <- getFromNamespace("knit_print.htmlwidget", "htmlwidgets")
+      return(orig_hw(x, ..., options = options))
+    }
+    knitr::normal_print(x)
+  }
+
+  registerS3method("knit_print", "plotly", r_wrapper, envir = asNamespace("knitr"))
+
+  # 2. Python plotly Figure adapter (fallback if not handled via _repr_html_)
+  py_wrapper <- function(x, ..., options = NULL) {
+    if (!auto_dark_html_output() || !requireNamespace("reticulate", quietly = TRUE)) {
+      return(knitr::normal_print(x))
+    }
+    html_str <- reticulate::py_to_r(x$`_repr_html_`())
+    knitr::asis_output(html_str)
+  }
+
+  registerS3method("knit_print", "plotly.basedatatypes.BaseFigure", py_wrapper, envir = asNamespace("knitr"))
+  registerS3method("knit_print", "plotly.graph_objs._figure.Figure", py_wrapper, envir = asNamespace("knitr"))
+
+  auto_dark_state$plotly_installed <- TRUE
+  invisible(TRUE)
+}
+
+
+# ── 9d. Python / matplotlib & plotly adapter via reticulate ──────────────────
+#
+# Automatically configures matplotlib and plotly in Python chunks with
+# transparent backgrounds and the One Dark Pro colour cycle. Rendered static
+# Python figures pass through knitr's standard `plot` hook (section 7), where
+# `magick` (`auto_dark_make_dark_image`) creates the `*-auto-dark.png`
+# companion image. Interactive Python `plotly` figures emit clean transparent
+# HTML widgets synchronized with `auto-dark-renderings.js`.
 
 auto_dark_configure_python <- function(pal = auto_dark_palette()) {
   if (!auto_dark_html_output()) {
     return(invisible(FALSE))
+  }
+
+  if (!nzchar(Sys.getenv("RETICULATE_PYTHON")) && nzchar(Sys.which("python3"))) {
+    Sys.setenv(RETICULATE_PYTHON = Sys.which("python3"))
   }
 
   colors_py <- paste(sprintf("'%s'", pal$cycle), collapse = ", ")
@@ -345,8 +503,103 @@ auto_dark_configure_python <- function(pal = auto_dark_palette()) {
       "    })",
       "except Exception:",
       "    pass",
+      "",
+      "try:",
+      "    import json, base64, uuid, numpy as np",
+      "    import plotly.io as pio",
+      "    import plotly.graph_objects as go",
+      "    import plotly.express as px",
+      "    from plotly.basedatatypes import BaseFigure",
+      "    _ad_cycle = [%s]",
+      "    px.defaults.color_discrete_sequence = _ad_cycle",
+      "    pio.templates['onedark_auto'] = go.layout.Template(",
+      "        layout=dict(",
+      "            paper_bgcolor='rgba(0,0,0,0)',",
+      "            plot_bgcolor='rgba(0,0,0,0)',",
+      "            colorway=_ad_cycle,",
+      "            font=dict(color='#abb2bf'),",
+      "            title=dict(font=dict(color='#e6edf3')),",
+      "            legend=dict(bgcolor='rgba(0,0,0,0)', bordercolor='rgba(0,0,0,0)', font=dict(color='#abb2bf')),",
+      "            scene=dict(",
+      "                bgcolor='rgba(0,0,0,0)',",
+      "                xaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)'),",
+      "                yaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)'),",
+      "                zaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)')",
+      "            )",
+      "        )",
+      "    )",
+      "    pio.templates.default = 'plotly_white+onedark_auto'",
+      "    go.Figure.show = lambda self, *args, **kwargs: self",
+      "    def _auto_dark_decode_bdata(obj):",
+      "        if isinstance(obj, dict):",
+      "            if 'bdata' in obj and 'dtype' in obj:",
+      "                arr = np.frombuffer(base64.b64decode(obj['bdata']), dtype=obj['dtype'])",
+      "                if 'shape' in obj:",
+      "                    dims = [int(s.strip()) for s in str(obj['shape']).split(',') if s.strip()]",
+      "                    arr = arr.reshape(dims)",
+      "                return arr.tolist()",
+      "            return {k: _auto_dark_decode_bdata(v) for k, v in obj.items()}",
+      "        if isinstance(obj, (list, tuple)):",
+      "            return [_auto_dark_decode_bdata(v) for v in obj]",
+      "        if hasattr(obj, 'tolist'):",
+      "            return obj.tolist()",
+      "        return obj",
+      "    def _auto_dark_repr_html(self):",
+      "        d = _auto_dark_decode_bdata(self.to_plotly_json())",
+      "        lay = d.setdefault('layout', {})",
+      "        lay.pop('template', None)",
+      "        lay['paper_bgcolor'] = 'rgba(0,0,0,0)'",
+      "        lay['plot_bgcolor'] = 'rgba(0,0,0,0)'",
+      "        lay['colorway'] = _ad_cycle",
+      "        lay.setdefault('font', {})['color'] = '#abb2bf'",
+      "        if isinstance(lay.get('title'), str):",
+      "            lay['title'] = {'text': lay['title']}",
+      "        lay.setdefault('title', {}).setdefault('font', {})['color'] = '#e6edf3'",
+      "        leg = lay.setdefault('legend', {})",
+      "        leg['bgcolor'] = 'rgba(0,0,0,0)'",
+      "        leg['bordercolor'] = 'rgba(0,0,0,0)'",
+      "        leg.setdefault('font', {})['color'] = '#abb2bf'",
+      "        if isinstance(leg.get('title'), str):",
+      "            leg['title'] = {'text': leg['title']}",
+      "        leg.setdefault('title', {}).setdefault('font', {})['color'] = '#e6edf3'",
+      "        sc = lay.setdefault('scene', {})",
+      "        sc['bgcolor'] = 'rgba(0,0,0,0)'",
+      "        for ax_nm in ('xaxis', 'yaxis', 'zaxis'):",
+      "            ax = sc.setdefault(ax_nm, {})",
+      "            ax['backgroundcolor'] = 'rgba(0,0,0,0)'",
+      "            ax['showbackground'] = False",
+      "            ax['gridcolor'] = 'rgba(128,128,128,0.28)'",
+      "            ax['zerolinecolor'] = 'rgba(128,128,128,0.45)'",
+      "            ax['linecolor'] = 'rgba(128,128,128,0.45)'",
+      "            ax.setdefault('tickfont', {})['color'] = '#abb2bf'",
+      "            if isinstance(ax.get('title'), str):",
+      "                ax['title'] = {'text': ax['title']}",
+      "            ax.setdefault('title', {}).setdefault('font', {})['color'] = '#e6edf3'",
+      "        h = lay.get('height', 480)",
+      "        div_id = 'plotly-py-' + uuid.uuid4().hex[:12]",
+      "        payload = json.dumps({'data': d.get('data', []), 'layout': lay})",
+      "        return (",
+      "            f'<div id=\"{div_id}\" class=\"plotly-graph-div js-plotly-plot auto-dark-no-filter\" '",
+      "            f'style=\"height:{h}px; width:100%%;\"></div>'",
+      "            f'<script>(function(){{var spec={payload};'",
+      "            f'function render(){{var el=document.getElementById(\"{div_id}\");if(!el||!window.Plotly)return;'",
+      "            f'window.Plotly.newPlot(el,spec.data,spec.layout,{{responsive:true}});'",
+      "            f'window.dispatchEvent(new CustomEvent(\"auto-dark-change\"));}}'",
+      "            f'if(window.Plotly){{render();}}else{{'",
+      "            f'var s=document.querySelector(\"script[data-auto-dark-plotly-cdn]\");'",
+      "            f'if(!s){{s=document.createElement(\"script\");s.src=\"https://cdn.plot.ly/plotly-2.35.2.min.js\";'",
+      "            f's.setAttribute(\"data-auto-dark-plotly-cdn\",\"true\");document.head.appendChild(s);}}'",
+      "            f's.addEventListener(\"load\",render);'",
+      "            f'window.addEventListener(\"DOMContentLoaded\",render);'",
+      "            f'window.addEventListener(\"load\",render);}}}})'",
+      "            f'();</script>'",
+      "        )",
+      "    BaseFigure._repr_html_ = _auto_dark_repr_html",
+      "except Exception:",
+      "    pass",
       sep = "\n"
     ),
+    colors_py,
     colors_py
   )
 
@@ -422,6 +675,7 @@ auto_dark_on <- function(palette             = "onedark",
   if (isTRUE(transparent_figures)) {
     auto_dark_configure_transparent_figures()
     auto_dark_install_ggplot2_adapter(pal)
+    auto_dark_install_plotly_adapter(pal)
     auto_dark_configure_python(pal)
   }
 

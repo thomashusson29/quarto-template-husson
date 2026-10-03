@@ -528,12 +528,17 @@ Pour assurer une intégration visuelle parfaite des figures lors de la bascule e
 - **Fond transparent et palette One Dark Pro automatiques** : injection automatique dans `matplotlib.rcParams` de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
 - **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
 
+#### 3. Graphiques 2D et 3D interactifs (`plotly` en R et Python)
+- **En R (`plotly::plot_ly`, `type = "scatter3d"`, etc.)** : interception automatique via `knit_print.plotly` pour appliquer un fond transparent (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans 3D `xaxis`/`yaxis`/`zaxis`) et la palette discrète **One Dark Pro** sans avoir à spécifier `colors = ...` ;
+- **En Python (`plotly.express.scatter_3d`, `plotly.graph_objects`)** : configuration automatique du template `onedark_auto` et de `px.defaults.color_discrete_sequence`, puis conversion transparente en widget interactif `plotly` via `reticulate` ;
+- **Synchronisation dynamique clair / sombre (`auto-dark-renderings.js`)** : lors du basculement de thème en HTML ou RevealJS (ainsi qu'au changement de diapositive RevealJS), `Plotly.relayout()` et `Plotly.Plots.resize()` adaptent en temps réel la couleur des titres, légendes, grilles et axes 2D/3D.
+
 ## Exemples et démonstrations inclus dans le dépôt
 
 Le dossier `examples/` contient des cas d'usage complets basés exclusivement sur `mtcars` (`Hôpital 1`, `Hôpital 2`, `Membre 1`, `Membre 2`) :
 
 1. **`examples/exemple-article.qmd`** :
-   - Rendu HTML statique (`husson-html`) sur `mtcars` avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt` et graphique `ggplot2`.
+   - Rendu HTML statique (`husson-html`) sur `mtcars` avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt`, graphique 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python).
    - Rendu Word (`husson-docx`) appliquant le modèle éditorial embarqué.
    - Commandes :
      ```bash
@@ -542,7 +547,7 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      ```
 
 2. **`examples/exemple-revealjs.qmd`** :
-   - Présentation complète RevealJS (`husson-revealjs`) sur `mtcars` avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux et figures `ggplot2` compatibles One Dark Pro.
+   - Présentation complète RevealJS (`husson-revealjs`) sur `mtcars` avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux, figures 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python) compatibles One Dark Pro.
    - Commande :
      ```bash
      quarto render examples/exemple-revealjs.qmd --to husson-revealjs
@@ -561,7 +566,7 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      2. **Accès direct depuis Python** : le préfixe `r.` donne un accès direct aux objets R sans écriture intermédiaire sur disque (`cars = r.cars_data.copy()`) ;
      3. **Modélisation statistique dans Python** : calcul d'une régression multiple OLS (avec `statsmodels` ou `numpy.linalg.lstsq`) estimant les prédictions (`Predicted`) et résidus (`Residuals`) ;
      4. **Rapatriement dans R** : le préfixe `py$` récupère le dataframe enrichi dans la session R (`cars_results <- py$cars`) ;
-     5. **Diagnostic graphique dans R** : représentation visuelle de la droite idéale ($y = x$) et des résidus avec `ggplot2`.
+     5. **Visualisations 2D et 3D dans R et Python** : figures 2D (`ggplot2`, `matplotlib`) et nuages 3D interactifs (`plotly::plot_ly` et `plotly.express.scatter_3d`) adaptés automatiquement à One Dark Pro.
    - Commandes :
      ```bash
      # Rendu local autonome
@@ -570,7 +575,8 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      # Rendu pour publication GitHub Pages
      quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
      ```
-   - Dépendances : packages R `reticulate`, `ggplot2`, `knitr`, et environnement Python 3 avec `numpy` et `pandas` (ou `statsmodels`).
+   - Dépendances : packages R `reticulate`, `ggplot2`, `plotly`, `knitr`, et environnement Python 3 avec `numpy`, `pandas`, `matplotlib` et `plotly` (et optionnellement `statsmodels`).
+
 
 ## Bibliographie
 

@@ -27,11 +27,11 @@ if (file.exists(setup_script)) {
 
 library(reticulate)
 py_path <- Sys.which("python3")
-has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, matplotlib'"), stdout = FALSE, stderr = FALSE) == 0
+has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, matplotlib, plotly'"), stdout = FALSE, stderr = FALSE) == 0
 if (has_deps) {
   use_python(py_path, required = FALSE)
 } else {
-  py_require(c("numpy", "pandas", "statsmodels", "matplotlib"))
+  py_require(c("numpy", "pandas", "statsmodels", "matplotlib", "plotly"))
 }
 ```
 
@@ -39,12 +39,14 @@ if (has_deps) {
 
 Ce document présente l'interopérabilité native entre **R** et **Python** au sein d'un même document Quarto piloté par `knitr` et le package `reticulate`.
 
-Le flux méthodologique suit quatre étapes :
+Le flux méthodologique suit six étapes :
 
 1. Chargement et mise en forme des données dans la session R (`mtcars`).
 2. Accès aux variables R depuis Python via le préfixe `r.` et modélisation statistique.
 3. Rapatriement des prédictions et résidus dans R via le préfixe `py$`.
-4. Visualisation finale des performances avec `ggplot2` (fond transparent et couleurs One Dark Pro appliqués automatiquement sans surcharge manuelle).
+4. Visualisation 2D dans R (`ggplot2`) et dans Python (`matplotlib`) avec fond transparent et palette One Dark Pro automatiques.
+5. Visualisation 3D interactive dans R (`plotly::plot_ly`) avec adaptation automatique One Dark Pro.
+6. Visualisation 3D interactive dans Python (`plotly.express.scatter_3d`) avec adaptation automatique One Dark Pro.
 
 # Étape 1 : Préparation des données dans R
 
@@ -107,7 +109,7 @@ knitr::kable(
 )
 ```
 
-# Étape 4 : Visualisation diagnostique dans R
+# Étape 4 : Visualisation diagnostique dans R (`ggplot2`)
 
 Nous représentons graphiquement la consommation observée par rapport aux prédictions calculées par le modèle Python. Le fond transparent et la palette One Dark Pro sont injectés automatiquement par `auto_dark_on()`.
 
@@ -163,5 +165,66 @@ ax.grid(True, linestyle=":", alpha=0.5)
 plt.tight_layout()
 plt.show()
 ```
+
+# Étape 6 : Visualisation 3D interactive dans R (`plotly`)
+
+L'extension intercepte également les widgets `plotly` R via `knit_print.plotly` : le fond de la scène 3D (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans `xaxis`/`yaxis`/`zaxis`) est rendu transparent automatiquement, les groupes utilisent la palette One Dark Pro sans spécifier `colors = ...`, et `auto-dark-renderings.js` met à jour les polices et grilles lors du basculement clair/sombre.
+
+```{r}
+#| label: plot-r-3d-plotly
+library(plotly)
+
+plot_ly(
+  data = cars_results,
+  x = ~wt,
+  y = ~hp,
+  z = ~mpg,
+  color = ~Cylindres,
+  text = ~paste0(model, "<br>Prédit : ", Predicted, " mpg"),
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 6, opacity = 0.9),
+  height = 500
+) |>
+  layout(
+    title = "Espace 3D interactif : Poids, Puissance et Consommation (R / plotly)",
+    scene = list(
+      xaxis = list(title = "Poids (1000 lbs)"),
+      yaxis = list(title = "Puissance (hp)"),
+      zaxis = list(title = "Consommation (mpg)")
+    )
+  )
+```
+
+# Étape 7 : Visualisation 3D interactive dans Python (`plotly.express`)
+
+L'équivalent Python (`plotly.express.scatter_3d` ou `plotly.graph_objects`) bénéficie du même traitement automatique : le template `onedark_auto` est injecté dans `plotly.io.templates` et la figure Python est convertie en widget interactif adaptatif sans aucun fond ni couleur codés en dur.
+
+```{python}
+#| label: plot-python-3d-plotly
+import plotly.express as px
+
+cars_py_3d = r.cars_results.copy()
+
+fig_3d = px.scatter_3d(
+    cars_py_3d,
+    x="wt",
+    y="hp",
+    z="mpg",
+    color="Cylindres",
+    hover_name="model",
+    hover_data={"Predicted": True, "Residuals": True},
+    title="Espace 3D interactif : Poids, Puissance et Consommation (Python / plotly.express)",
+    labels={
+        "wt": "Poids (1000 lbs)",
+        "hp": "Puissance (hp)",
+        "mpg": "Consommation (mpg)",
+        "Cylindres": "Motorisation"
+    },
+    height=500
+).update_traces(marker=dict(size=6, opacity=0.9))
+fig_3d
+```
+
 
 

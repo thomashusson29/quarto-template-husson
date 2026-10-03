@@ -27,6 +27,15 @@ if (file.exists(setup_script)) {
 
 library(ggplot2)
 library(dplyr)
+library(reticulate)
+py_path <- Sys.which("python3")
+has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, plotly'"), stdout = FALSE, stderr = FALSE) == 0
+if (has_deps) {
+  use_python(py_path, required = FALSE)
+} else {
+  py_require(c("numpy", "pandas", "plotly"))
+}
+
 data(mtcars)
 df_cars <- mtcars |>
   mutate(
@@ -49,7 +58,7 @@ df_cars <- mtcars |>
 
 ::: {.callout-note}
 ### Objectif de la présentation
-Illustrer le rendu RevealJS du template et l'adaptation automatique des graphiques R au thème **One Dark Pro** uniquement sur `mtcars`.
+Illustrer le rendu RevealJS du template et l'adaptation automatique des graphiques 2D et 3D (R et Python) au thème **One Dark Pro** uniquement sur `mtcars`.
 :::
 
 ## Organisation de l'analyse {nav-title="Plan"}
@@ -65,8 +74,8 @@ Illustrer le rendu RevealJS du template et l'adaptation automatique des graphiqu
 
 ::: {.column width="50%"}
 ### Volet graphique
-- Relation poids (`wt`) et consommation (`mpg`)
-- Distribution de la puissance (`hp`)
+- Relation 2D poids (`wt`) et consommation (`mpg`)
+- Nuages 3D interactifs R (`plotly`) et Python (`plotly.express`)
 - Tableau complet défilable (`sticky`)
 :::
 
@@ -91,9 +100,9 @@ Comparaison des moyennes observées sur les 32 véhicules de `mtcars` :
 - **Effet de la puissance (`hp`)** : baisse moyenne de $-0{,}032\text{ mpg}$ par cheval supplémentaire ($p < 0{,}01$).
 - **Coefficient de détermination** : $R^2 = 0{,}827$.
 
-# Visualisations R {nav-title="GRAPHIQUES"}
+# Visualisations 2D et 3D {nav-title="GRAPHIQUES"}
 
-## Consommation selon le poids {nav-title="Poids vs MPG"}
+## Consommation selon le poids (2D R) {nav-title="Poids vs MPG"}
 
 ```{r}
 #| label: fig-slides-mpg-wt
@@ -117,7 +126,7 @@ ggplot(df_cars, aes(x = wt, y = mpg, color = Cylindres, fill = Cylindres)) +
   )
 ```
 
-## Distribution de la puissance par cylindrée {nav-title="Puissance"}
+## Distribution de la puissance par cylindrée (2D R) {nav-title="Puissance"}
 
 ```{r}
 #| label: fig-slides-hp-cyl
@@ -139,6 +148,60 @@ ggplot(df_cars, aes(x = Cylindres, y = hp, fill = Cylindres, color = Cylindres))
   )
 ```
 
+## Nuage 3D interactif dans R (`plotly`) {nav-title="3D R"}
+
+```{r}
+#| label: fig-slides-3d-r
+library(plotly)
+
+plot_ly(
+  data = df_cars,
+  x = ~wt,
+  y = ~hp,
+  z = ~mpg,
+  color = ~Cylindres,
+  text = ~Modele,
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 6, opacity = 0.9),
+  height = 460
+) |>
+  layout(
+    title = "Espace 3D interactif : Poids, Puissance et Consommation (R / plotly)",
+    scene = list(
+      xaxis = list(title = "Poids (1000 lbs)"),
+      yaxis = list(title = "Puissance (hp)"),
+      zaxis = list(title = "Consommation (mpg)")
+    )
+  )
+```
+
+## Nuage 3D interactif dans Python (`plotly.express`) {nav-title="3D Python"}
+
+```{python}
+#| label: fig-slides-3d-py
+import plotly.express as px
+
+df_py = r.df_cars.copy()
+fig_3d_slides = px.scatter_3d(
+    df_py,
+    x="wt",
+    y="hp",
+    z="mpg",
+    color="Cylindres",
+    hover_name="Modele",
+    title="Espace 3D interactif : Poids, Puissance et Consommation (Python / plotly.express)",
+    labels={
+        "wt": "Poids (1000 lbs)",
+        "hp": "Puissance (hp)",
+        "mpg": "Consommation (mpg)",
+        "Cylindres": "Motorisation"
+    },
+    height=460
+).update_traces(marker=dict(size=6, opacity=0.9))
+fig_3d_slides
+```
+
 ## Données individuelles mtcars {.scrollable nav-title="Données"}
 
 Tableau défilable avec titre fixe (`sticky`) :
@@ -156,6 +219,7 @@ knitr::kable(
 
 ## Points clés
 
-1. Toutes les figures utilisent exclusivement le jeu de données `mtcars`.
+1. Toutes les figures 2D et 3D (R et Python) utilisent exclusivement le jeu de données `mtcars`.
 2. Le fond transparent et la palette One Dark Pro sont appliqués automatiquement via `auto_dark_on()`.
-3. Le basculement clair/sombre permute dynamiquement les images et leur compagnon `*-auto-dark.png`.
+3. Le basculement clair/sombre adapte dynamiquement les images statiques (`*-auto-dark.png`) et les scènes 3D interactives (`Plotly.relayout`).
+
