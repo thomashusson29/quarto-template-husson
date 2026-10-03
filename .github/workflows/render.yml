@@ -49,7 +49,7 @@ jobs:
           sudo apt-get install --yes poppler-utils
 
       - name: Render the neutral template with the project command
-        run: quarto render
+        run: quarto render template.qmd
 
       - name: Render the Word format with the embedded reference document
         run: quarto render template.qmd --to husson-docx --output template.docx
