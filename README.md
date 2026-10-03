@@ -51,6 +51,16 @@ L'index d'accueil (`docs/index.html`) est conçu de façon sobre et épurée (sa
 
 Pour prévisualiser la galerie localement, ouvrez simplement le fichier `docs/index.html` dans un navigateur.
 
+### Configuration du Déploiement GitHub Pages
+
+Dans les paramètres de votre dépôt GitHub (**Settings > Pages > Build and deployment**) :
+
+- **Méthode 1 : Déploiement direct par branche (Simple et immédiat)** :
+  Sélectionnez la source **Deploy from a branch**, choisissez la branche `main` et le dossier `/docs`.
+  Le fichier `docs/.nojekyll` inclus à la racine de `docs/` désactive le traitement Jekyll par défaut, garantissant que les répertoires d'extensions (`_extensions/`) et de ressources ne soient pas ignorés ou rejetés lors de la mise en ligne.
+- **Méthode 2 : Déploiement par GitHub Actions** :
+  Sélectionnez la source **GitHub Actions**. Le fichier de workflow `.github/workflows/pages.yml` se charge alors de publier automatiquement le dossier `docs/` à chaque commit sur `main`.
+
 ```bash
 # Commandes de régénération des démonstrations pour GitHub Pages
 quarto render examples/exemple-article.qmd --to husson-html --output-dir docs --output exemple-article.html
@@ -498,17 +508,25 @@ Le format `husson-revealjs` reprend le thème `auto-dark-clean` et ses ressource
 locales. Il suit le thème du système au premier chargement, propose une bascule
 clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dark Pro.
 
-### Graphiques R et compatibilité One Dark Pro
+### Graphiques R, Python et compatibilité One Dark Pro
 
-Pour assurer une intégration visuelle parfaite des figures `ggplot2` lors de la bascule entre le mode clair et le mode One Dark Pro :
+Pour assurer une intégration visuelle parfaite des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
 
-1. Activez le module auto-dark dans votre bloc d'initialisation :
-   ```r
-   source("_extensions/husson/auto-dark-setup.R")
-   auto_dark_on(transparent_figures = TRUE)
-   ```
-2. Configurez les graphiques avec un fond transparent (`theme(plot.background = element_rect(fill = "transparent", colour = NA), panel.background = element_rect(fill = "transparent", colour = NA))`).
-3. Le module génère automatiquement des images compagnes adaptées au thème sombre (`*-auto-dark.png`) via le package `magick`, ou applique un filtre CSS contrasté en cas d'absence de `magick`.
+#### 1. En R (`ggplot2`, `lattice`, base R)
+- **Fond transparent automatique** : le module `auto-dark-setup.R` configure le périphérique graphique `knitr` (`fig.bg = "transparent"`, `dev.args = list(bg = "transparent")`) et intercepte l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
+- **Palette One Dark Pro automatique** : application automatique du cycle de couleurs One Dark Pro (`#61afef` bleu, `#98c379` vert, `#e06c75` rouge, `#c678dd` violet, `#d19a66` orange, `#56b6c2` cyan, `#e5c07b` jaune) aux échelles discrètes `ggplot2` (`ggplot2.discrete.colour` et `ggplot2.discrete.fill`) ;
+- **Génération d'images compagnes sombres** : le hook `knitr` traite chaque tracé via le package `magick` en créant un fichier `*-auto-dark.png` (`image_transparent` + `image_negate` + `image_modulate(brightness = 115, saturation = 115, hue = 200)`) ;
+- **Bascule instantanée** : le script navigateur `auto-dark-renderings.js` (et `auto-dark-reveal.js` sur RevealJS) permute l'image source dès l'activation du mode sombre (avec repli sur filtre CSS si `magick` est absent) ;
+- **Activation** :
+  ```r
+  source("_extensions/husson/auto-dark-setup.R")
+  auto_dark_on(transparent_figures = TRUE)
+  ```
+
+#### 2. En Python (`matplotlib`, `seaborn` via `reticulate`)
+- **Activation transparente depuis R** : l'appel à `auto_dark_on()` dans le bloc `setup` R configure automatiquement la session Python `reticulate` avant l'exécution des blocs `{python}` sans aucun import supplémentaire ;
+- **Fond transparent et palette One Dark Pro automatiques** : injection automatique dans `matplotlib.rcParams` de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
+- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
 
 ## Exemples et démonstrations inclus dans le dépôt
 

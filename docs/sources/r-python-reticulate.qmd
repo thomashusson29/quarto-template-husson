@@ -27,8 +27,11 @@ if (file.exists(setup_script)) {
 
 library(reticulate)
 py_path <- Sys.which("python3")
-if (nzchar(py_path)) {
+has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, matplotlib'"), stdout = FALSE, stderr = FALSE) == 0
+if (has_deps) {
   use_python(py_path, required = FALSE)
+} else {
+  py_require(c("numpy", "pandas", "statsmodels", "matplotlib"))
 }
 ```
 
@@ -41,7 +44,7 @@ Le flux méthodologique suit quatre étapes :
 1. Chargement et mise en forme des données dans la session R (`mtcars`).
 2. Accès aux variables R depuis Python via le préfixe `r.` et modélisation statistique.
 3. Rapatriement des prédictions et résidus dans R via le préfixe `py$`.
-4. Visualisation finale des performances avec `ggplot2`.
+4. Visualisation finale des performances avec `ggplot2` (fond transparent et couleurs One Dark Pro appliqués automatiquement sans surcharge manuelle).
 
 # Étape 1 : Préparation des données dans R
 
@@ -106,7 +109,7 @@ knitr::kable(
 
 # Étape 4 : Visualisation diagnostique dans R
 
-Nous représentons graphiquement la consommation observée par rapport aux prédictions calculées par le modèle Python.
+Nous représentons graphiquement la consommation observée par rapport aux prédictions calculées par le modèle Python. Le fond transparent et la palette One Dark Pro sont injectés automatiquement par `auto_dark_on()`.
 
 ```{r}
 #| label: plot-results
@@ -115,19 +118,50 @@ Nous représentons graphiquement la consommation observée par rapport aux préd
 #| fig-height: 4.8
 library(ggplot2)
 
-ggplot(cars_results, aes(x = Predicted, y = mpg)) +
-  geom_point(color = "#17365D", size = 3, alpha = 0.85) +
+cars_results$Cylindres <- factor(mtcars$cyl, labels = c("4 cyl.", "6 cyl.", "8 cyl."))
+
+ggplot(cars_results, aes(x = Predicted, y = mpg, color = Cylindres)) +
+  geom_point(size = 3.2, alpha = 0.9) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#e06c75", linewidth = 0.8) +
   annotate("text", x = 28, y = 29, label = "Ligne idéale (y = x)", color = "#e06c75", fontface = "italic") +
   labs(
     title = "Validation croisée R-Python sur mtcars",
     subtitle = "Consommation observée (R) vs Consommation prédite par le modèle OLS (Python)",
     x = "Consommation prédite (mpg - Python)",
-    y = "Consommation réelle (mpg - R)"
+    y = "Consommation réelle (mpg - R)",
+    color = "Motorisation"
   ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.background = element_rect(fill = "transparent", colour = NA),
-    panel.background = element_rect(fill = "transparent", colour = NA)
-  )
+  theme_minimal(base_size = 12)
 ```
+
+# Étape 5 : Visualisation directe dans Python (`matplotlib`)
+
+Grâce à `auto_dark_on()` activé dans le bloc `setup` R (`auto-dark-setup.R`), les graphiques produits dans les blocs `{python}` bénéficient exactement de la même mécanique automatique que les graphiques R :
+
+- **Fond transparent automatique** (`figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` injectés via `reticulate`).
+- **Palette One Dark Pro automatique** (`axes.prop_cycle` aligné sur la palette de `auto_dark_palette()`).
+- **Génération automatique du compagnon sombre** (`*-auto-dark.png`) par le hook `knitr` / `magick` existant de `auto-dark-setup.R`.
+
+```{python}
+#| label: plot-python-results
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 4.8
+import matplotlib.pyplot as plt
+
+# Aucun fond (facecolor / transparent) ni couleur de série n'est codé en dur :
+fig, ax = plt.subplots(figsize=(8, 4.8))
+for cyl, grp in cars.groupby(r.mtcars["cyl"]):
+    ax.scatter(grp["wt"], grp["Residuals"], label=f"{int(cyl)} cyl.", s=60, alpha=0.9)
+
+ax.axhline(0, color="#e06c75", linestyle="--", linewidth=1.1)
+ax.set_title("Analyse des résidus OLS selon le poids du véhicule (Python / Matplotlib)", fontweight="bold")
+ax.set_xlabel("Poids (1000 lbs)")
+ax.set_ylabel("Résidus (mpg)")
+ax.legend(title="Motorisation", frameon=False)
+ax.grid(True, linestyle=":", alpha=0.5)
+plt.tight_layout()
+plt.show()
+```
+
+

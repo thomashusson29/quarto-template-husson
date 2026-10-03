@@ -106,8 +106,6 @@ ggplot(df_lact, aes(x = Temps, y = Lactate, color = Groupe, group = Groupe)) +
   geom_point(size = 3.5) +
   geom_hline(yintercept = 2.5, linetype = "dashed", color = "#e06c75", linewidth = 0.9) +
   annotate("text", x = 5.2, y = 2.9, label = "Seuil de viabilité (2.5 mmol/L)", color = "#e06c75", fontface = "bold", size = 4.2) +
-  scale_color_manual(values = c("Protocole Optimisé" = "#61afef", "Protocole Standard" = "#98c379")) +
-  scale_fill_manual(values = c("Protocole Optimisé" = "#61afef", "Protocole Standard" = "#98c379")) +
   scale_x_continuous(breaks = temps) +
   labs(
     title = "Élimination des lactates en cours de perfusion",
@@ -119,13 +117,10 @@ ggplot(df_lact, aes(x = Temps, y = Lactate, color = Groupe, group = Groupe)) +
   ) +
   theme_minimal(base_size = 14) +
   theme(
-    plot.background = element_rect(fill = "transparent", colour = NA),
-    panel.background = element_rect(fill = "transparent", colour = NA),
     legend.position = "top",
     legend.text = element_text(size = 12),
     plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(color = "#abb2bf", linetype = "dotted", linewidth = 0.4)
+    panel.grid.minor = element_blank()
   )
 ```
 
@@ -146,8 +141,6 @@ cohortes <- data.frame(
 ggplot(cohortes, aes(x = Groupe, y = ProductionBile, fill = Groupe)) +
   geom_boxplot(alpha = 0.5, outlier.shape = NA, width = 0.45) +
   geom_jitter(width = 0.12, size = 3.5, alpha = 0.9, aes(color = Groupe)) +
-  scale_fill_manual(values = c("Standard" = "#d19a66", "Optimisé" = "#c678dd")) +
-  scale_color_manual(values = c("Standard" = "#d19a66", "Optimisé" = "#c678dd")) +
   labs(
     title = "Production cumulée de bile à 4 heures",
     subtitle = "Marqueur direct de la fonction exocrine hépatocytaire et cholangiocytaire",
@@ -156,12 +149,9 @@ ggplot(cohortes, aes(x = Groupe, y = ProductionBile, fill = Groupe)) +
   ) +
   theme_minimal(base_size = 14) +
   theme(
-    plot.background = element_rect(fill = "transparent", colour = NA),
-    panel.background = element_rect(fill = "transparent", colour = NA),
     legend.position = "none",
     plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(color = "#abb2bf", linetype = "dotted", linewidth = 0.4)
+    panel.grid.minor = element_blank()
   )
 ```
 

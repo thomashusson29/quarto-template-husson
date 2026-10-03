@@ -29,6 +29,12 @@ execute:
 source(if (file.exists("_extensions/husson/gt-page-fit.R")) "_extensions/husson/gt-page-fit.R" else "../_extensions/husson/gt-page-fit.R")
 if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
 
+setup_dark <- if (file.exists("_extensions/husson/auto-dark-setup.R")) "_extensions/husson/auto-dark-setup.R" else "../_extensions/husson/auto-dark-setup.R"
+if (file.exists(setup_dark)) {
+  source(setup_dark)
+  auto_dark_on(transparent_figures = TRUE)
+}
+
 library(ggplot2)
 library(dplyr)
 ```
@@ -135,7 +141,6 @@ df_resume |>
   geom_errorbar(aes(ymin = pmax(0, Moyenne - EcartType), ymax = Moyenne + EcartType), width = 0.2, alpha = 0.6) +
   geom_hline(yintercept = 2.5, linetype = "dashed", color = "#e06c75", linewidth = 0.8) +
   annotate("text", x = 5.2, y = 2.7, label = "Seuil viabilité (2.5 mmol/L)", color = "#e06c75", size = 3.5, fontface = "italic") +
-  scale_color_manual(values = c("Protocole Optimisé" = "#17365D", "Protocole Standard" = "#61afef")) +
   scale_x_continuous(breaks = temps) +
   labs(
     x = "Temps de perfusion (heures)",
@@ -144,8 +149,6 @@ df_resume |>
   ) +
   theme_minimal(base_size = 12) +
   theme(
-    plot.background = element_rect(fill = "transparent", colour = NA),
-    panel.background = element_rect(fill = "transparent", colour = NA),
     legend.position = "top",
     panel.grid.minor = element_blank()
   )

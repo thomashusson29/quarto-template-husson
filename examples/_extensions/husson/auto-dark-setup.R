@@ -36,7 +36,11 @@ auto_dark_palette <- function(name = "onedark") {
     blue        = "#61afef",
     green       = "#98c379",
     red         = "#e06c75",
-    purple      = "#c678dd"
+    purple      = "#c678dd",
+    orange      = "#d19a66",
+    cyan        = "#56b6c2",
+    yellow      = "#e5c07b",
+    cycle       = c("#61afef", "#98c379", "#e06c75", "#c678dd", "#d19a66", "#56b6c2", "#e5c07b")
   )
 }
 
@@ -54,6 +58,8 @@ auto_dark_state$include_graphics_installed <- FALSE
 auto_dark_state$include_graphics_original  <- NULL
 auto_dark_state$flowchart_installed       <- FALSE
 auto_dark_state$flowchart_original        <- NULL
+auto_dark_state$ggplot2_installed         <- FALSE
+auto_dark_state$python_hook_installed     <- FALSE
 
 
 # ── 4. Context helpers ────────────────────────────────────────────────────────
@@ -129,7 +135,7 @@ auto_dark_make_dark_image <- function(path, palette = auto_dark_palette()) {
 
   dark_path <- auto_dark_companion_path(path)
   dark_image <- magick::image_negate(image)
-  dark_image <- magick::image_modulate(dark_image, hue = 200)
+  dark_image <- magick::image_modulate(dark_image, brightness = 115, saturation = 115, hue = 200)
 
   dir.create(dirname(dark_path), recursive = TRUE, showWarnings = FALSE)
   magick::image_write(dark_image, path = dark_path)
@@ -263,6 +269,110 @@ auto_dark_install_flowchart_adapter <- function() {
 }
 
 
+# ── 9b. ggplot2 adapter (transparent background + One Dark Pro palette) ──────
+#
+# Automatically sets the default ggplot2 discrete colour/fill palettes to the
+# One Dark Pro cycle, and intercepts knitr printing of ggplot objects so that
+# plot, panel, and legend backgrounds remain transparent even when the user
+# adds a complete theme such as `+ theme_minimal()` or `+ theme_bw()`.
+
+auto_dark_install_ggplot2_adapter <- function(pal = auto_dark_palette()) {
+  if (!auto_dark_html_output()) {
+    return(invisible(FALSE))
+  }
+
+  # 1. Default One Dark Pro discrete colour and fill scales
+  options(
+    ggplot2.discrete.colour = pal$cycle,
+    ggplot2.discrete.fill   = pal$cycle
+  )
+
+  if (isTRUE(auto_dark_state$ggplot2_installed) ||
+      !requireNamespace("knitr", quietly = TRUE)) {
+    return(invisible(FALSE))
+  }
+
+  wrapper <- function(x, ..., options = NULL) {
+    if (isTRUE(getOption("auto_dark.active", FALSE)) &&
+        isTRUE(getOption("auto_dark.transparent_figures", TRUE)) &&
+        auto_dark_html_output() &&
+        requireNamespace("ggplot2", quietly = TRUE)) {
+      x <- x + ggplot2::theme(
+        plot.background       = ggplot2::element_rect(fill = "transparent", colour = NA),
+        panel.background      = ggplot2::element_rect(fill = "transparent", colour = NA),
+        legend.background     = ggplot2::element_rect(fill = "transparent", colour = NA),
+        legend.box.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+        legend.key            = ggplot2::element_rect(fill = "transparent", colour = NA),
+        panel.grid.major      = ggplot2::element_line(colour = "#80808040"),
+        panel.grid.minor      = ggplot2::element_line(colour = "#80808020")
+      )
+    }
+    knitr::normal_print(x)
+  }
+
+  registerS3method("knit_print", "ggplot", wrapper, envir = asNamespace("knitr"))
+  registerS3method("knit_print", "ggplot2::ggplot", wrapper, envir = asNamespace("knitr"))
+
+  auto_dark_state$ggplot2_installed <- TRUE
+  invisible(TRUE)
+}
+
+
+# ── 9c. Python / matplotlib adapter via reticulate ───────────────────────────
+#
+# Automatically configures matplotlib in Python chunks with transparent
+# backgrounds and the One Dark Pro colour cycle. Rendered Python figures then
+# pass through knitr's standard `plot` hook (section 7), where `magick`
+# (`auto_dark_make_dark_image`) automatically creates the `*-auto-dark.png`
+# companion image using the exact same pipeline as R figures.
+
+auto_dark_configure_python <- function(pal = auto_dark_palette()) {
+  if (!auto_dark_html_output()) {
+    return(invisible(FALSE))
+  }
+
+  colors_py <- paste(sprintf("'%s'", pal$cycle), collapse = ", ")
+  py_code <- sprintf(
+    paste(
+      "try:",
+      "    import matplotlib as mpl",
+      "    mpl.rcParams.update({",
+      "        'figure.facecolor': 'none',",
+      "        'axes.facecolor': 'none',",
+      "        'savefig.transparent': True,",
+      "        'savefig.facecolor': 'none',",
+      "        'axes.prop_cycle': mpl.cycler(color=[%s])",
+      "    })",
+      "except Exception:",
+      "    pass",
+      sep = "\n"
+    ),
+    colors_py
+  )
+
+  activate_py <- function(init = FALSE) {
+    if (requireNamespace("reticulate", quietly = TRUE) &&
+        tryCatch(reticulate::py_available(initialize = init), error = function(e) FALSE)) {
+      tryCatch(reticulate::py_run_string(py_code), error = function(e) NULL)
+    }
+  }
+
+  activate_py(init = FALSE)
+
+  if (requireNamespace("knitr", quietly = TRUE) && !isTRUE(auto_dark_state$python_hook_installed)) {
+    knitr::knit_hooks$set(auto_dark_py = function(before, options, envir) {
+      if (before && identical(options$engine, "python")) {
+        activate_py(init = TRUE)
+      }
+    })
+    knitr::opts_chunk$set(auto_dark_py = TRUE)
+    auto_dark_state$python_hook_installed <- TRUE
+  }
+
+  invisible(TRUE)
+}
+
+
 # ── 10. Public API: auto_dark_on() / auto_dark_off() ─────────────────────────
 
 #' Enable the One Dark theme for the current knitr session.
@@ -311,6 +421,8 @@ auto_dark_on <- function(palette             = "onedark",
 
   if (isTRUE(transparent_figures)) {
     auto_dark_configure_transparent_figures()
+    auto_dark_install_ggplot2_adapter(pal)
+    auto_dark_configure_python(pal)
   }
 
   if (isTRUE(generate_dark_images)) {
