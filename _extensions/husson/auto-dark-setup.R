@@ -360,6 +360,10 @@ auto_dark_style_plotly_widget <- function(x, pal = auto_dark_palette(), force_re
     n_cycle <- length(pal$cycle)
     for (i in seq_along(x$x$data)) {
       col_i <- pal$cycle[((i - 1) %% n_cycle) + 1]
+      tr_mode <- x$x$data[[i]]$mode
+      if (is.character(tr_mode) && length(tr_mode) == 1 && !grepl("lines", tr_mode, fixed = TRUE)) {
+        x$x$data[[i]]$line <- NULL
+      }
       mc <- x$x$data[[i]]$marker$color
       if (is.character(mc) && length(mc) == 1) {
         x$x$data[[i]]$marker$color <- col_i
@@ -370,6 +374,10 @@ auto_dark_style_plotly_widget <- function(x, pal = auto_dark_palette(), force_re
       }
     }
   }
+
+  # Prevent htmlwidgets from running plotly_build a second time (which would
+  # turn scatter3d mode = "markers" into "markers+lines").
+  x$preRenderHook <- NULL
 
   layout <- x$x$layout %||% list()
   layout$template      <- NULL
@@ -396,9 +404,9 @@ auto_dark_style_plotly_widget <- function(x, pal = auto_dark_palette(), force_re
   )
 
   axis_2d <- list(
-    gridcolor     = "rgba(128,128,128,0.22)",
-    zerolinecolor = "rgba(128,128,128,0.35)",
-    linecolor     = "rgba(128,128,128,0.35)",
+    gridcolor     = "rgba(128,128,128,0.25)",
+    zerolinecolor = "rgba(128,128,128,0.40)",
+    linecolor     = "rgba(128,128,128,0.40)",
     tickfont      = list(color = pal$text),
     title         = list(font = list(color = pal$text_strong))
   )
@@ -408,23 +416,36 @@ auto_dark_style_plotly_widget <- function(x, pal = auto_dark_palette(), force_re
     layout[[ax_name]] <- utils::modifyList(ax, axis_2d)
   }
 
+  # Use opaque hex colours for 3D WebGL axes/grids so browser premultiplied-alpha
+  # canvas compositing never washes out the grid on a white light-mode page.
   axis_3d <- list(
     backgroundcolor = "rgba(0,0,0,0)",
     showbackground  = FALSE,
-    gridcolor       = "rgba(128,128,128,0.28)",
-    zerolinecolor   = "rgba(128,128,128,0.45)",
-    linecolor       = "rgba(128,128,128,0.45)",
+    showgrid        = TRUE,
+    showline        = TRUE,
+    gridcolor       = "#7b8794",
+    gridwidth       = 1,
+    zerolinecolor   = "#636d83",
+    linecolor       = "#636d83",
+    tickcolor       = "#636d83",
     tickfont        = list(color = pal$text),
     title           = list(font = list(color = pal$text_strong))
   )
   scene <- layout$scene %||% list()
   scene$bgcolor <- "rgba(0,0,0,0)"
+  if (is.null(scene$camera)) {
+    scene$camera <- list(eye = list(x = 1.45, y = 1.45, z = 1.25))
+  }
   for (ax_name in c("xaxis", "yaxis", "zaxis")) {
     ax <- scene[[ax_name]] %||% list()
     ax$title <- auto_dark_normalize_plotly_title(ax$title)
     scene[[ax_name]] <- utils::modifyList(ax, axis_3d)
   }
   layout$scene <- scene
+  layout$margin <- utils::modifyList(
+    list(l = 10, r = 10, b = 20, t = 50),
+    layout$margin %||% list()
+  )
 
   x$x$layout <- layout
   x
@@ -522,9 +543,9 @@ auto_dark_configure_python <- function(pal = auto_dark_palette()) {
       "            legend=dict(bgcolor='rgba(0,0,0,0)', bordercolor='rgba(0,0,0,0)', font=dict(color='#abb2bf')),",
       "            scene=dict(",
       "                bgcolor='rgba(0,0,0,0)',",
-      "                xaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)'),",
-      "                yaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)'),",
-      "                zaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, gridcolor='rgba(128,128,128,0.28)', zerolinecolor='rgba(128,128,128,0.45)', linecolor='rgba(128,128,128,0.45)')",
+      "                xaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, showgrid=True, showline=True, gridcolor='#7b8794', zerolinecolor='#636d83', linecolor='#636d83', tickcolor='#636d83'),",
+      "                yaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, showgrid=True, showline=True, gridcolor='#7b8794', zerolinecolor='#636d83', linecolor='#636d83', tickcolor='#636d83'),",
+      "                zaxis=dict(backgroundcolor='rgba(0,0,0,0)', showbackground=False, showgrid=True, showline=True, gridcolor='#7b8794', zerolinecolor='#636d83', linecolor='#636d83', tickcolor='#636d83')",
       "            )",
       "        )",
       "    )",
@@ -564,13 +585,21 @@ auto_dark_configure_python <- function(pal = auto_dark_palette()) {
       "        leg.setdefault('title', {}).setdefault('font', {})['color'] = '#e6edf3'",
       "        sc = lay.setdefault('scene', {})",
       "        sc['bgcolor'] = 'rgba(0,0,0,0)'",
+      "        sc.setdefault('camera', {'eye': {'x': 1.45, 'y': 1.45, 'z': 1.25}})",
+      "        mrg = lay.setdefault('margin', {})",
+      "        for mk, mv in (('l', 10), ('r', 10), ('b', 20), ('t', 50)):",
+      "            mrg.setdefault(mk, mv)",
       "        for ax_nm in ('xaxis', 'yaxis', 'zaxis'):",
       "            ax = sc.setdefault(ax_nm, {})",
       "            ax['backgroundcolor'] = 'rgba(0,0,0,0)'",
       "            ax['showbackground'] = False",
-      "            ax['gridcolor'] = 'rgba(128,128,128,0.28)'",
-      "            ax['zerolinecolor'] = 'rgba(128,128,128,0.45)'",
-      "            ax['linecolor'] = 'rgba(128,128,128,0.45)'",
+      "            ax['showgrid'] = True",
+      "            ax['showline'] = True",
+      "            ax['gridcolor'] = '#7b8794'",
+      "            ax['gridwidth'] = 1",
+      "            ax['zerolinecolor'] = '#636d83'",
+      "            ax['linecolor'] = '#636d83'",
+      "            ax['tickcolor'] = '#636d83'",
       "            ax.setdefault('tickfont', {})['color'] = '#abb2bf'",
       "            if isinstance(ax.get('title'), str):",
       "                ax['title'] = {'text': ax['title']}",
@@ -583,8 +612,8 @@ auto_dark_configure_python <- function(pal = auto_dark_palette()) {
       "            f'style=\"height:{h}px; width:100%%;\"></div>'",
       "            f'<script>(function(){{var spec={payload};'",
       "            f'function render(){{var el=document.getElementById(\"{div_id}\");if(!el||!window.Plotly)return;'",
-      "            f'window.Plotly.newPlot(el,spec.data,spec.layout,{{responsive:true}});'",
-      "            f'window.dispatchEvent(new CustomEvent(\"auto-dark-change\"));}}'",
+      "            f'window.Plotly.newPlot(el,spec.data,spec.layout,{{responsive:true}}).then(function(){{'",
+      "            f'window.dispatchEvent(new CustomEvent(\"auto-dark-change\"));}});}}'",
       "            f'if(window.Plotly){{render();}}else{{'",
       "            f'var s=document.querySelector(\"script[data-auto-dark-plotly-cdn]\");'",
       "            f'if(!s){{s=document.createElement(\"script\");s.src=\"https://cdn.plot.ly/plotly-2.35.2.min.js\";'",

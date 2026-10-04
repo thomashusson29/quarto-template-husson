@@ -144,23 +144,26 @@
 
   /* -- 6. Interactive Plotly (2D & 3D) synchronization -------------------- */
 
+  var plotlyRetryCount = 0;
+  var plotlyRetryTimer = null;
+
   function syncPlotlyElement(el) {
-    if (!el) return;
+    if (!el) return true;
     el.classList.add("auto-dark-no-filter");
 
-    if (!window.Plotly || typeof window.Plotly.relayout !== "function") return;
-    if (!el._fullLayout && !el.data) return;
+    if (!window.Plotly || typeof window.Plotly.relayout !== "function") return false;
+    if (!el._fullLayout) return false;
 
     var dark = isDarkMode();
     var themeKey = dark ? "dark" : "light";
     var fg = dark ? "#abb2bf" : "#212529";
     var fgStrong = dark ? "#e6edf3" : "#131516";
-    var grid2d = dark ? "rgba(128,128,128,0.22)" : "rgba(128,128,128,0.20)";
-    var line2d = "rgba(128,128,128,0.35)";
-    var grid3d = dark ? "rgba(128,128,128,0.28)" : "rgba(128,128,128,0.25)";
-    var line3d = "rgba(128,128,128,0.45)";
+    var grid2d = dark ? "rgba(128,128,128,0.25)" : "rgba(128,128,128,0.22)";
+    var line2d = dark ? "rgba(128,128,128,0.40)" : "rgba(128,128,128,0.40)";
+    var grid3d = dark ? "#5c6370" : "#9aa5b1";
+    var line3d = dark ? "#8b949e" : "#57606a";
 
-    if (el.dataset.autoDarkPlotlyTheme === themeKey) return;
+    if (el.dataset.autoDarkPlotlyTheme === themeKey) return true;
     el.dataset.autoDarkPlotlyTheme = themeKey;
 
     var update = {
@@ -174,14 +177,22 @@
       "legend.title.font.color": fgStrong
     };
 
-    if (el._fullLayout && el._fullLayout.scene) {
+    var has3d = Boolean(
+      (el._fullLayout && el._fullLayout.scene) ||
+      (el.layout && el.layout.scene)
+    );
+
+    if (has3d) {
       update["scene.bgcolor"] = "rgba(0,0,0,0)";
       ["xaxis", "yaxis", "zaxis"].forEach(function (ax) {
         update["scene." + ax + ".backgroundcolor"] = "rgba(0,0,0,0)";
         update["scene." + ax + ".showbackground"] = false;
+        update["scene." + ax + ".showgrid"] = true;
+        update["scene." + ax + ".showline"] = true;
         update["scene." + ax + ".gridcolor"] = grid3d;
         update["scene." + ax + ".zerolinecolor"] = line3d;
         update["scene." + ax + ".linecolor"] = line3d;
+        update["scene." + ax + ".tickcolor"] = line3d;
         update["scene." + ax + ".tickfont.color"] = fg;
         update["scene." + ax + ".title.font.color"] = fgStrong;
       });
@@ -198,10 +209,13 @@
     try {
       window.Plotly.relayout(el, update);
     } catch (e) {}
+    return true;
   }
 
   function syncPlotlyWidgets(forceResize) {
     var nodes = document.querySelectorAll(".js-plotly-plot, .plotly-graph-div, .plotly.html-widget");
+    var pending = false;
+
     nodes.forEach(function (el) {
       if (forceResize) {
         delete el.dataset.autoDarkPlotlyTheme;
@@ -211,8 +225,20 @@
           } catch (e) {}
         }
       }
-      syncPlotlyElement(el);
+      if (!syncPlotlyElement(el)) {
+        pending = true;
+      }
     });
+
+    if (pending && plotlyRetryCount < 40) {
+      plotlyRetryCount += 1;
+      if (plotlyRetryTimer) clearTimeout(plotlyRetryTimer);
+      plotlyRetryTimer = setTimeout(function () {
+        syncPlotlyWidgets(false);
+      }, 100);
+    } else if (!pending) {
+      plotlyRetryCount = 0;
+    }
   }
 
 
