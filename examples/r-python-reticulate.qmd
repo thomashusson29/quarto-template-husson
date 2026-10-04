@@ -136,12 +136,12 @@ ggplot(cars_results, aes(x = Predicted, y = mpg, color = Cylindres)) +
   theme_minimal(base_size = 12)
 ```
 
-# Étape 5 : Visualisation directe dans Python (`matplotlib`)
+# Étape 5 : Visualisation directe dans Python (`matplotlib` et `seaborn`)
 
-Grâce à `auto_dark_on()` activé dans le bloc `setup` R (`auto-dark-setup.R`), les graphiques produits dans les blocs `{python}` bénéficient exactement de la même mécanique automatique que les graphiques R :
+Grâce à `auto_dark_on()` activé dans le bloc `setup` R (`auto-dark-setup.R`), les graphiques produits dans les blocs `{python}` avec `matplotlib` ou `seaborn` bénéficient exactement de la même mécanique automatique que les graphiques R :
 
-- **Fond transparent automatique** (`figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` injectés via `reticulate`).
-- **Palette One Dark Pro automatique** (`axes.prop_cycle` aligné sur la palette de `auto_dark_palette()`).
+- **Fond transparent automatique** (`figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` injectés via `reticulate`, y compris après un appel à `sns.set_theme()` ou `sns.set_style()`).
+- **Palette One Dark Pro automatique** (`axes.prop_cycle` et palettes `seaborn` alignés sur `auto_dark_palette()`, y compris pour une variable `hue` numérique discrète comme `cyl`).
 - **Génération automatique du compagnon sombre** (`*-auto-dark.png`) par le hook `knitr` / `magick` existant de `auto-dark-setup.R`.
 
 ```{python}
@@ -162,6 +162,47 @@ ax.set_xlabel("Poids (1000 lbs)")
 ax.set_ylabel("Résidus (mpg)")
 ax.legend(title="Motorisation", frameon=False)
 ax.grid(True, linestyle=":", alpha=0.5)
+plt.tight_layout()
+plt.show()
+```
+
+Même avec `seaborn` (y compris après un appel explicite à `sns.set_theme(style="whitegrid")` et avec une variable `hue` numérique ou catégorielle), le fond reste transparent et la palette One Dark Pro s'applique automatiquement :
+
+```{python}
+#| label: plot-python-seaborn
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 4.8
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.set_theme(style="whitegrid")
+
+cars_sns = r.cars_results.copy()
+fig, ax = plt.subplots(figsize=(8, 4.8))
+sns.boxplot(
+    data=cars_sns,
+    x="Cylindres",
+    y="mpg",
+    hue="Cylindres",
+    width=0.45,
+    boxprops=dict(alpha=0.82),
+    ax=ax
+)
+sns.stripplot(
+    data=cars_sns,
+    x="Cylindres",
+    y="mpg",
+    hue="Cylindres",
+    size=7,
+    jitter=0.12,
+    legend=False,
+    ax=ax
+)
+ax.set_title("Distribution de la consommation par motorisation (Python / Seaborn)", fontweight="bold")
+ax.set_xlabel("Motorisation")
+ax.set_ylabel("Consommation (mpg)")
+sns.despine(left=True)
 plt.tight_layout()
 plt.show()
 ```

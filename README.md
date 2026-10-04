@@ -526,8 +526,10 @@ Pour assurer une intégration visuelle pérenne et automatique des figures lors 
 
 #### 2. En Python (`matplotlib`, `seaborn` via `reticulate`)
 - **Activation transparente depuis R** : l'appel à `auto_dark_on()` dans le bloc `setup` R configure automatiquement la session Python `reticulate` avant l'exécution des blocs `{python}` sans aucun import supplémentaire ;
-- **Fond transparent et palette One Dark Pro automatiques** : injection automatique dans `matplotlib.rcParams` de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
-- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
+- **Fond transparent et palette One Dark Pro automatiques (`matplotlib` et `seaborn`)** :
+  - Dans `matplotlib.rcParams` : injection automatique de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
+  - Dans `seaborn` : interception automatique de `sns.axes_style` (utilisé par `sns.set_theme()`, `sns.set_style()`, `sns.set()`) pour empêcher l'écrasement du fond transparent par `'white'` ou `'#EAEAF2'`, remplacement des palettes `SEABORN_PALETTES` (`deep`, `muted`, `bright`, `pastel`, `dark`, `colorblind`, `onedark`) par la palette One Dark Pro, et adaptation de `HueMapping` pour que même une variable `hue` numérique discrète (ex. `cyl`) utilise automatiquement le cycle One Dark Pro ;
+- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` et `seaborn` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
 
 #### 3. Graphiques 2D et 3D interactifs (`plotly` en R et Python)
 - **En R (`plotly::plot_ly`, `type = "scatter3d"`, etc.)** : interception automatique via `knit_print.plotly` pour appliquer un fond transparent (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans 3D `xaxis`/`yaxis`/`zaxis`) et la palette discrète **One Dark Pro** sans avoir à spécifier `colors = ...` ;
