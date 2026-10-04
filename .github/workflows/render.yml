@@ -72,6 +72,10 @@ jobs:
           test -s output/auto-dark-reveal-init.js
           test -s output/auto-dark-reveal.js
           grep -q "Predicted" output/examples/r-python-reticulate.html
+          grep -q "#7b8794" output/examples/r-python-reticulate.html
+          grep -q "hookPlotlyGlobal" output/auto-dark-renderings.js
+          grep -q "#9aa5b1" output/auto-dark-renderings.js
+          grep -q "#5c6370" output/auto-dark-renderings.js
           grep -q "auto-dark-system.js" output/template.html
           grep -q "auto-dark-renderings.js" output/template.html
           grep -q "auto-dark-reveal-init.js" output/template-slides.html

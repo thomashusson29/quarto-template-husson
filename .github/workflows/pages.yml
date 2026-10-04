@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "docs/**"
+      - "_extensions/husson/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -28,8 +29,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ensure .nojekyll exists in docs
-        run: touch docs/.nojekyll
+      - name: Sync extension assets and ensure .nojekyll exists in docs
+        run: |
+          touch docs/.nojekyll
+          mkdir -p docs/_extensions/husson
+          cp -R _extensions/husson/* docs/_extensions/husson/
+          for f in auto-dark-renderings.js auto-dark-system.js auto-dark-reveal-init.js auto-dark-reveal.js navigation-reveal.js navigation-reveal.css; do
+            if [ -f "_extensions/husson/$f" ]; then
+              cp "_extensions/husson/$f" "docs/$f"
+            fi
+          done
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

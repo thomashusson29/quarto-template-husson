@@ -510,14 +510,15 @@ clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dar
 
 ### Graphiques R, Python et compatibilité One Dark Pro
 
-Pour assurer une intégration visuelle parfaite des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
+Pour assurer une intégration visuelle pérenne et automatique des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
 
 #### 1. En R (`ggplot2`, `lattice`, base R)
-- **Fond transparent automatique** : le module `auto-dark-setup.R` configure le périphérique graphique `knitr` (`fig.bg = "transparent"`, `dev.args = list(bg = "transparent")`) et intercepte l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
+- **Configuration native par défaut dans `_extension.yml`** : les formats `husson-html` et `husson-revealjs` injectent automatiquement `knitr: opts_chunk: { fig.bg: "transparent", dev.args: { bg: "transparent" } }` ainsi que les options R `ggplot2.discrete.colour` et `ggplot2.discrete.fill` calées sur la palette One Dark Pro, même si `auto-dark-setup.R` n'est pas sourcées manuellement ;
+- **Fond transparent et accompagnement `ggplot2` complet** : le module `auto-dark-setup.R` intercepte en outre l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
 - **Palette One Dark Pro automatique** : application automatique du cycle de couleurs One Dark Pro (`#61afef` bleu, `#98c379` vert, `#e06c75` rouge, `#c678dd` violet, `#d19a66` orange, `#56b6c2` cyan, `#e5c07b` jaune) aux échelles discrètes `ggplot2` (`ggplot2.discrete.colour` et `ggplot2.discrete.fill`) ;
 - **Génération d'images compagnes sombres** : le hook `knitr` traite chaque tracé via le package `magick` en créant un fichier `*-auto-dark.png` (`image_transparent` + `image_negate` + `image_modulate(brightness = 115, saturation = 115, hue = 200)`) ;
 - **Bascule instantanée** : le script navigateur `auto-dark-renderings.js` (et `auto-dark-reveal.js` sur RevealJS) permute l'image source dès l'activation du mode sombre (avec repli sur filtre CSS si `magick` est absent) ;
-- **Activation** :
+- **Activation complète (images compagnes `magick` et `reticulate`)** :
   ```r
   source("_extensions/husson/auto-dark-setup.R")
   auto_dark_on(transparent_figures = TRUE)
@@ -531,7 +532,7 @@ Pour assurer une intégration visuelle parfaite des figures lors de la bascule e
 #### 3. Graphiques 2D et 3D interactifs (`plotly` en R et Python)
 - **En R (`plotly::plot_ly`, `type = "scatter3d"`, etc.)** : interception automatique via `knit_print.plotly` pour appliquer un fond transparent (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans 3D `xaxis`/`yaxis`/`zaxis`) et la palette discrète **One Dark Pro** sans avoir à spécifier `colors = ...` ;
 - **En Python (`plotly.express.scatter_3d`, `plotly.graph_objects`)** : configuration automatique du template `onedark_auto` et de `px.defaults.color_discrete_sequence`, puis conversion transparente en widget interactif `plotly` via `reticulate` ;
-- **Synchronisation dynamique clair / sombre (`auto-dark-renderings.js`)** : lors du basculement de thème en HTML ou RevealJS (ainsi qu'au changement de diapositive RevealJS), `Plotly.relayout()` et `Plotly.Plots.resize()` adaptent en temps réel la couleur des titres, légendes, grilles et axes 2D/3D.
+- **Interception universelle côté navigateur (`auto-dark-renderings.js`)** : même sans appel préalable à `auto_dark_on()` (ou avec le moteur `jupyter`), `auto-dark-renderings.js` intercepte globalement `Plotly.newPlot` et `Plotly.react`, remplace automatiquement les couleurs par défaut de Plotly / R Set2 par la palette One Dark Pro (`Plotly.restyle`), et applique des couleurs de quadrillage 3D hexadécimales opaques (`#9aa5b1` / `#57606a` en thème clair, `#5c6370` / `#8b949e` en thème sombre) garantissant la visibilité du quadrillage WebGL (`premultipliedAlpha`) sur fond clair comme sur fond sombre.
 
 ## Exemples et démonstrations inclus dans le dépôt
 
