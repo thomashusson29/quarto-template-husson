@@ -120,7 +120,6 @@ contributes:
       slide-level: 2
       incremental: false
       auto-stretch: false
-      embed-resources: true
       menu:
         side: left
       slide-number: true
