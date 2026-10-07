@@ -147,6 +147,44 @@ $selection-bg: #26351c !default;
   display: inline-block;
 }
 
+/* ── Red square highlight panel ──────────────────────────────────────────── */
+
+.reveal .red-square-center {
+  min-height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal .red-square {
+  width: 82%;
+  box-sizing: border-box;
+  padding: 1.35em 1.6em;
+  border: 1px solid rgba(16, 120, 149, 0.25);
+  border-left: 6px solid $accent;
+  border-radius: 5px;
+  background: rgba(16, 120, 149, 0.045);
+  color: $jet;
+  font-size: 1.18em;
+  font-weight: lighter;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.reveal .red-square p {
+  margin: 0;
+}
+
+.reveal .red-square-label {
+  display: block;
+  margin-bottom: 0.55em;
+  color: $accent;
+  font-size: 0.72em;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* ── Lists ───────────────────────────────────────────────────────────────── */
 
 .reveal ul {

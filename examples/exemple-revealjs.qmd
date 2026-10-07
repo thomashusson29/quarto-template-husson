@@ -56,9 +56,14 @@ df_cars <- mtcars |>
   - `hp` : puissance brute en chevaux (`horsepower`).
   - `cyl` : nombre de cylindres (4, 6 ou 8).
 
-::: {.callout-note}
-### Objectif de la présentation
+## Objectif de la présentation {nav-title="Objectif"}
+
+::: {.red-square-center}
+::: {.red-square}
+<span class="red-square-label">OBJECTIF PRINCIPAL</span>
+
 Illustrer le rendu RevealJS du template et l'adaptation automatique des graphiques 2D et 3D (R et Python) au thème **One Dark Pro** uniquement sur `mtcars`.
+:::
 :::
 
 ## Organisation de l'analyse {nav-title="Plan"}

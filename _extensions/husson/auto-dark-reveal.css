@@ -348,6 +348,21 @@ body.quarto-dark .reveal table caption {
 }
 
 
+/* ── Red square highlight panel ──────────────────────────────────────────── */
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .red-square {
+  color: #abb2bf !important;
+  background-color: #21252b !important;
+  border-color: #3e4451 !important;
+  border-left-color: #61afef !important;
+}
+
+:is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
+  .reveal .red-square-label {
+  color: #61afef !important;
+}
+
 /* ── 11. Code blocks / cell output ───────────────────────────────────────── */
 
 :is(html.auto-dark-theme-dark, body.auto-dark-theme-dark, body.quarto-dark)
