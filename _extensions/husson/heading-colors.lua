@@ -33,29 +33,7 @@ local function safe_css_color(value, fallback, label)
   return color
 end
 
-local function append_header_include(meta, html)
-  local include = pandoc.MetaBlocks({
-    pandoc.RawBlock("html", html)
-  })
-  local current = meta["header-includes"]
-
-  if current == nil then
-    meta["header-includes"] = pandoc.MetaList({include})
-  elseif pandoc.utils.type(current) == "List" then
-    table.insert(current, include)
-    meta["header-includes"] = current
-  else
-    meta["header-includes"] = pandoc.MetaList({current, include})
-  end
-end
-
-function Meta(meta)
-  local option = meta["heading-colors"]
-
-  if option == nil or option == false then
-    return meta
-  end
-
+local function resolve_colors(option)
   local light = {
     h1 = DEFAULT_LIGHT.h1,
     h2 = DEFAULT_LIGHT.h2,
@@ -68,45 +46,71 @@ function Meta(meta)
     h3 = DEFAULT_DARK.h3
   }
 
-  if type(option) == "table" then
-    light.h1 = safe_css_color(option.h1, light.h1, "h1")
-    light.h2 = safe_css_color(option.h2, light.h2, "h2")
-    light.h3 = safe_css_color(option.h3, light.h3, "h3")
+  if option == true then
+    return light, dark
+  end
 
-    local dark_map = option.dark
-    if type(dark_map) == "table" then
-      dark.h1 = safe_css_color(dark_map.h1, dark.h1, "dark.h1")
-      dark.h2 = safe_css_color(dark_map.h2, dark.h2, "dark.h2")
-      dark.h3 = safe_css_color(dark_map.h3, dark.h3, "dark.h3")
-    end
-  elseif option ~= true then
+  if type(option) ~= "table" then
     io.stderr:write(
       "[quarto-template-husson] heading-colors doit etre true, false "
       .. "ou une table h1/h2/h3; option ignoree.\n"
     )
-    return meta
+    return nil, nil
   end
 
-  local css = string.format([[
-<style id="husson-heading-colors">
-.reveal .slides h1 { color: %s !important; }
-.reveal .slides h2 { color: %s !important; }
-.reveal .slides h3 { color: %s !important; }
+  light.h1 = safe_css_color(option.h1, light.h1, "h1")
+  light.h2 = safe_css_color(option.h2, light.h2, "h2")
+  light.h3 = safe_css_color(option.h3, light.h3, "h3")
 
-html.auto-dark-theme-dark body .reveal .slides h1,
-body.auto-dark-theme-dark .reveal .slides h1,
-body.quarto-dark .reveal .slides h1 { color: %s !important; }
+  local dark_map = option.dark
+  if type(dark_map) == "table" then
+    dark.h1 = safe_css_color(dark_map.h1, dark.h1, "dark.h1")
+    dark.h2 = safe_css_color(dark_map.h2, dark.h2, "dark.h2")
+    dark.h3 = safe_css_color(dark_map.h3, dark.h3, "dark.h3")
+  end
 
-html.auto-dark-theme-dark body .reveal .slides h2,
-body.auto-dark-theme-dark .reveal .slides h2,
-body.quarto-dark .reveal .slides h2 { color: %s !important; }
+  return light, dark
+end
 
-html.auto-dark-theme-dark body .reveal .slides h3,
-body.auto-dark-theme-dark .reveal .slides h3,
-body.quarto-dark .reveal .slides h3 { color: %s !important; }
-</style>
-]], light.h1, light.h2, light.h3, dark.h1, dark.h2, dark.h3)
+local function append_style(existing, extra)
+  if existing == nil or existing == "" then
+    return extra
+  end
+  if existing:sub(-1) ~= ";" then
+    existing = existing .. ";"
+  end
+  return existing .. " " .. extra
+end
 
-  append_header_include(meta, css)
-  return meta
+function Pandoc(doc)
+  local option = doc.meta["heading-colors"]
+
+  if option == nil or option == false then
+    return doc
+  end
+
+  local light, dark = resolve_colors(option)
+  if light == nil then
+    return doc
+  end
+
+  return doc:walk({
+    Header = function(h)
+      if h.level < 1 or h.level > 3 then
+        return h
+      end
+
+      local key = "h" .. tostring(h.level)
+      h.classes:insert("husson-heading-colored")
+
+      local vars = string.format(
+        "--husson-heading-light:%s; --husson-heading-dark:%s;",
+        light[key],
+        dark[key]
+      )
+
+      h.attributes["style"] = append_style(h.attributes["style"], vars)
+      return h
+    end
+  })
 end
