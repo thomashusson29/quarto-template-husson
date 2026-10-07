@@ -85,8 +85,11 @@ end
 function Pandoc(doc)
   local option = doc.meta["heading-colors"]
 
-  if option == nil or option == false then
+  if option == false then
     return doc
+  end
+  if option == nil then
+    option = true
   end
 
   local light, dark = resolve_colors(option)
