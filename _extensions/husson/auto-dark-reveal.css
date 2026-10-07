@@ -151,6 +151,32 @@ body.quarto-dark .reveal .slides {
 }
 
 
+/* ── Typography consistency ──────────────────────────────────────────────── */
+
+/*
+ * Bold text keeps the surrounding text colour. Accent colours should be
+ * applied explicitly to a container/class rather than to <strong> itself.
+ */
+.reveal strong,
+.reveal b {
+  color: inherit !important;
+}
+
+/*
+ * Keep the visual gap between h2 and h3 identical whether h3 is a direct
+ * sibling or the first element inside Quarto columns.
+ */
+.reveal .slides h2:has(+ h3),
+.reveal .slides h2:has(+ .columns > .column > h3:first-child) {
+  margin-bottom: 0 !important;
+}
+
+.reveal .slides h2 + h3,
+.reveal .slides h2 + .columns > .column > h3:first-child {
+  margin-top: 0.6em !important;
+}
+
+
 /* ── 5. Headings ─────────────────────────────────────────────────────────── */
 /*
  * $presentation-heading-color: $jet (#131516) → baked in.
