@@ -542,7 +542,7 @@ d'une colonne Quarto.
 
 Le format `husson-revealjs` embarque désormais les choix de mise en page récurrents :
 format 1050 × 700, contenu aligné en haut, niveau de diapositive 2, présentation non
-incrémentale, `auto-stretch: false`, ressources embarquées, rythme vertical compact,
+incrémentale, `auto-stretch: false`, rythme vertical compact,
 espacement h2→h3 identique avec ou sans colonnes, couleurs des titres, et composants
 `.small`, `.source`, `.eyebrow`, `.key`, `.takeaway`, `.progression`,
 `.red-square`, `.process-photo`, `.media-layout` / `.liver-layout`,
