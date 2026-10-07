@@ -151,6 +151,24 @@ body.quarto-dark .reveal .slides {
 }
 
 
+/* ── Configurable heading colours ───────────────────────────────────────── */
+/*
+ * heading-colors.lua marks h1/h2/h3 directly and stores the selected light /
+ * dark values as CSS custom properties on the heading. Keeping the actual
+ * colour rule here makes the option robust to presentation-specific Reveal
+ * themes and to stylesheet ordering.
+ */
+.reveal .slides .husson-heading-colored {
+  color: var(--husson-heading-light, #107895) !important;
+}
+
+html.auto-dark-theme-dark .reveal .slides .husson-heading-colored,
+body.auto-dark-theme-dark .reveal .slides .husson-heading-colored,
+body.quarto-dark .reveal .slides .husson-heading-colored {
+  color: var(--husson-heading-dark, #61afef) !important;
+}
+
+
 /* ── Typography consistency ──────────────────────────────────────────────── */
 
 /*
