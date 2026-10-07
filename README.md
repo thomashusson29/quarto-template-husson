@@ -510,18 +510,12 @@ clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dar
 
 ### Couleur des titres h1, h2 et h3
 
-L'option `heading-colors` permet de colorer les trois premiers niveaux de titres
-sans modifier le thème RevealJS. Elle est désactivée par défaut afin de préserver
-le rendu des présentations existantes.
-
-Pour appliquer la couleur d'accent Husson aux trois niveaux :
+`heading-colors` est activé par défaut : h1, h2 et h3 utilisent la couleur d'accent
+Husson (`#107895` en clair, `#61afef` en sombre). Pour revenir à des titres neutres :
 
 ```yaml
-heading-colors: true
+heading-colors: false
 ```
-
-En thème clair, h1, h2 et h3 utilisent `#107895`; en mode sombre, ils utilisent
-`#61afef`.
 
 Les couleurs peuvent aussi être choisies niveau par niveau :
 
@@ -543,6 +537,34 @@ le texte concerné.
 L'espacement entre un titre h2 et un h3 est également normalisé : le même écart est
 appliqué lorsque le h3 est directement sous le h2 ou lorsqu'il se trouve en tête
 d'une colonne Quarto.
+
+### YAML minimal et composants intégrés
+
+Le format `husson-revealjs` embarque désormais les choix de mise en page récurrents :
+format 1050 × 700, contenu aligné en haut, niveau de diapositive 2, présentation non
+incrémentale, `auto-stretch: false`, ressources embarquées, rythme vertical compact,
+espacement h2→h3 identique avec ou sans colonnes, couleurs des titres, et composants
+`.small`, `.source`, `.eyebrow`, `.key`, `.takeaway`, `.progression`,
+`.red-square`, `.process-photo`, `.media-layout` / `.liver-layout`,
+`.case-meta`, `.plot`, `.formule`, `.discussion` et `.appendix`.
+
+Une présentation standard n'a donc plus besoin de redéfinir son thème ni d'inclure
+un bloc CSS local. Exemple minimal :
+
+```yaml
+---
+title: "Titre de la présentation"
+subtitle: "Sous-titre"
+author: "Nom"
+date: today
+format:
+  husson-revealjs:
+    footer: "Nom — Sujet"
+---
+```
+
+Les styles réellement liés à un contenu précis (par exemple le cadrage d'une photo
+particulière) doivent rester dans le projet concerné, et non dans le thème.
 
 ### Graphiques R, Python et compatibilité One Dark Pro
 
