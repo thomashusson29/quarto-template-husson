@@ -1,0 +1,257 @@
+/*
+ * presentation-reveal.css
+ *
+ * Reusable presentation components and layout defaults for husson-revealjs.
+ * This file is always loaded, even when a document supplies a custom Reveal
+ * SCSS theme. Keep presentation-specific image crops and content out of here.
+ */
+
+/* ── Compact slide rhythm ────────────────────────────────────────────────── */
+
+.reveal .slides p {
+  margin-top: 0.6em;
+  margin-bottom: 0.55em;
+}
+
+.reveal .slides ul {
+  margin-top: 0.65em;
+}
+
+.reveal .slides li {
+  margin-bottom: 0.3em;
+}
+
+.reveal .slides h2 {
+  margin-bottom: 0.45em;
+}
+
+.reveal .slides h3 {
+  margin-top: 0.45em;
+}
+
+/* h2 → h3 must keep the same visual gap inside and outside columns. */
+.reveal .slides h2 + .columns {
+  margin-top: 0 !important;
+}
+
+.reveal .slides .columns {
+  gap: 28px;
+}
+
+.reveal .slides .column {
+  min-width: 0;
+}
+
+
+/* ── Generic text helpers ────────────────────────────────────────────────── */
+
+.reveal .slides .small {
+  font-size: 0.77em;
+}
+
+.reveal .slides .source {
+  font-size: 0.64em;
+  line-height: 1.35;
+  color: #596975;
+}
+
+.reveal .slides .eyebrow {
+  color: #107895;
+  font-size: 0.7em;
+  margin: 0 0 1em;
+}
+
+.reveal .slides .key {
+  color: #107895;
+  font-weight: 500;
+}
+
+.reveal .slides .takeaway {
+  border-top: 2px solid #107895;
+  padding-top: 0.6em;
+  margin-top: 0.7em;
+}
+
+.reveal .slides .progression {
+  font-size: 1.06em;
+  line-height: 1.55;
+  margin: 0.55em 0;
+}
+
+
+/* ── Title / image / result layouts ──────────────────────────────────────── */
+
+.reveal .slides .title-slide-custom {
+  padding-top: 85px;
+}
+
+.reveal .slides .title-slide-custom h2 {
+  font-size: 1.5em;
+  line-height: 1.25;
+  max-width: 1000px;
+}
+
+.reveal .slides .title-slide-custom .subtitle {
+  color: #107895;
+  font-style: italic;
+  font-size: 0.85em;
+  margin: 1.5em 0;
+}
+
+.reveal .slides .title-slide-custom .title-author {
+  margin-top: 1.7em;
+}
+
+.reveal .slides .process-photo {
+  width: 100% !important;
+  height: 265px !important;
+  object-fit: contain;
+  margin: 0 !important;
+}
+
+.reveal .slides .media-layout,
+.reveal .slides .liver-layout {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 22px;
+}
+
+.reveal .slides .case-meta {
+  font-size: 0.83em;
+  margin: 0.35em 0 0.7em;
+}
+
+.reveal .slides .liver-photo {
+  width: 100%;
+  overflow: hidden;
+  background-repeat: no-repeat;
+}
+
+.reveal .slides .liver-curve {
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.reveal .slides .liver-result {
+  font-size: 0.86em;
+  line-height: 1.45;
+  margin-top: 0.3em;
+}
+
+.reveal .slides .plot {
+  max-height: 380px;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 0.15em auto;
+  display: block;
+}
+
+.reveal .slides .formule {
+  font-size: 0.92em;
+  line-height: 1.5;
+  border: 2px solid #107895;
+  border-radius: 6px;
+  padding: 0.7em 0.8em;
+  margin: 0.4em 0 0.7em;
+  text-align: center;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.reveal .slides .discussion p {
+  margin: 0.8em 0;
+}
+
+
+/* ── Appendices ──────────────────────────────────────────────────────────── */
+
+.reveal .slides .appendix {
+  font-size: 0.81em;
+}
+
+.reveal .slides .appendix table {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0.5em 0;
+}
+
+.reveal .slides .appendix td,
+.reveal .slides .appendix th {
+  padding: 0.34em 0.4em;
+}
+
+.reveal .slides .appendix h2 {
+  font-size: 1.7em;
+}
+
+.reveal .slides .appendix-compact-table td,
+.reveal .slides .appendix-compact-table th {
+  padding: 0.23em 0.3em;
+}
+
+
+/* ── Optional dual institutional logos ───────────────────────────────────── */
+
+.dual-logo {
+  position: fixed;
+  bottom: 6px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 20;
+}
+
+.dual-logo img {
+  height: 38px;
+  width: auto;
+}
+
+body:has(.dual-logo) .reveal div.footer {
+  left: 300px !important;
+}
+
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+
+html.auto-dark-theme-dark .reveal .source,
+body.auto-dark-theme-dark .reveal .source,
+body.quarto-dark .reveal .source {
+  color: #b4bec8;
+}
+
+html.auto-dark-theme-dark .reveal .key,
+html.auto-dark-theme-dark .reveal .eyebrow,
+body.auto-dark-theme-dark .reveal .key,
+body.auto-dark-theme-dark .reveal .eyebrow,
+body.quarto-dark .reveal .key,
+body.quarto-dark .reveal .eyebrow {
+  color: #6ec3dc;
+}
+
+html.auto-dark-theme-dark .reveal .takeaway,
+body.auto-dark-theme-dark .reveal .takeaway,
+body.quarto-dark .reveal .takeaway {
+  border-top-color: #61afef;
+}
+
+html.auto-dark-theme-dark .reveal .formule,
+body.auto-dark-theme-dark .reveal .formule,
+body.quarto-dark .reveal .formule {
+  border-color: #61afef;
+}
+
+html.auto-dark-theme-dark .reveal .title-slide-custom .subtitle,
+body.auto-dark-theme-dark .reveal .title-slide-custom .subtitle,
+body.quarto-dark .reveal .title-slide-custom .subtitle {
+  color: #61afef;
+}
+
+@media print {
+  .dual-logo {
+    display: none;
+  }
+}
