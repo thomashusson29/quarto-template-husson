@@ -1,0 +1,85 @@
+---
+title: "Chirurgie hépatobiliaire en vie réelle : Analyse\\newline multi-échelle des
+  parcours et complications\\newline postopératoires"
+author: "Stylianos TZEDAKIS"
+format:
+  husson-pdf:
+    mainfont: "Times New Roman"
+    fontsize: 11pt
+    linestretch: 1.15
+    keep-tex: true
+    pdf-engine: xelatex
+    documentclass: scrartcl
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    language:
+      fr:
+        crossref-tbl-title: Tableau
+        crossref-tbl-prefix: Tableau
+        crossref-lot-title: Liste des tableaux
+  husson-html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    embed-resources: true
+thesis:
+  university: "Université Paris Cité"
+  school: "École Doctorale Pierre Louis de Santé Publique - ED393"
+  laboratory: "HeKA (Approches fondées sur les données et modèles en santé pour\\
+    newline l’acquisition de connaissances), UMR-S 1346"
+  department: "Centre de Recherche Inria Paris, Inserm"
+  degree: "Thèse de doctorat en Biostatistique"
+  logo: "logo-universite-paris-cite.png"
+  directors:
+    - name: "Pr. Sandrine KATSAHIAN"
+      role: "Dirigée"
+    - name: "Pr. David FUKS"
+      role: "Et co-dirigée"
+  date: "18/12/2025"
+  jury:
+    - name: "Sandrine KATSAHIAN"
+      title: "PU-PH, Université Paris Cité"
+      role: "Directrice de thèse"
+    - name: "David FUKS"
+      title: "PU-PH, Université Paris Cité"
+      role: "Co-directeur de thèse"
+    - name: "Astrid HERRERO"
+      title: "PU-PH, Université de Montpellier"
+      role: "Rapportrice"
+    - name: "Emmanuelle LERAY"
+      title: "DR, Université de Rennes"
+      role: "Rapportrice"
+    - name: "Karim BOUDJEMA"
+      title: "PU, Université de Rennes"
+      role: "Examinateur"
+    - name: "Audrey LAVENU"
+      title: "PU, Université de Rennes"
+      role: "Examinatrice"
+    - name: "Mickaël LESURTEL"
+      title: "PU-PH, Université Paris Cité"
+      role: "Examinateur"
+    - name: "Andrea LAZZATI"
+      title: "PU-PH, Université Sorbonne Paris Nord"
+      role: "Membre invité"
+  faculty: Faculté de Médecine
+lang: fr
+language:
+  fr:
+    crossref-tbl-title: Tableau
+    crossref-tbl-prefix: Tableau
+    crossref-lot-title: Liste des tableaux
+mainfont: "Times New Roman"
+---
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+# Introduction
+
+La chirurgie hépatobiliaire contemporaine associe des résections hépatiques majeures, des abords mini-invasifs et une prise en charge péri-opératoire complexe.
+Ce document sert d'exemple de référence pour la page de garde officielle de thèse/mémoire avec le template Quarto Husson.
+
+# Matériel et Méthodes
+
+Les données médico-administratives et les cohortes multicentriques permettent une modélisation multi-échelle des trajectoires postopératoires.

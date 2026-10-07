@@ -1,0 +1,167 @@
+---
+title: "Exemple R et Python avec reticulate"
+subtitle: "Transfert bidirectionnel d'objets R → Python → R sur le jeu de données mtcars"
+author: "Membre 1, Membre 2 — Hôpital 1, Hôpital 2"
+lang: fr
+format:
+  husson-html:
+    toc: true
+    number-sections: true
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+setup_script <- if (file.exists("_extensions/husson/auto-dark-setup.R")) {
+  "_extensions/husson/auto-dark-setup.R"
+} else {
+  "../_extensions/husson/auto-dark-setup.R"
+}
+if (file.exists(setup_script)) {
+  source(setup_script)
+  auto_dark_on(transparent_figures = TRUE)
+}
+
+library(reticulate)
+py_path <- Sys.which("python3")
+has_deps <- nzchar(py_path) && system2(py_path, c("-c", "'import numpy, pandas, matplotlib'"), stdout = FALSE, stderr = FALSE) == 0
+if (has_deps) {
+  use_python(py_path, required = FALSE)
+} else {
+  py_require(c("numpy", "pandas", "statsmodels", "matplotlib"))
+}
+```
+
+# Introduction
+
+Ce document présente l'interopérabilité native entre **R** et **Python** au sein d'un même document Quarto piloté par `knitr` et le package `reticulate`.
+
+Le flux méthodologique suit quatre étapes :
+
+1. Chargement et mise en forme des données dans la session R (`mtcars`).
+2. Accès aux variables R depuis Python via le préfixe `r.` et modélisation statistique.
+3. Rapatriement des prédictions et résidus dans R via le préfixe `py$`.
+4. Visualisation finale des performances avec `ggplot2` (fond transparent et couleurs One Dark Pro appliqués automatiquement sans surcharge manuelle).
+
+# Étape 1 : Préparation des données dans R
+
+Le jeu de données de référence `mtcars` est chargé dans l'environnement R. Nous sélectionnons la consommation (`mpg`), le poids (`wt`) et la puissance (`hp`).
+
+```{r}
+#| label: create-r-data
+data(mtcars)
+
+cars_data <- mtcars[, c("mpg", "wt", "hp")]
+cars_data$model <- rownames(mtcars)
+
+knitr::kable(head(cars_data, 6), caption = "Aperçu des 6 premières lignes du jeu mtcars (R)")
+```
+
+# Étape 2 : Modélisation statistique dans Python
+
+Le préfixe `r.` permet au bloc Python d'accéder directement au dataframe R sans sérialisation sur disque. Nous ajustons une régression linéaire multiple modélisant la consommation (`mpg`) en fonction du poids (`wt`) et de la puissance du véhicule (`hp`).
+
+```{python}
+#| label: fit-python-model
+import numpy as np
+import pandas as pd
+
+# 1. Accès transparent au dataframe défini dans R
+cars = r.cars_data.copy()
+
+# 2. Estimation des moindres carrés ordinaires (OLS)
+try:
+    import statsmodels.api as sm
+    X = sm.add_constant(cars[["wt", "hp"]])
+    y = cars["mpg"]
+    model = sm.OLS(y, X).fit()
+    cars["Predicted"] = np.round(model.predict(X), 2)
+    cars["Residuals"] = np.round(model.resid, 2)
+except ImportError:
+    X = np.column_stack([np.ones(len(cars)), cars["wt"], cars["hp"]])
+    y = cars["mpg"].values
+    beta = np.linalg.lstsq(X, y, rcond=None)[0]
+    cars["Predicted"] = np.round(X @ beta, 2)
+    cars["Residuals"] = np.round(y - cars["Predicted"], 2)
+```
+
+# Étape 3 : Retour des résultats vers R
+
+Le préfixe `py$` permet à la session R de récupérer l'objet calculé dans la session Python. Nous vérifions que les colonnes calculées (`Predicted` et `Residuals`) sont bien conservées.
+
+```{r}
+#| label: retrieve-python-results
+cars_results <- py$cars
+
+stopifnot(
+  all(c("Predicted", "Residuals") %in% names(cars_results)),
+  nrow(cars_results) == nrow(cars_data)
+)
+
+knitr::kable(
+  head(cars_results[, c("model", "mpg", "wt", "hp", "Predicted", "Residuals")], 8),
+  caption = "Données augmentées avec les prédictions et résidus calculés par Python"
+)
+```
+
+# Étape 4 : Visualisation diagnostique dans R
+
+Nous représentons graphiquement la consommation observée par rapport aux prédictions calculées par le modèle Python. Le fond transparent et la palette One Dark Pro sont injectés automatiquement par `auto_dark_on()`.
+
+```{r}
+#| label: plot-results
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 4.8
+library(ggplot2)
+
+cars_results$Cylindres <- factor(mtcars$cyl, labels = c("4 cyl.", "6 cyl.", "8 cyl."))
+
+ggplot(cars_results, aes(x = Predicted, y = mpg, color = Cylindres)) +
+  geom_point(size = 3.2, alpha = 0.9) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#e06c75", linewidth = 0.8) +
+  annotate("text", x = 28, y = 29, label = "Ligne idéale (y = x)", color = "#e06c75", fontface = "italic") +
+  labs(
+    title = "Validation croisée R-Python sur mtcars",
+    subtitle = "Consommation observée (R) vs Consommation prédite par le modèle OLS (Python)",
+    x = "Consommation prédite (mpg - Python)",
+    y = "Consommation réelle (mpg - R)",
+    color = "Motorisation"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+# Étape 5 : Visualisation directe dans Python (`matplotlib`)
+
+Grâce à `auto_dark_on()` activé dans le bloc `setup` R (`auto-dark-setup.R`), les graphiques produits dans les blocs `{python}` bénéficient exactement de la même mécanique automatique que les graphiques R :
+
+- **Fond transparent automatique** (`figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` injectés via `reticulate`).
+- **Palette One Dark Pro automatique** (`axes.prop_cycle` aligné sur la palette de `auto_dark_palette()`).
+- **Génération automatique du compagnon sombre** (`*-auto-dark.png`) par le hook `knitr` / `magick` existant de `auto-dark-setup.R`.
+
+```{python}
+#| label: plot-python-results
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 4.8
+import matplotlib.pyplot as plt
+
+# Aucun fond (facecolor / transparent) ni couleur de série n'est codé en dur :
+fig, ax = plt.subplots(figsize=(8, 4.8))
+for cyl, grp in cars.groupby(r.mtcars["cyl"]):
+    ax.scatter(grp["wt"], grp["Residuals"], label=f"{int(cyl)} cyl.", s=60, alpha=0.9)
+
+ax.axhline(0, color="#e06c75", linestyle="--", linewidth=1.1)
+ax.set_title("Analyse des résidus OLS selon le poids du véhicule (Python / Matplotlib)", fontweight="bold")
+ax.set_xlabel("Poids (1000 lbs)")
+ax.set_ylabel("Résidus (mpg)")
+ax.legend(title="Motorisation", frameon=False)
+ax.grid(True, linestyle=":", alpha=0.5)
+plt.tight_layout()
+plt.show()
+```
+
+

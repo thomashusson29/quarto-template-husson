@@ -1,0 +1,161 @@
+---
+title: "Analyse exploratoire de mtcars"
+subtitle: "Présentation RevealJS avec adaptation automatique One Dark Pro"
+author: "Membre 1, Membre 2 — Hôpital 1, Hôpital 2"
+date: "2026-10-03"
+lang: fr
+format:
+  husson-revealjs: default
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+setup_script <- if (file.exists("_extensions/husson/auto-dark-setup.R")) {
+  "_extensions/husson/auto-dark-setup.R"
+} else {
+  "../_extensions/husson/auto-dark-setup.R"
+}
+if (file.exists(setup_script)) {
+  source(setup_script)
+  auto_dark_on(transparent_figures = TRUE)
+}
+
+library(ggplot2)
+library(dplyr)
+data(mtcars)
+df_cars <- mtcars |>
+  mutate(
+    Modele = rownames(mtcars),
+    Cylindres = factor(cyl, labels = c("4 cyl.", "6 cyl.", "8 cyl.")),
+    Transmission = factor(am, labels = c("Automatique", "Manuelle"))
+  )
+```
+
+# Introduction {nav-title="INTRODUCTION"}
+
+## Présentation du jeu de données mtcars {nav-title="Jeu de données"}
+
+- **Échantillon** : 32 modèles d'automobiles issus du package `datasets` de R.
+- **Variables étudiées** :
+  - `mpg` : consommation en miles par gallon.
+  - `wt` : poids en milliers de livres (`1000 lbs`).
+  - `hp` : puissance brute en chevaux (`horsepower`).
+  - `cyl` : nombre de cylindres (4, 6 ou 8).
+
+::: {.callout-note}
+### Objectif de la présentation
+Illustrer le rendu RevealJS du template et l'adaptation automatique des graphiques R au thème **One Dark Pro** uniquement sur `mtcars`.
+:::
+
+## Organisation de l'analyse {nav-title="Plan"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Volet descriptif
+- Répartition par nombre de cylindres
+- Comparaison boîte automatique vs manuelle
+- Statistiques de position et dispersion
+:::
+
+::: {.column width="50%"}
+### Volet graphique
+- Relation poids (`wt`) et consommation (`mpg`)
+- Distribution de la puissance (`hp`)
+- Tableau complet défilable (`sticky`)
+:::
+
+::::
+
+# Statistiques descriptives {nav-title="DESCRIPTIF"}
+
+## Synthèse par motorisation {nav-title="Motorisation"}
+
+Comparaison des moyennes observées sur les 32 véhicules de `mtcars` :
+
+| Groupe | Effectif | MPG moyen | Poids moyen (1000 lbs) | Puissance moyenne (hp) | 1/4 mile moyen (qsec) |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **4 cylindres** | 11 | 26.7 | 2.29 | 82.6 | 19.1 |
+| **6 cylindres** | 7 | 19.7 | 3.12 | 122.3 | 18.0 |
+| **8 cylindres** | 14 | 15.1 | 4.00 | 209.2 | 16.8 |
+
+## Paramètres du modèle linéaire {nav-title="Modèle"}
+
+- **Équation estimée** : $\text{mpg} = \beta_0 + \beta_1 \cdot \text{wt} + \beta_2 \cdot \text{hp}$
+- **Effet du poids (`wt`)** : baisse moyenne de $-3{,}88\text{ mpg}$ par millier de livres supplémentaire ($p < 0{,}001$).
+- **Effet de la puissance (`hp`)** : baisse moyenne de $-0{,}032\text{ mpg}$ par cheval supplémentaire ($p < 0{,}01$).
+- **Coefficient de détermination** : $R^2 = 0{,}827$.
+
+# Visualisations R {nav-title="GRAPHIQUES"}
+
+## Consommation selon le poids {nav-title="Poids vs MPG"}
+
+```{r}
+#| label: fig-slides-mpg-wt
+#| fig-width: 9.5
+#| fig-height: 4.8
+ggplot(df_cars, aes(x = wt, y = mpg, color = Cylindres, fill = Cylindres)) +
+  geom_smooth(method = "lm", alpha = 0.18, linewidth = 1.1) +
+  geom_point(size = 3.5, alpha = 0.9) +
+  labs(
+    title = "Consommation (mpg) en fonction du poids (wt)",
+    subtitle = "Adaptation automatique One Dark Pro sans fond codé en dur",
+    x = "Poids (1000 lbs)",
+    y = "Consommation (mpg)",
+    color = "Motorisation",
+    fill = "Motorisation"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold", size = 16)
+  )
+```
+
+## Distribution de la puissance par cylindrée {nav-title="Puissance"}
+
+```{r}
+#| label: fig-slides-hp-cyl
+#| fig-width: 9.5
+#| fig-height: 4.8
+ggplot(df_cars, aes(x = Cylindres, y = hp, fill = Cylindres, color = Cylindres)) +
+  geom_boxplot(alpha = 0.45, outlier.shape = NA, width = 0.45) +
+  geom_jitter(width = 0.12, size = 3.5, alpha = 0.9) +
+  labs(
+    title = "Puissance (hp) selon le nombre de cylindres",
+    subtitle = "Jeu de données mtcars (n = 32)",
+    x = "Nombre de cylindres",
+    y = "Puissance (hp)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 16)
+  )
+```
+
+## Données individuelles mtcars {.scrollable nav-title="Données"}
+
+Tableau défilable avec titre fixe (`sticky`) :
+
+```{r}
+#| label: tbl-slides-scroll
+knitr::kable(
+  df_cars[, c("Modele", "mpg", "cyl", "disp", "hp", "wt", "qsec", "Transmission")],
+  row.names = FALSE,
+  col.names = c("Modèle", "MPG", "Cyl", "Disp", "HP", "Poids", "Qsec", "Transmission")
+)
+```
+
+# Synthèse {nav-title="SYNTHÈSE"}
+
+## Points clés
+
+1. Toutes les figures utilisent exclusivement le jeu de données `mtcars`.
+2. Le fond transparent et la palette One Dark Pro sont appliqués automatiquement via `auto_dark_on()`.
+3. Le basculement clair/sombre permute dynamiquement les images et leur compagnon `*-auto-dark.png`.

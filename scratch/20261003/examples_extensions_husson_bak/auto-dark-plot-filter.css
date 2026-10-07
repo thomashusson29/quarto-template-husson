@@ -1,0 +1,69 @@
+/*
+ * auto-dark-plot-filter.css
+ *
+ * Fallback CSS filter for figures that do not have a *-auto-dark.* companion
+ * image (e.g. because magick is not installed, or mode = "filter").
+ *
+ * When the robust companion-image workflow is active, images that have a
+ * companion get the class .auto-dark-render-light (light copy) or
+ * .auto-dark-render-dark (dark copy), and this filter is suppressed for them.
+ *
+ * The filter is also suppressed for elements with .auto-dark-no-filter.
+ * Add that class to a chunk via `class.output = "auto-dark-no-filter"` to opt
+ * out of CSS filtering for a specific output.
+ */
+
+
+/* ── Fallback filter variable ────────────────────────────────────────────── */
+
+:root {
+  --auto-dark-plot-filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+}
+
+
+/* ── Apply filter to figures in dark mode (fallback only) ────────────────── */
+/*
+ * Targets:
+ *  - Captioned figures:   .quarto-figure img.figure-img
+ *  - Uncaptioned outputs: .cell-output-display > p > img
+ *  - Direct img outputs:  .cell-output-display > img
+ *  - RevealJS embedded resources: .reveal img.quarto-figure
+ *
+ * Exclusions:
+ *  - .auto-dark-no-filter  — user opt-out
+ *  - .auto-dark-render-light / .auto-dark-render-dark — managed by JS
+ */
+
+body.quarto-dark .quarto-figure img.figure-img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.quarto-dark .cell-output-display > p > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.quarto-dark .cell-output-display > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.quarto-dark .reveal img.quarto-figure:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.auto-dark-theme-dark .quarto-figure img.figure-img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.auto-dark-theme-dark .cell-output-display > p > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.auto-dark-theme-dark .cell-output-display > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+body.auto-dark-theme-dark .reveal img.quarto-figure:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+html.auto-dark-theme-dark .quarto-figure img.figure-img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+html.auto-dark-theme-dark .cell-output-display > p > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+html.auto-dark-theme-dark .cell-output-display > img:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark),
+html.auto-dark-theme-dark .reveal img.quarto-figure:not(.auto-dark-no-filter):not(.auto-dark-render-light):not(.auto-dark-render-dark) {
+  filter: var(--auto-dark-plot-filter);
+}
+
+/* Inline SVG outputs */
+body.quarto-dark .cell-output-display > svg:not(.auto-dark-no-filter),
+body.auto-dark-theme-dark .cell-output-display > svg:not(.auto-dark-no-filter),
+html.auto-dark-theme-dark .cell-output-display > svg:not(.auto-dark-no-filter) {
+  filter: var(--auto-dark-plot-filter);
+}
+
+
+/* ── Always suppress filter for managed/opted-out elements ───────────────── */
+
+.auto-dark-no-filter,
+.auto-dark-no-filter img,
+.auto-dark-no-filter svg,
+.auto-dark-plot img,
+img.auto-dark-render-light,
+img.auto-dark-render-dark {
+  filter: none !important;
+}

@@ -170,7 +170,7 @@ L'activation du mode thèse (en définissant le bloc `thesis:` ou `thesis: true`
 - Une taille de corps de **11pt** (`fontsize: 11pt`).
 - Un **interligne de 1,15** (`linestretch: 1.15`).
 - Une **géométrie de page calibrée** (`top=3cm, bottom=2.5cm, left=3cm, right=2.5cm`).
-- La génération automatique de la page de garde conforme au modèle de thèse universitaire :
+- La génération automatique de la page de garde conforme au millimètre au modèle de thèse Sorbonne / Université Paris Cité / Paris-Saclay (ref: thèse S. Tzedakis) :
   - Marges de couverture calibrées (2,2 cm).
   - Centrage sobre du nom du candidat (sans préfixe « par »).
   - Tableau du jury pleine largeur avec alignement dynamique (`\extracolsep{\fill}`) empêchant tout retour à la ligne disgracieux dans les titres, affiliations ou rôles.
@@ -181,22 +181,22 @@ format:
   husson-pdf:
     font: "Times New Roman" # ou "Garamond", "Roboto", "Carlito"
 thesis:
-  university: "Université 1"
-  faculty: "Faculté 1"
-  degree: "Thèse de doctorat"
-  date: "3 octobre 2026"
+  university: "Université Paris Cité"
+  faculty: "Faculté de Médecine"
+  degree: "Thèse de doctorat en Médecine"
+  date: "7 octobre 2026"
   directors:
-    - name: "Membre 1"
-      role: "Directeur de thèse"
+    - name: "Pr Claire GOUMARD"
+      role: "Directrice de thèse"
   jury:
-    - name: "Membre 1"
-      title: "Hôpital 1, Université 1"
-      role: "Directeur de thèse"
-    - name: "Membre 2"
-      title: "Hôpital 2, Université 2"
-      role: "Rapporteur"
-    - name: "Membre 3"
-      title: "Hôpital 1, Université 1"
+    - name: "Pr Claire GOUMARD"
+      title: "PU-PH"
+      role: "Directrice de thèse"
+    - name: "Dr Jérémie GAUTHERON"
+      title: "CR, Inserm UMR-S 938"
+      role: "Co-directeur de recherche"
+    - name: "Pr Jean DUPONT"
+      title: "PU-PH, Université Paris-Saclay"
       role: "Président du jury"
 ```
 
@@ -221,17 +221,17 @@ frontmatter:
   summary: |
     Le résumé de la thèse.
   acknowledgements: |
-    Les remerciements (Membre 1, Membre 2, Hôpital 1, Hôpital 2).
+    Les remerciements.
   scientific-valorization: |
     Publications, communications et autres éléments de valorisation.
   table-of-contents: true
   list-of-figures: true
   list-of-tables: true
   abbreviations:
-    - term: "MPG"
-      definition: "Miles per gallon"
-    - term: "WT"
-      definition: "Weight (1000 lbs)"
+    - term: "NMP"
+      definition: "Normothermic machine perfusion"
+    - term: "CGR"
+      definition: "Concentré de globules rouges"
 ```
 
 L’ordre PDF est alors : page de titre, page blanche facultative, résumé,
@@ -271,8 +271,8 @@ Les remerciements peuvent être rédigés normalement en Markdown.
 :::
 
 ::: {.frontmatter-abbreviations}
-MPG
-: Miles per gallon
+NMP
+: Perfusion normothermique
 :::
 ```
 
@@ -355,8 +355,8 @@ Le template intègre un système d'orientation élégant et discret, particuliè
 Une ligne fine placée en haut de chaque page ou diapositive affiche en temps réel le contexte hiérarchique actif sous forme d'un fil d'Ariane sobre (`H1 | H2 › H3`).
 
 - **Principe visuel** :
-  - **Chapitre / Partie (H1)** : libellé mis en valeur à gauche en bleu (`headingblue` `#17365D` en PDF, bleu d'accent `#107895` en police `Roboto` graisse `500` en RevealJS), séparé par un filet vertical `|`.
-  - **Sous-sections actives (H2 à H5)** : cheminement affiché avec des chevrons fins `›` (en bleu `#107895` sur RevealJS, graisse `500` sur le segment actif).
+  - **Chapitre / Partie (H1)** : libellé mis en valeur à gauche en bleu foncé (`headingblue`, `#17365D`), séparé par un filet vertical `|`.
+  - **Sous-sections actives (H2 à H5)** : cheminement affiché avec des chevrons fins `›`.
   - **Filet de séparation** : trait continu discret de 0.3 pt en gris doux (`linegray`, `#D0D4D9`), sans filets gras superflus.
 - **Titre court pour l'en-tête (`nav-title`)** :
   Pour éviter qu'un intitulé trop long ne déborde dans la barre d'en-tête, spécifiez un libellé court avec l'attribut `nav-title` :
@@ -398,15 +398,15 @@ Pour afficher un titre abrégé uniquement dans le pied de page sans altérer le
 
 ```yaml
 ---
-title: "Modélisation statistique et analyse multivariée du jeu de données mtcars"
-short-title: "Analyse mtcars"
-author: "Membre 1"
+title: "Faisabilité et sécurité de l'utilisation de la décharge cave en perfusion normothermique hépatique"
+short-title: "Décharge cave en PNH"
+author: "Thomas Husson"
 ---
 ```
 Rendu en bas de page :
 ```text
 ─────────────────────────────────────────────────────────────────────────────
-Membre 1 – Analyse mtcars                                                   4
+Thomas Husson – Décharge cave en PNH                                        4
 ```
 > **Note** : La clé alternative `footer-title: "..."` est également reconnue. Vous pouvez renseigner cette option à la racine du YAML ou directement sous la section `format: husson-pdf:`.
 
@@ -414,7 +414,7 @@ Membre 1 – Analyse mtcars                                                   4
 Pour abréger le prénom ou modifier la mention de l'auteur en bas de page :
 ```yaml
 ---
-footer-author: "Membre 1"
+footer-author: "T. Husson"
 ---
 ```
 
@@ -422,7 +422,7 @@ footer-author: "Membre 1"
 Pour remplacer intégralement la mention gauche par une chaîne libre (affiliation, date, projet) :
 ```yaml
 ---
-footer-left: "Membre 1 (Hôpital 1, Hôpital 2) – Analyse mtcars"
+footer-left: "T. Husson (CHU Bicêtre) – Étude PNH 2026"
 ---
 ```
 
@@ -447,9 +447,9 @@ Sur une présentation RevealJS (`husson-revealjs`), le template offre une suite 
 Les diapositives volumineuses munies de l'attribut `{.scrollable}` conservent automatiquement leur titre ancré au sommet de la vue pendant le défilement vertical du contenu :
 
 ```markdown
-## Données individuelles mtcars {.scrollable}
+## Décharge cave : recueil brut {.scrollable}
 
-| Modèle | MPG | Poids (1000 lbs) |
+| ID | Volume brut (mL) | Hématocrite (%) |
 |---|---|---|
 ... (long tableau ou figures défilantes) ...
 ```
@@ -463,7 +463,7 @@ Les diapositives volumineuses munies de l'attribut `{.scrollable}` conservent au
 #### B. Protection automatique contre le chevauchement du bas de diapositive
 Pour éviter que les grandes figures ou les graphiques ne viennent rogner le pied de page, les logos institutionnels (`.dual-logo`), la barre de progression ou les numéros de diapositives :
 
-1. **Positionnement vertical équilibré sous la barre du haut** : le premier titre (`h1`, `h2`) conserve une respiration supérieure de 14 px (`padding-top: 14px`) afin de ne pas coller au filet de la barre de navigation haute, tout en maintenant un interligne compact avec le paragraphe introductif.
+1. **Rapprochement vertical sobre** : la marge supérieure superflue du premier titre (`h1`, `h2`) et l'interligne avec le paragraphe introductif sont optimisés pour supprimer l'effet de vide sous la barre d'en-tête.
 2. **Plafonnement dynamique des figures (`max-height`)** :
    - Par défaut, les images sur diapositive non scrollable sont plafonnées à 480 px.
    - Si la diapositive contient à la fois du texte introductif / une liste et une figure, la hauteur maximale de l'image est automatiquement ajustée (410 px pour une diapositive standard, 440 px pour une diapositive `{.smaller}`).
@@ -510,15 +510,14 @@ clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dar
 
 ### Graphiques R, Python et compatibilité One Dark Pro
 
-Pour assurer une intégration visuelle pérenne et automatique des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
+Pour assurer une intégration visuelle parfaite des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
 
 #### 1. En R (`ggplot2`, `lattice`, base R)
-- **Configuration native par défaut dans `_extension.yml`** : les formats `husson-html` et `husson-revealjs` injectent automatiquement `knitr: opts_chunk: { fig.bg: "transparent", dev.args: { bg: "transparent" } }` ainsi que les options R `ggplot2.discrete.colour` et `ggplot2.discrete.fill` calées sur la palette One Dark Pro, même si `auto-dark-setup.R` n'est pas sourcées manuellement ;
-- **Fond transparent et accompagnement `ggplot2` complet** : le module `auto-dark-setup.R` intercepte en outre l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
+- **Fond transparent automatique** : le module `auto-dark-setup.R` configure le périphérique graphique `knitr` (`fig.bg = "transparent"`, `dev.args = list(bg = "transparent")`) et intercepte l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
 - **Palette One Dark Pro automatique** : application automatique du cycle de couleurs One Dark Pro (`#61afef` bleu, `#98c379` vert, `#e06c75` rouge, `#c678dd` violet, `#d19a66` orange, `#56b6c2` cyan, `#e5c07b` jaune) aux échelles discrètes `ggplot2` (`ggplot2.discrete.colour` et `ggplot2.discrete.fill`) ;
 - **Génération d'images compagnes sombres** : le hook `knitr` traite chaque tracé via le package `magick` en créant un fichier `*-auto-dark.png` (`image_transparent` + `image_negate` + `image_modulate(brightness = 115, saturation = 115, hue = 200)`) ;
 - **Bascule instantanée** : le script navigateur `auto-dark-renderings.js` (et `auto-dark-reveal.js` sur RevealJS) permute l'image source dès l'activation du mode sombre (avec repli sur filtre CSS si `magick` est absent) ;
-- **Activation complète (images compagnes `magick` et `reticulate`)** :
+- **Activation** :
   ```r
   source("_extensions/husson/auto-dark-setup.R")
   auto_dark_on(transparent_figures = TRUE)
@@ -526,22 +525,15 @@ Pour assurer une intégration visuelle pérenne et automatique des figures lors 
 
 #### 2. En Python (`matplotlib`, `seaborn` via `reticulate`)
 - **Activation transparente depuis R** : l'appel à `auto_dark_on()` dans le bloc `setup` R configure automatiquement la session Python `reticulate` avant l'exécution des blocs `{python}` sans aucun import supplémentaire ;
-- **Fond transparent et palette One Dark Pro automatiques (`matplotlib` et `seaborn`)** :
-  - Dans `matplotlib.rcParams` : injection automatique de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
-  - Dans `seaborn` : interception automatique de `sns.axes_style` (utilisé par `sns.set_theme()`, `sns.set_style()`, `sns.set()`) pour empêcher l'écrasement du fond transparent par `'white'` ou `'#EAEAF2'`, remplacement des palettes `SEABORN_PALETTES` (`deep`, `muted`, `bright`, `pastel`, `dark`, `colorblind`, `onedark`) par la palette One Dark Pro, et adaptation de `HueMapping` pour que même une variable `hue` numérique discrète (ex. `cyl`) utilise automatiquement le cycle One Dark Pro ;
-- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` et `seaborn` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
-
-#### 3. Graphiques 2D et 3D interactifs (`plotly` en R et Python)
-- **En R (`plotly::plot_ly`, `type = "scatter3d"`, etc.)** : interception automatique via `knit_print.plotly` pour appliquer un fond transparent (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans 3D `xaxis`/`yaxis`/`zaxis`) et la palette discrète **One Dark Pro** sans avoir à spécifier `colors = ...` ;
-- **En Python (`plotly.express.scatter_3d`, `plotly.graph_objects`)** : configuration automatique du template `onedark_auto` et de `px.defaults.color_discrete_sequence`, puis conversion transparente en widget interactif `plotly` via `reticulate` ;
-- **Interception universelle côté navigateur (`auto-dark-renderings.js`)** : même sans appel préalable à `auto_dark_on()` (ou avec le moteur `jupyter`), `auto-dark-renderings.js` intercepte globalement `Plotly.newPlot` et `Plotly.react`, remplace automatiquement les couleurs par défaut de Plotly / R Set2 par la palette One Dark Pro (`Plotly.restyle`), et applique des couleurs de quadrillage 3D hexadécimales opaques (`#9aa5b1` / `#57606a` en thème clair, `#5c6370` / `#8b949e` en thème sombre) garantissant la visibilité du quadrillage WebGL (`premultipliedAlpha`) sur fond clair comme sur fond sombre.
+- **Fond transparent et palette One Dark Pro automatiques** : injection automatique dans `matplotlib.rcParams` de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
+- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
 
 ## Exemples et démonstrations inclus dans le dépôt
 
-Le dossier `examples/` contient des cas d'usage complets basés exclusivement sur `mtcars` (`Hôpital 1`, `Hôpital 2`, `Membre 1`, `Membre 2`) :
+Le dossier `examples/` contient des cas d'usage complets prêts à être rendus :
 
 1. **`examples/exemple-article.qmd`** :
-   - Rendu HTML statique (`husson-html`) sur `mtcars` avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt`, graphique 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python).
+   - Rendu HTML statique (`husson-html`) avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt` et graphique `ggplot2`.
    - Rendu Word (`husson-docx`) appliquant le modèle éditorial embarqué.
    - Commandes :
      ```bash
@@ -550,14 +542,14 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      ```
 
 2. **`examples/exemple-revealjs.qmd`** :
-   - Présentation complète RevealJS (`husson-revealjs`) sur `mtcars` avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux, figures 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python) compatibles One Dark Pro.
+   - Présentation complète RevealJS (`husson-revealjs`) avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux et figures `ggplot2` compatibles One Dark Pro.
    - Commande :
      ```bash
      quarto render examples/exemple-revealjs.qmd --to husson-revealjs
      ```
 
 3. **`examples/exemple-these.qmd`** :
-   - Thèse complète (`husson-pdf`) sur `mtcars` avec page de garde générique (`Université 1`, `Hôpital 1`, `Hôpital 2`, `Membre 1` à `Membre 6`), pages liminaires (résumé, remerciements génériques, valorisation, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, tableaux ajustés et planche en paysage (`pdflscape`).
+   - Thèse universitaire complète de 16 pages (`husson-pdf`) avec page de garde officielle (Université Paris Cité), jury complet, pages liminaires (résumé, remerciements, valorisation scientifique, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, en-tête et pied de page soignés, tableaux ajustés et planche en paysage (`pdflscape`).
    - Commande :
      ```bash
      quarto render examples/exemple-these.qmd --to husson-pdf
@@ -569,7 +561,7 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      2. **Accès direct depuis Python** : le préfixe `r.` donne un accès direct aux objets R sans écriture intermédiaire sur disque (`cars = r.cars_data.copy()`) ;
      3. **Modélisation statistique dans Python** : calcul d'une régression multiple OLS (avec `statsmodels` ou `numpy.linalg.lstsq`) estimant les prédictions (`Predicted`) et résidus (`Residuals`) ;
      4. **Rapatriement dans R** : le préfixe `py$` récupère le dataframe enrichi dans la session R (`cars_results <- py$cars`) ;
-     5. **Visualisations 2D et 3D dans R et Python** : figures 2D (`ggplot2`, `matplotlib`) et nuages 3D interactifs (`plotly::plot_ly` et `plotly.express.scatter_3d`) adaptés automatiquement à One Dark Pro.
+     5. **Diagnostic graphique dans R** : représentation visuelle de la droite idéale ($y = x$) et des résidus avec `ggplot2`.
    - Commandes :
      ```bash
      # Rendu local autonome
@@ -578,8 +570,7 @@ Le dossier `examples/` contient des cas d'usage complets basés exclusivement su
      # Rendu pour publication GitHub Pages
      quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
      ```
-   - Dépendances : packages R `reticulate`, `ggplot2`, `plotly`, `knitr`, et environnement Python 3 avec `numpy`, `pandas`, `matplotlib` et `plotly` (et optionnellement `statsmodels`).
-
+   - Dépendances : packages R `reticulate`, `ggplot2`, `knitr`, et environnement Python 3 avec `numpy` et `pandas` (ou `statsmodels`).
 
 ## Bibliographie
 
