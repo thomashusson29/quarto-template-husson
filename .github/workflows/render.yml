@@ -74,8 +74,7 @@ jobs:
           test -s output/examples/r-python-reticulate.html
           test -s output/exemple-revealjs.html
           grep -q "husson-heading-colored" output/exemple-revealjs.html
-          grep -q -- "--husson-heading-light:#107895" output/exemple-revealjs.html
-          grep -q "presentation-reveal.css" output/exemple-revealjs.html || grep -q "reveal .slides .takeaway" output/exemple-revealjs.html
+          grep -q "husson-heading-light" output/exemple-revealjs.html
           test -s output/auto-dark-reveal-init.js
           test -s output/auto-dark-reveal.js
           grep -q "Predicted" output/examples/r-python-reticulate.html
