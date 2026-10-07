@@ -4,6 +4,7 @@ subtitle: "Présentation RevealJS avec adaptation automatique One Dark Pro"
 author: "Membre 1, Membre 2 — Hôpital 1, Hôpital 2"
 date: "2026-10-03"
 lang: fr
+heading-colors: true
 format:
   husson-revealjs: default
 execute:
