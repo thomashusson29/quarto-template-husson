@@ -508,6 +508,42 @@ Le format `husson-revealjs` reprend le thème `auto-dark-clean` et ses ressource
 locales. Il suit le thème du système au premier chargement, propose une bascule
 clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dark Pro.
 
+### Couleur des titres h1, h2 et h3
+
+L'option `heading-colors` permet de colorer les trois premiers niveaux de titres
+sans modifier le thème RevealJS. Elle est désactivée par défaut afin de préserver
+le rendu des présentations existantes.
+
+Pour appliquer la couleur d'accent Husson aux trois niveaux :
+
+```yaml
+heading-colors: true
+```
+
+En thème clair, h1, h2 et h3 utilisent `#107895`; en mode sombre, ils utilisent
+`#61afef`.
+
+Les couleurs peuvent aussi être choisies niveau par niveau :
+
+```yaml
+heading-colors:
+  h1: "#0B6178"
+  h2: "#107895"
+  h3: "#9A2515"
+  dark:
+    h1: "#61AFEF"
+    h2: "#61AFEF"
+    h3: "#E5C07B"
+```
+
+Le gras ordinaire (`**texte**`) conserve désormais la couleur du texte environnant.
+Pour obtenir une couleur d'accent, utilisez une classe explicite sur le conteneur ou
+le texte concerné.
+
+L'espacement entre un titre h2 et un h3 est également normalisé : le même écart est
+appliqué lorsque le h3 est directement sous le h2 ou lorsqu'il se trouve en tête
+d'une colonne Quarto.
+
 ### Graphiques R, Python et compatibilité One Dark Pro
 
 Pour assurer une intégration visuelle pérenne et automatique des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
