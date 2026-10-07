@@ -187,6 +187,11 @@
   font-size: 1.7em;
 }
 
+.reveal .slides .appendix-compact-table td,
+.reveal .slides .appendix-compact-table th {
+  padding: 0.23em 0.3em;
+}
+
 
 /* ── Optional dual institutional logos ───────────────────────────────────── */
 
