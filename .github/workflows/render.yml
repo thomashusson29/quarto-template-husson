@@ -61,6 +61,9 @@ jobs:
       - name: Render the R/Python example
         run: quarto render examples/r-python-reticulate.qmd
 
+      - name: Render the Reveal heading-colors example
+        run: quarto render examples/exemple-revealjs.qmd --to husson-revealjs --output exemple-revealjs.html
+
       - name: Check generated artifacts
         shell: bash
         run: |
@@ -69,6 +72,9 @@ jobs:
           test -s output/template.docx
           test -s output/template-slides.html
           test -s output/examples/r-python-reticulate.html
+          test -s output/examples/exemple-revealjs.html
+          grep -q "husson-heading-colored" output/examples/exemple-revealjs.html
+          grep -q -- "--husson-heading-light:#107895" output/examples/exemple-revealjs.html
           test -s output/auto-dark-reveal-init.js
           test -s output/auto-dark-reveal.js
           grep -q "Predicted" output/examples/r-python-reticulate.html
