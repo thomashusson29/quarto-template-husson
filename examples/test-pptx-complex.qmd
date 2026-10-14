@@ -23,7 +23,7 @@ execute:
 Le **texte reste modifiable** dans PowerPoint. L’image garde son cadrage.
 :::
 
-![Logo Quarto](../methodes-pour-julie-assets/quarto.jpg){width="43%"}
+![Schéma de composants](assets/components.svg){width="43%"}
 :::
 
 ::: {.column width="48%"}
@@ -35,7 +35,7 @@ Le **texte reste modifiable** dans PowerPoint. L’image garde son cadrage.
 - Alignement vertical
 :::
 
-![Interface de rédaction](../methodes-pour-julie-assets/codex.jpg){width="43%"}
+![Schéma de navigateur](assets/browser.svg){width="43%"}
 :::
 
 :::::
@@ -57,7 +57,7 @@ Le tableau, ses chiffres et sa légende doivent rester lisibles et éditables.
 : Exemple de tableau Quarto {#tbl-pptx-test}
 :::
 ::: {.column width="43%"}
-![Graphique SVG de démonstration](../methodes-pour-julie-assets/graphique-exemple.svg){width="92%"}
+![Graphique SVG de démonstration](assets/chart.svg){width="92%"}
 :::
 :::::
 
@@ -85,7 +85,7 @@ Textes et formes modifiables
 Les flèches générées en CSS doivent rester alignées avec les boîtes.
 :::
 
-![Mesure de performance](../methodes-pour-julie-assets/performance-brieuc.png){width="30%"}
+![Mesure de performance fictive](assets/chart.svg){width="30%"}
 
 ## 4. Une diapositive à défilement {.scrollable nav-title="Défilement"}
 
@@ -97,7 +97,7 @@ Chaque bloc ci-dessous doit apparaître sur une diapositive PPTX, sans être cou
 La conversion préserve l’ordre des éléments et le titre sur les pages de suite.
 :::
 
-![Courbe ROC](../methodes-pour-julie-assets/roc-brieuc.png){width="44%"}
+![Courbe fictive](assets/chart.svg){width="44%"}
 
 ::: {.callout-tip}
 ### Deuxième section
@@ -129,7 +129,7 @@ Chaque onglet devient une diapositive PPTX distincte.
 Un premier panneau avec sa **propre image** et du texte modifiable.
 :::
 
-![Résumé graphique](../methodes-pour-julie-assets/gtsummary.jpg){width="45%"}
+![Résumé graphique fictif](assets/components.svg){width="45%"}
 
 ### Références
 
@@ -137,7 +137,7 @@ Un premier panneau avec sa **propre image** et du texte modifiable.
 Le deuxième panneau présente une autre disposition et une autre image.
 :::
 
-![Tableau de références](../methodes-pour-julie-assets/grist-references-exemple.jpg){width="45%"}
+![Tableau de démonstration](assets/browser.svg){width="45%"}
 
 ### Outils
 
@@ -145,6 +145,6 @@ Le deuxième panneau présente une autre disposition et une autre image.
 Le troisième panneau vérifie que l’ordre des onglets est conservé.
 :::
 
-![Outil de rédaction](../methodes-pour-julie-assets/copilot.jpg){width="45%"}
+![Outil de démonstration](assets/components.svg){width="45%"}
 
 :::

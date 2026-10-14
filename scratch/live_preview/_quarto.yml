@@ -1,7 +1,0 @@
-project:
-  type: default
-
-execute:
-  freeze: auto
-  warning: false
-  message: false

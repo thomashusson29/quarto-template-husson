@@ -11,6 +11,7 @@ figure-html/
 figure-pdf/
 *.html
 *.pdf
+*.pptx
 *-auto-dark.png
 *-auto-dark.jpg
 *-auto-dark.jpeg
@@ -44,6 +45,31 @@ figure-pdf/
 !docs/
 !docs/**
 docs/**/.DS_Store
+# Régénéré par le workflow Pages depuis l'extension source
+/docs/_extensions/
+# Copies de rendu rangées dans un sous-dossier, sans page d'entrée publiée
+/docs/examples/
 
 # Dépendances locales de l’export PPTX
 **/node_modules/
+
+# Documents personnels et brouillons locaux (jamais dans le template public)
+/scratch/
+/M2_transplant.qmd
+/methodes-pour-julie.qmd
+/methodes-pour-julie.css
+/methodes-pour-julie-assets/
+/biblio/biblio_master_perf.bib
+**/biblio_shared.bib
+/examples/extract_interventions.*
+/examples/interventions_uniques.txt
+/examples/these_tzedakis_exemple.*
+/examples/scratch/
+/examples/_extensions/*
+!/examples/_extensions/husson
+
+# Sorties auxiliaires LaTeX
+*.aux
+*.log
+*.toc
+*.synctex.gz

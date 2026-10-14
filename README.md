@@ -632,7 +632,7 @@ En HTML et RevealJS, toutes les figures s'adaptent automatiquement lors du passa
 
 ## Exemples et démonstrations inclus dans le dépôt
 
-Le dossier `examples/` contient des cas d'usage complets basés sur `mtcars` :
+Le dossier `examples/` contient des cas d'usage génériques. Les documents personnels, les brouillons et les sorties de compilation sont exclus du dépôt public par `.gitignore` :
 
 1. **[`examples/exemple-article.qmd`](examples/exemple-article.qmd)** : rendu HTML (`husson-html`) et Word (`husson-docx`).
 2. **[`examples/exemple-revealjs.qmd`](examples/exemple-revealjs.qmd)** : présentation RevealJS (`husson-revealjs`).
@@ -643,7 +643,7 @@ Le dossier `examples/` contient des cas d'usage complets basés sur `mtcars` :
 
 ## Bibliographie
 
-Le template prend en charge nativement les deux modes de citation de Quarto (et résout automatiquement la bibliographie partagée `_extensions/husson/biblio_shared.bib` sur les formats concernés) :
+Le template prend en charge les deux modes de citation de Quarto. Ajoutez votre propre fichier `.bib` au projet. Une bibliographie locale facultative `_extensions/husson/biblio_shared.bib` est également reconnue si vous en utilisez une ; elle n'est pas distribuée avec le dépôt public.
 
 1. **Mode Citeproc (par défaut sur tous les formats)** :
    ```yaml

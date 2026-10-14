@@ -3,7 +3,7 @@ project:
   output-dir: output
   post-render: node _extensions/husson/pptx/post-render.mjs
   render:
-    - "*.qmd"
+    - "template.qmd"
 
 lang: fr
 prefer-pdf: true
