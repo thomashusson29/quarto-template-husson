@@ -1,0 +1,30 @@
+.reveal .slides .flow-test {
+  display: flex;
+  gap: 64px;
+  align-items: stretch;
+  margin: 42px 0;
+}
+.reveal .slides .flow-step {
+  position: relative;
+  flex: 1;
+  min-height: 130px;
+  padding: 24px 20px;
+  background: #f2f5f7;
+  border-top: 6px solid #2375a5;
+  border-radius: 4px;
+  text-align: center;
+}
+.reveal .slides .flow-step:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  left: calc(100% + 15px);
+  top: 38%;
+  color: #5f6d79;
+  font-size: 46px;
+  line-height: 1;
+}
+.reveal .slides section.scrollable img {
+  height: 270px !important;
+  width: auto !important;
+  max-height: none !important;
+}

@@ -97,6 +97,20 @@ $endif$
 \restoregeometry
 \end{titlepage}
 
+$else$
+$-- En-tête standard si pas de métadonnée thesis
+$if(title)$
+\maketitle
+$if(frontmatter)$
+$elseif(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$endif$
+$endif$
+
+$if(thesis)$
 $-- Page blanche au verso (pour impression recto-verso)
 $if(frontmatter.blank-page)$
 \newpage
@@ -104,11 +118,16 @@ $if(frontmatter.blank-page)$
 \mbox{}
 \newpage
 $endif$
+$endif$
 
-$-- Pages liminaires facultatives. Elles restent en chiffres romains et ne
-$-- consomment aucune page du texte principal.
+$if(thesis)$
 \pagenumbering{Roman}
 \setcounter{page}{1}
+$elseif(frontmatter)$
+\pagenumbering{Roman}
+\setcounter{page}{1}
+$endif$
+
 $if(frontmatter.table-of-contents)$
 \hussoncustomfrontmattertrue
 $endif$
@@ -116,6 +135,7 @@ $if(frontmatter.markdown)$
 \hussoncustomfrontmattertrue
 $else$
 
+$if(thesis)$
 $if(abstract)$
 \clearpage
 \section*{Résumé}
@@ -134,6 +154,7 @@ $if(abstract)$
   \end{minipage}%
 }
 \end{center}
+$endif$
 $endif$
 
 $if(frontmatter.summary)$
@@ -221,21 +242,23 @@ $endfor$
 \end{description}
 $endif$
 
-$-- Le texte principal commence toujours ici à la page 1.
+$if(thesis)$
+$if(toc)$
+$-- Le sommaire standard suivra en chiffres romains puis basculera en chiffres arabes
+\clearpage
+$else$
 \clearpage
 \pagenumbering{arabic}
 \setcounter{page}{1}
-
 $endif$
-
+$elseif(frontmatter)$
+$if(toc)$
+\clearpage
 $else$
-$-- Comportement standard si pas de métadonnée thesis
-$if(title)$
-\maketitle
-$if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 $endif$
 $endif$
+
 $endif$

@@ -1,0 +1,100 @@
+.reveal .slides section {
+  text-align: left;
+  font-size: 30px;
+}
+
+.reveal .slides section h2 {
+  font-size: 1.42em;
+  font-weight: 650;
+  margin: 0 0 .48em;
+  line-height: 1.15;
+}
+
+.reveal .slides section p,
+.reveal .slides section li {
+  line-height: 1.32;
+}
+
+.reveal .slides section li { margin-bottom: .48em; }
+.reveal .slides section ul,
+.reveal .slides section ol { margin-left: .95em; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 42% 55%;
+  gap: 3%;
+  align-items: center;
+  min-height: 490px;
+}
+
+.copy { font-size: .88em; }
+.copy-wide { font-size: .79em; margin-bottom: .52em; }
+.copy-wide p { margin: .25em 0; }
+.copy pre { font-size: .74em; margin: .28em 0 .6em; }
+.copy blockquote { font-size: .92em; margin: .2em 0 .7em; }
+
+.visual { margin: 0; text-align: center; }
+.visual p { margin: 0; }
+.shot {
+  display: block;
+  width: 100%;
+  max-height: 465px;
+  object-fit: contain;
+  border: 1px solid rgba(125, 138, 150, .35);
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 8px 28px rgba(25, 35, 50, .12);
+}
+.visual small {
+  display: block;
+  margin-top: .36em;
+  font-size: .45em;
+  line-height: 1.25;
+  opacity: .85;
+}
+
+.two-visuals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5%;
+  align-items: start;
+  margin: .25em 0 .45em;
+}
+.two-visuals .shot { max-height: 320px; }
+.two-visuals .editor-shot { max-height: 285px; }
+.two-visuals .chart-shot { max-height: 285px; }
+.two-visuals .small-shot { max-height: 290px; }
+
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .35em;
+  margin: .25em 0 .6em;
+  font-size: .7em;
+  font-weight: 600;
+}
+.steps span:nth-child(even) { opacity: .55; }
+
+.links {
+  margin-top: .75em;
+  font-size: .57em;
+}
+.links p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .38em;
+  margin: 0;
+}
+.links a {
+  display: inline-block;
+  padding: .35em .58em;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  text-decoration: none;
+  line-height: 1.18;
+}
+.links a:hover { text-decoration: underline; }
+
+.reveal .slides section#title-slide { text-align: center; }
+.reveal .slides section#title-slide h1 { font-size: 2em; }

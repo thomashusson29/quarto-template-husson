@@ -1,0 +1,29 @@
+---
+title: "Exemple PPTX modifiable"
+subtitle: "Template Husson"
+lang: fr
+format:
+  husson-revealjs:
+    width: 1600
+    height: 900
+    transition: none
+execute:
+  enabled: false
+---
+
+# Introduction {nav-title="INTRODUCTION"}
+
+## Trois éléments éditables {nav-title="Éléments"}
+
+::: {.callout-note}
+Ce texte et cet encadré deviennent des objets PowerPoint modifiables.
+:::
+
+| Élément | Traitement |
+|---|---|
+| Texte | Modifiable |
+| Tableau | Modifiable |
+
+## Conclusion {nav-title="Conclusion"}
+
+**Une seule source `.qmd`** pour le RevealJS et le PPTX.

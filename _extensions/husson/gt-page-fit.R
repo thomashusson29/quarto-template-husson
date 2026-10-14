@@ -216,8 +216,7 @@ husson_calculate_optimal_widths <- function(df, visible_cols, boxhead = NULL, tb
 }
 
 husson_fit_gt_to_page <- function(tbl, force = FALSE) {
-  if (!inherits(tbl, "gt_tbl") ||
-      (!isTRUE(force) && !husson_latex_output())) {
+  if (!inherits(tbl, "gt_tbl")) {
     return(tbl)
   }
 
@@ -229,13 +228,19 @@ husson_fit_gt_to_page <- function(tbl, force = FALSE) {
   boxhead <- tbl[["_boxhead"]]
   if (!is.data.frame(boxhead) ||
       !all(c("var", "type") %in% names(boxhead))) {
-    return(gt::tab_options(tbl, table.width = gt::pct(100)))
+    if (isTRUE(force) || husson_latex_output()) {
+      return(gt::tab_options(tbl, table.width = gt::pct(100)))
+    }
+    return(tbl)
   }
 
   visible <- boxhead$var[boxhead$type != "hidden"]
   n_cols <- length(visible)
   if (n_cols < 1L) {
-    return(gt::tab_options(tbl, table.width = gt::pct(100)))
+    if (isTRUE(force) || husson_latex_output()) {
+      return(gt::tab_options(tbl, table.width = gt::pct(100)))
+    }
+    return(tbl)
   }
 
   df <- tbl[["_data"]]
@@ -266,6 +271,10 @@ husson_fit_gt_to_page <- function(tbl, force = FALSE) {
       }
     }
     boxhead <- tbl[["_boxhead"]]
+  }
+
+  if (!isTRUE(force) && !husson_latex_output()) {
+    return(tbl)
   }
 
   # 3. Verification des largeurs existantes

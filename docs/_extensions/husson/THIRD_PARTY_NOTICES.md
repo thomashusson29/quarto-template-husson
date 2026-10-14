@@ -11,3 +11,10 @@ it does not bundle the upstream Lua filter or its CSS-inversion implementation.
 
 This notice records provenance and third-party credits only. It does not grant
 a license for this extension or repository.
+
+The RevealJS theme in `auto-dark-clean.scss` and `navigation-reveal.css` uses
+[Carlito](https://github.com/googlefonts/carlito), by The Carlito Project Authors
+(the TTF metadata also credits Łukasz Dziedzic / tyPoland), under the
+[SIL Open Font License 1.1](fonts/OFL.txt). The four version 1.103 TTF files in
+`fonts/` are loaded locally by `auto-dark-reveal.css`; no network font service
+is required. The PPTX adapter embeds these four variants in exported slides.

@@ -1,0 +1,11 @@
+.reveal .slides section .gt_table {
+  font-size: 24px !important;
+}
+
+.reveal .slides section .gt_table .gt_footnotes,
+.reveal .slides section .gt_table .gt_source_notes,
+.reveal .slides section .gt_table .gt_sourcenotes,
+.reveal .slides section .gt_table .gt_footnote,
+.reveal .slides section .gt_table .gt_source_note {
+  font-size: 18px !important;
+}

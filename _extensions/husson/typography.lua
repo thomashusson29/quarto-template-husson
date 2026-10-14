@@ -15,7 +15,8 @@ local function stringify_val(val)
   if val == nil then
     return nil
   end
-  return pandoc.utils.stringify(val):gsub("^%s+", ""):gsub("%s+$", "")
+  local res = pandoc.utils.stringify(val):gsub("^%s+", ""):gsub("%s+$", "")
+  return res
 end
 
 local citation_map = {
@@ -50,7 +51,57 @@ function Cite(cite)
   return cite
 end
 
+local ext_dir = pandoc.path.directory(PANDOC_SCRIPT_FILE):gsub("\\", "/")
+
+local function file_exists(path)
+  local f = io.open(path, "rb")
+  if f then
+    f:close()
+    return true
+  end
+  return false
+end
+
+local function append_header_include(meta, latex_code)
+  local block = pandoc.MetaBlocks{pandoc.RawBlock("latex", latex_code)}
+  if not meta["header-includes"] then
+    meta["header-includes"] = pandoc.MetaList{block}
+  elseif meta["header-includes"].t == "MetaList" then
+    meta["header-includes"]:insert(block)
+  else
+    meta["header-includes"] = pandoc.MetaList{meta["header-includes"], block}
+  end
+end
+
 function Meta(meta)
+  -- 0. Enrichissement automatique de la bibliographie avec biblio_shared.bib (tous formats)
+  if meta.bibliography then
+    local shared_path = ext_dir .. "/biblio_shared.bib"
+    if file_exists(shared_path) then
+      local bib_list = pandoc.List()
+      local already_present = false
+      if meta.bibliography.t == "MetaList" then
+        for _, b in ipairs(meta.bibliography) do
+          local b_str = stringify_val(b) or ""
+          if b_str:match("biblio_shared%.bib$") then
+            already_present = true
+          end
+          table.insert(bib_list, b)
+        end
+      else
+        local b_str = stringify_val(meta.bibliography) or ""
+        if b_str:match("biblio_shared%.bib$") then
+          already_present = true
+        end
+        table.insert(bib_list, meta.bibliography)
+      end
+      if not already_present then
+        table.insert(bib_list, pandoc.MetaInlines{pandoc.Str(shared_path)})
+      end
+      meta.bibliography = bib_list
+    end
+  end
+
   if not FORMAT:match("latex") then
     return meta
   end
@@ -60,13 +111,37 @@ function Meta(meta)
     meta.documentclass = pandoc.MetaInlines{pandoc.Str("scrartcl")}
   end
 
-  -- 2. Détection du mode thèse / page de garde
+  -- 2. Chemins de recherche LaTeX pour les logos et ressources embarqués dans l'extension
+  append_header_include(
+    meta,
+    "\\makeatletter\\def\\input@path{{" .. ext_dir .. "/}}\\makeatother\n" ..
+    "\\graphicspath{{" .. ext_dir .. "/}{images/}{./}}"
+  )
+
+  -- 3. Détection du mode thèse / page de garde
   local is_thesis = false
   if meta.thesis ~= nil and meta.thesis ~= false then
     is_thesis = true
+    if type(meta.thesis) == "table" and meta.thesis.logo then
+      local logo_str = stringify_val(meta.thesis.logo)
+      if logo_str and logo_str ~= "" and not file_exists(logo_str) then
+        local base_logo = pandoc.path.filename(logo_str)
+        if file_exists(ext_dir .. "/" .. base_logo) then
+          meta.thesis.logo = pandoc.MetaInlines{pandoc.Str(base_logo)}
+        end
+      end
+    end
   end
 
-  -- 3. Détection du choix de police
+  -- Éviter un double sommaire si frontmatter.table-of-contents est activé
+  if meta.frontmatter and type(meta.frontmatter) == "table" then
+    local fm_toc = meta.frontmatter["table-of-contents"]
+    if fm_toc ~= nil and stringify_val(fm_toc) ~= "false" then
+      meta.toc = false
+    end
+  end
+
+  -- 4. Détection du choix de police (Times New Roman par défaut)
   local chosen_font = stringify_val(meta.font)
   if not chosen_font and is_thesis and type(meta.thesis) == "table" and meta.thesis.font then
     chosen_font = stringify_val(meta.thesis.font)
@@ -75,10 +150,10 @@ function Meta(meta)
     chosen_font = stringify_val(meta.mainfont)
   end
 
-  local font_family = "default"
+  local font_family = "times"
   if chosen_font then
     local lower = chosen_font:lower()
-    if lower:match("computer") or lower:match("latin modern") or lower:match("default") then
+    if lower:match("computer") or lower:match("latin modern") or lower:match("default") or lower == "cm" then
       font_family = "default"
     elseif lower:match("carlito") or lower:match("calibri") then
       font_family = "carlito"
@@ -91,18 +166,15 @@ function Meta(meta)
     else
       font_family = "custom"
     end
-  elseif is_thesis then
-    font_family = "times"
-  else
-    font_family = "default"
   end
 
-  -- 4. Application de la police
+  -- 5. Application de la police
   if font_family == "times" then
     meta.mainfont = pandoc.MetaInlines{pandoc.Str("Times New Roman")}
   elseif font_family == "carlito" then
     meta.mainfont = pandoc.MetaInlines{pandoc.Str("Carlito-Regular.ttf")}
     meta.mainfontoptions = pandoc.MetaList{
+      pandoc.MetaInlines{pandoc.RawInline("latex", "Path=" .. ext_dir .. "/fonts/")},
       pandoc.MetaInlines{pandoc.Str("BoldFont=Carlito-Bold.ttf")},
       pandoc.MetaInlines{pandoc.Str("ItalicFont=Carlito-Italic.ttf")},
       pandoc.MetaInlines{pandoc.Str("BoldItalicFont=Carlito-BoldItalic.ttf")}
@@ -123,7 +195,7 @@ function Meta(meta)
     meta.mainfont = nil
   end
 
-  -- 5. Paramètres spécifiques au mode thèse
+  -- 6. Paramètres spécifiques au mode thèse
   if is_thesis then
     if not meta.linestretch then
       meta.linestretch = pandoc.MetaInlines{pandoc.Str("1.15")}
@@ -139,19 +211,18 @@ function Meta(meta)
     end
   end
 
-  -- 6. Enrichissement automatique de la bibliographie avec biblio_shared.bib si présente
-  if meta.bibliography then
-    local shared_path = "_extensions/husson/biblio_shared.bib"
-    local bib_list = pandoc.List()
-    if meta.bibliography.t == "MetaList" then
-      for _, b in ipairs(meta.bibliography) do
-        table.insert(bib_list, b)
-      end
-    else
-      table.insert(bib_list, meta.bibliography)
-    end
-    table.insert(bib_list, pandoc.MetaInlines{pandoc.Str(shared_path)})
-    meta.bibliography = bib_list
+  -- 7. Couleurs des titres (activées par défaut en PDF ; désactivées si heading-colors: false)
+  local hc = meta["heading-colors"]
+  if hc == false or (hc ~= nil and (stringify_val(hc) or ""):lower() == "false") then
+    append_header_include(
+      meta,
+      "\\AtBeginDocument{%\n" ..
+      "  \\definecolor{headingblue}{HTML}{000000}%\n" ..
+      "  \\definecolor{headingred}{HTML}{000000}%\n" ..
+      "  \\definecolor{headinggreen}{HTML}{000000}%\n" ..
+      "  \\definecolor{headingcharcoal}{HTML}{000000}%\n" ..
+      "}"
+    )
   end
 
   return meta

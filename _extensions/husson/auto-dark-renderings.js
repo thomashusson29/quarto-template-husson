@@ -148,6 +148,17 @@
       applyTheme(image);
       return;
     }
+
+    if (image.dataset.autoDarkDarkSource) {
+      image.dataset.autoDarkRenderingChecked = "true";
+      if (!image.dataset.autoDarkLightSource) {
+        image.dataset.autoDarkLightSource = source(image);
+      }
+      image.classList.add("auto-dark-no-filter");
+      applyTheme(image);
+      return;
+    }
+
     if (image.classList.contains("auto-dark-no-filter")) return;
     if (image.classList.contains("auto-dark-render-light")) return;
     if (image.classList.contains("auto-dark-render-dark")) return;

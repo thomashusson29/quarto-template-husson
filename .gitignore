@@ -44,3 +44,6 @@ figure-pdf/
 !docs/
 !docs/**
 docs/**/.DS_Store
+
+# Dépendances locales de l’export PPTX
+**/node_modules/

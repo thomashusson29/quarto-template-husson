@@ -10,3 +10,11 @@ runOnSave = true
 gatherUsageStats = false
 serverAddress = "0.0.0.0"
 serverPort = 8502
+
+[theme]
+base = "light"
+primaryColor = "#426B91"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F6F7F9"
+textColor = "#242932"
+font = "sans serif"

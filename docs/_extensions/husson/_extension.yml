@@ -1,6 +1,6 @@
 title: Husson
 author: Thomas Husson
-version: 1.3.0
+version: 1.5.0
 quarto-required: ">=1.8.0"
 
 contributes:
@@ -8,6 +8,7 @@ contributes:
     html:
       toc: true
       toc-depth: 2
+      df-print: kable
       theme:
         light: cosmo
         dark: darkly
@@ -17,19 +18,16 @@ contributes:
           crossref-tbl-title: "Tableau"
           crossref-tbl-prefix: "Tableau"
           crossref-lot-title: "Liste des tableaux"
+      filters:
+        - typography.lua
+        - frontmatter.lua
+        - heading-colors.lua
+        - table-column-widths.lua
+        - auto-dark.lua
       css:
         - auto-dark.css
         - auto-dark-os-detect.css
         - auto-dark-plot-filter.css
-      include-in-header:
-        - text: |
-            <script src="auto-dark-system.js"></script>
-      include-after-body:
-        - text: |
-            <script src="auto-dark-renderings.js"></script>
-      format-resources:
-        - auto-dark-system.js
-        - auto-dark-renderings.js
       r-options:
         ggplot2.discrete.colour:
           - "#61afef"
@@ -57,11 +55,12 @@ contributes:
       toc: true
       toc-depth: 2
       toc-title: "Table des matières"
+      df-print: kable
       pdf-engine: xelatex
       pdf-engine-opts:
         - -interaction=nonstopmode
         - -halt-on-error
-      cite-method: natbib
+      cite-method: citeproc
       biblio-style: unsrturl
       natbiboptions: "numbers,round,sort,compress"
       number-sections: true
@@ -89,28 +88,25 @@ contributes:
         - navigation-header.tex
       template-partials:
         - before-body.tex
-      format-resources:
-        - navigation-header.tex
-        - logo-universite-paris-cite.png
-        - logo-universite-paris-saclay.png
-        - biblio_shared.bib
-        - fonts/Carlito-Regular.ttf
-        - fonts/Carlito-Bold.ttf
-        - fonts/Carlito-Italic.ttf
-        - fonts/Carlito-BoldItalic.ttf
 
     docx:
       toc: true
       toc-depth: 2
+      df-print: kable
       number-sections: true
       language:
         fr:
           crossref-tbl-title: "Tableau"
           crossref-tbl-prefix: "Tableau"
           crossref-lot-title: "Liste des tableaux"
+      filters:
+        - typography.lua
+        - frontmatter.lua
+        - table-column-widths.lua
       reference-doc: template.docx
 
     revealjs:
+      df-print: kable
       theme:
         - default
         - auto-dark-clean.scss
@@ -122,30 +118,24 @@ contributes:
       date-format: long
       tbl-colwidths: false
       html-math-method: katex
+      language:
+        fr:
+          crossref-tbl-title: "Tableau"
+          crossref-tbl-prefix: "Tableau"
+          crossref-lot-title: "Liste des tableaux"
       filters:
+        - typography.lua
+        - frontmatter.lua
+        - heading-colors.lua
         - navigation-header.lua
+        - table-column-widths.lua
+        - auto-dark.lua
       css:
         - auto-dark.css
         - auto-dark-reveal.css
         - auto-dark-plot-filter.css
         - auto-dark-gt-reveal.css
         - auto-dark-switch.css
-        - navigation-reveal.css
-      include-in-header:
-        - text: |
-            <script src="auto-dark-reveal-init.js"></script>
-      include-after-body:
-        - text: |
-            <script src="auto-dark-reveal.js"></script>
-        - text: |
-            <script src="auto-dark-renderings.js"></script>
-        - text: |
-            <script src="navigation-reveal.js"></script>
-      format-resources:
-        - auto-dark-reveal-init.js
-        - auto-dark-reveal.js
-        - auto-dark-renderings.js
-        - navigation-reveal.js
         - navigation-reveal.css
       r-options:
         ggplot2.discrete.colour:

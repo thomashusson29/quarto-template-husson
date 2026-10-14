@@ -1,0 +1,241 @@
+$if(has-frontmatter)$
+\frontmatter
+$endif$
+
+$if(thesis)$
+$-- =========================================================================
+$-- Page de garde officielle de thèse / mémoire (modèle HAL / Paris-Saclay / Paris Cité)
+$-- =========================================================================
+\begin{titlepage}
+\newgeometry{top=3.0cm,bottom=2.5cm,left=2.2cm,right=2.2cm}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+
+$-- Logo en haut à gauche
+$if(thesis.logo)$
+\noindent\includegraphics[height=2.5cm]{$thesis.logo$}\par
+\vspace{0.60cm}
+$else$
+\vspace*{3.10cm}
+$endif$
+
+$-- En-tête institutionnel centré
+\begin{center}
+$if(thesis.university)$
+{\LARGE\scshape $thesis.university$\par}
+\vspace{0.20cm}
+$endif$
+{\large
+$if(thesis.faculty)$$thesis.faculty$\\$endif$
+$if(thesis.school)$$thesis.school$\\$endif$
+$if(thesis.specialty)$$thesis.specialty$\\$endif$
+$if(thesis.laboratory)$$thesis.laboratory$\\$endif$
+$if(thesis.department)$$thesis.department$$endif$\par}
+
+$-- Double filet encadrant le titre
+\vspace{0.80cm}
+\rule{\textwidth}{0.8pt}\par
+\vspace{0.45cm}
+{\LARGE\bfseries $title$\par}
+$if(subtitle)$
+\vspace{0.35cm}
+{\Large $subtitle$\par}
+$endif$
+\vspace{0.45cm}
+\rule{\textwidth}{0.8pt}\par
+
+$-- Auteur
+\vspace{1.05cm}
+{\Large $for(authors)$$it.name.literal$$sep$ et $endfor$}\par
+
+$-- Diplôme et encadrement
+\vspace{1.05cm}
+$if(thesis.degree)$
+{\normalsize $thesis.degree$\par}
+$endif$
+
+$if(thesis.directors)$
+\vspace{0.20cm}
+{\normalsize
+$for(thesis.directors)$
+$it.role$ par $it.name$$if(it.title)$, $it.title$$endif$\\
+$endfor$
+\par}
+$endif$
+
+$-- Date et annonce du jury
+$if(thesis.date)$
+\vspace{1.30cm}
+{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$ $elseif(thesis.jury)$Présentée et soutenue publiquement le $endif$$thesis.date$\par}
+$elseif(date)$
+\vspace{1.30cm}
+{\normalsize $if(thesis.date_prefix)$$thesis.date_prefix$ $elseif(thesis.jury)$Présentée et soutenue publiquement le $endif$$date$\par}
+$endif$
+
+$if(thesis.jury)$
+$if(thesis.date)$
+\vspace{0.20cm}
+$elseif(date)$
+\vspace{0.20cm}
+$else$
+\vspace{1.30cm}
+$endif$
+{\normalsize Devant un jury composé de :\par}
+\vspace{0.80cm}
+
+$-- Tableau du jury occupant exactement \textwidth avec rôles alignés à droite
+\small
+\renewcommand{\arraystretch}{1.15}
+\noindent\begin{tabular*}{\textwidth}{@{}l@{\hspace{12pt}}l@{\extracolsep{\fill}}r@{}}
+$for(thesis.jury)$
+\mbox{$it.name$} & \mbox{$it.title$} & \mbox{$it.role$} \\
+$endfor$
+\end{tabular*}
+$endif$
+
+\end{center}
+\restoregeometry
+\end{titlepage}
+
+$-- Page blanche au verso (pour impression recto-verso)
+$if(frontmatter.blank-page)$
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
+$endif$
+
+$-- Pages liminaires facultatives. Elles restent en chiffres romains et ne
+$-- consomment aucune page du texte principal.
+\pagenumbering{Roman}
+\setcounter{page}{1}
+$if(frontmatter.table-of-contents)$
+\hussoncustomfrontmattertrue
+$endif$
+$if(frontmatter.markdown)$
+\hussoncustomfrontmattertrue
+$else$
+
+$if(abstract)$
+\clearpage
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
+\vspace{0.25\baselineskip}
+\begin{center}
+\setlength{\fboxsep}{14pt}
+\setlength{\fboxrule}{0.6pt}
+\fcolorbox{headingblue}{white}{%
+  \begin{minipage}{0.90\textwidth}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{7pt}
+  \normalsize
+  $abstract$
+  \vspace{0.16\textheight}
+  \end{minipage}%
+}
+\end{center}
+$endif$
+
+$if(frontmatter.summary)$
+\clearpage
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
+\vspace{0.25\baselineskip}
+\begin{center}
+\setlength{\fboxsep}{14pt}
+\setlength{\fboxrule}{0.6pt}
+\fcolorbox{headingblue}{white}{%
+  \begin{minipage}{0.90\textwidth}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{7pt}
+  \normalsize
+  $frontmatter.summary$
+  \vspace{0.16\textheight}
+  \end{minipage}%
+}
+\end{center}
+$endif$
+
+$if(frontmatter.acknowledgements)$
+\clearpage
+\section*{Remerciements}
+\addcontentsline{toc}{section}{Remerciements}
+$frontmatter.acknowledgements$
+$endif$
+
+$if(frontmatter.scientific-valorization)$
+\clearpage
+\section*{Valorisation scientifique}
+\addcontentsline{toc}{section}{Valorisation scientifique}
+$frontmatter.scientific-valorization$
+$endif$
+
+$if(frontmatter.table-of-contents)$
+\clearpage
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\tableofcontents
+\endgroup
+$endif$
+
+$if(frontmatter.list-of-figures)$
+\clearpage
+\renewcommand{\listfigurename}{Liste des figures}
+\addcontentsline{toc}{section}{Liste des figures}
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\listoffigures
+\endgroup
+$endif$
+
+$if(frontmatter.list-of-tables)$
+\clearpage
+\renewcommand{\listtablename}{Liste des tableaux}
+\addcontentsline{toc}{section}{Liste des tableaux}
+\begingroup
+\hypersetup{linkcolor=black}
+\color{black}
+\setkomafont{section}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsection}{\rmfamily\color{black}\normalsize}
+\setkomafont{subsubsection}{\rmfamily\color{black}\normalsize}
+\listoftables
+\endgroup
+$endif$
+
+$if(frontmatter.abbreviations)$
+\clearpage
+\section*{Liste des abréviations}
+\addcontentsline{toc}{section}{Liste des abréviations}
+\begin{description}
+$for(frontmatter.abbreviations)$
+\item[\textbf{$it.term$}] $it.definition$
+$endfor$
+\end{description}
+$endif$
+
+$-- Le texte principal commence toujours ici à la page 1.
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+$endif$
+
+$else$
+$-- Comportement standard si pas de métadonnée thesis
+$if(title)$
+\maketitle
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$endif$
+$endif$

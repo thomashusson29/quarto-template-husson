@@ -3,20 +3,78 @@
 
 # Quarto Template Husson
 
-Extension Quarto personnelle fournissant quatre formats cohérents :
+Extension Quarto universitaire et scientifique fournissant cinq formats prêts à l'emploi à partir d'un unique fichier `.qmd` natif :
 
-- `husson-pdf` : PDF XeLaTeX A4, typographie soignée, tableaux ajustés
-  automatiquement, barre de navigation hiérarchique en en-tête et pied de page
-  structuré avec auteur, titre et pagination ;
-- `husson-html` : HTML clair/sombre fondé sur la palette One Dark et suivant
-  automatiquement les préférences du système ;
-- `husson-docx` : document Word utilisant automatiquement le modèle éditorial
-  embarqué dans l'extension ;
-- `husson-revealjs` : présentation RevealJS avec le thème clair
-  Auto Dark Clean, fil d'Ariane interactif en haut de diapositive, titre sticky
-  pour les diapositives défilables et bascule automatique ou manuelle vers One Dark.
+| Format | Usage principal | Ce qui est géré automatiquement (sans configuration) |
+| :--- | :--- | :--- |
+| **`husson-pdf`** | Thèses, mémoires, devoirs, rapports et articles imprimables (A4, XeLaTeX) | Police **Times New Roman** par défaut, tableaux (`kable`, `gt`, `gtsummary`, Markdown) ajustés à 100 % de la largeur sans débordement, barre de navigation haute, pied de page paginé, symboles grecs/cliniques (`≥`, `±`, `α`, `₀`) natifs. |
+| **`husson-html`** | Rapports web interactifs et articles scientifiques | Thème clair/sombre automatique (**One Dark Pro**), figures `ggplot2` / `matplotlib` / `plotly` adaptées au mode sombre sans code R/Python requis, sommaire flottant. |
+| **`husson-docx`** | Documents Word partageables pour relecture clinique ou académique | Application automatique de la feuille de styles embarquée (`template.docx`), tableaux proportionnels et intitulés francisés (« Tableau »). |
+| **`husson-revealjs`** | Diaporamas de soutenance, d'enseignement et de staff | Fil d'Ariane cliquable en haut de diapositive, titres fixes (*sticky*) sur diapositives défilables (`.scrollable`), bascule clair/sombre automatique. |
+| **`husson-pptx`** | Export PowerPoint modifiable d’un diaporama RevealJS | Conversion de la mise en page calculée en thème clair en textes et formes PowerPoint, avec images pour les schémas et démonstrations. |
 
-## Créer un nouveau projet
+---
+
+## Démarrage rapide (3 méthodes au choix)
+
+Vous n'avez besoin d'ajouter **aucun script R ni code LaTeX** dans votre document : un fichier `.qmd` standard fonctionne immédiatement.
+
+### Méthode 1 : Avec l'interface graphique Quarto Husson Studio (recommandé pour débuter)
+
+L'application locale **Quarto Husson Studio** est organisée en **3 panneaux horizontaux + 1 panneau Terminal inférieur** (chacun affichable ou masquable via les petits boutons **`Files`**, **`Preview`** et **`Terminal`** situés tout en haut du panneau central) :
+
+1. **Lancement** :
+   - Sur macOS : double-cliquez sur [`gui/Quarto GUI.command`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/Quarto%20GUI.command).
+   - Ou depuis un terminal :
+     ```bash
+     streamlit run gui/app.py
+     ```
+2. **Panneau de gauche (`Files`, rétractable) — Créer ou Ouvrir** :
+   - **New** (par défaut à l'ouverture) : choisissez le dossier (`Folder` / `Subfolder`) et le nom du fichier (`Filename`), puis cliquez sur **Create** dans le panneau central pour créer le `.qmd` et installer automatiquement `_extensions/husson`.
+   - **Open** : sélectionnez un document existant (`Recent`, `Path` ou `Import`) et cliquez sur **Convert** si vous souhaitez convertir un `.qmd` natif vers le template Husson (avec sauvegarde automatique dans `scratch/`).
+3. **Panneau central — Configuration par onglets (`Formats`, `Typography`, `Cover`, `Tables`, `Assistant`)** :
+   - Choisissez un préréglage rapide (*Master*, *Thesis*, *Report*, *Article*, *Presentation*) ou ajustez chaque option (polices, couleurs de titres, saut de page H1, page de garde, jury interactif, pages liminaires, tableaux). La navigation conserve l'onglet actif à chaque modification.
+   - Dans **Formats**, cochez **PPTX** avec **RevealJS** pour exporter le même `.qmd` en diaporama web et en PowerPoint modifiable. **Render** produit les formats sélectionnés et propose l'ouverture du PPTX.
+4. **Panneau de droite (`Preview`, rétractable) & Panneau inférieur (`Terminal`, rétractable)** :
+   - Cliquez sur le bouton **`Preview`** (ou changez de préréglage) pour exécuter une véritable compilation `quarto render`, suivre le journal d'exécution en direct dans le panneau **`Terminal`** en bas d'écran, et visualiser le rendu natif dans le panneau de droite :
+   - **`PDF`** : visualisation multi-pages haute définition (avec zoom `75%` / `100%` / `Fit`) du véritable fichier `.pdf` compilé par Quarto et XeLaTeX (`_extensions/husson/`).
+   - **`HTML`** : affichage interactif du véritable document web `husson-html` compilé (avec bascule clair/sombre One Dark Pro, sommaire flottant et adaptation automatique des figures).
+   - **`RevealJS`** : affichage interactif du véritable diaporama `husson-revealjs` compilé (navigation entre diapositives, barre de progression haute cliquable et thème clair/sombre).
+   - **`YAML`** : inspection en direct de l'en-tête YAML exact généré.
+
+---
+
+### Méthode 2 : Convertir manuellement un fichier `.qmd` existant (en 2 étapes)
+
+Si vous avez déjà un fichier `mon_document.qmd` dans un dossier :
+
+**Étape 1 — Installer l'extension dans le dossier du document** (une seule fois par projet) :
+```bash
+cd /chemin/vers/mon-dossier
+quarto add thomashusson29/quarto-template-husson
+```
+
+**Étape 2 — Remplacer `format: pdf` ou `format: html` dans l'en-tête YAML de votre `.qmd`** :
+```yaml
+---
+title: "Titre de mon étude"
+author: "Prénom Nom"
+date: today
+lang: fr
+format:
+  husson-pdf: default
+  husson-html: default
+---
+```
+
+Puis compilez normalement depuis RStudio, Positron, VS Code ou le terminal :
+```bash
+quarto render mon_document.qmd
+```
+
+---
+
+### Méthode 3 : Créer un nouveau projet complet en ligne de commande
 
 ```bash
 quarto use template thomashusson29/quarto-template-husson
@@ -24,25 +82,156 @@ cd <nom-du-projet>
 quarto render
 ```
 
-Le rendu par défaut est écrit dans `output/` et contient un fichier HTML et un
-PDF. Word et RevealJS restent explicites, car HTML et RevealJS produiraient
-tous deux un fichier `.html` de même nom.
-
-Pour une seule sortie :
-
+Pour compiler vers un format unique :
 ```bash
 quarto render --to husson-pdf
 quarto render --to husson-html
 quarto render --to husson-docx
 quarto render --to husson-revealjs
+quarto render --to husson-pptx
 ```
+
+---
+
+## Modèles d'en-têtes YAML prêts à copier-coller
+
+Voici les configurations types selon la nature de votre document.
+
+### Cas 1 : Rapport ou Article standard (PDF + HTML)
+
+Les chapitres `# H1` s'enchaînent sur la même page sans laisser de grands espaces blancs. Si vous souhaitez au contraire un saut de page avant chaque `# H1`, ajoutez `pagebreak-h1: true`.
+
+```yaml
+---
+title: "Analyse des facteurs pronostiques"
+subtitle: "Étude de cohorte rétrospective"
+author: "Prénom Nom"
+date: today
+lang: fr
+font: "Times New Roman"       # ou "Computer Modern", "Garamond", "Roboto", "Carlito"
+pagebreak-h1: false           # mettre true pour forcer un saut de page à chaque # H1
+bibliography: references.bib  # optionnel
+format:
+  husson-pdf:
+    toc: true
+    number-sections: true
+  husson-html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+---
+```
+
+### Cas 2 : Devoir ou Rapport de Master (avec page de garde universitaire, sans jury)
+
+Génère une page de garde officielle avec logo universitaire, diplôme et unité d'enseignement, sans formule solennelle de soutenance ni tableau de jury.
+
+```yaml
+---
+title: "Devoir d'Épidémiologie Clinique"
+subtitle: "Analyse de survie sur les données SUPPORT"
+author: "Prénom Nom"
+lang: fr
+font: "Computer Modern"       # ou "Times New Roman"
+thesis:
+  university: "Université Paris-Saclay"
+  faculty: "Faculté de Médecine"
+  degree: "Master 2 — Santé Publique et Méthodologie de la Recherche"
+  specialty: "UE Épidémiologie"
+  department: "Étude observationnelle"
+  date: "Année universitaire 2025-2026"
+  logo: "logo-universite-paris-saclay.png"
+format:
+  husson-pdf:
+    toc: true
+    number-sections: true
+---
+```
+
+### Cas 3 : Thèse ou Mémoire officiel (page de garde, jury et pages liminaires)
+
+En mode thèse (`thesis:`), chaque chapitre `# H1` commence automatiquement sur une nouvelle page, les pages liminaires (résumé, remerciements, table des matières, listes des figures et tableaux) sont numérotées en chiffres romains (`I`, `II`, `III`...), et l'introduction démarre en page `1` en chiffres arabes.
+
+```yaml
+---
+title: "Titre complet de la thèse"
+subtitle: "Sous-titre de l'étude"
+author: "Prénom Nom"
+lang: fr
+font: "Times New Roman"
+thesis:
+  university: "Université Paris-Saclay"
+  faculty: "Faculté de Médecine"
+  degree: "Thèse pour le diplôme d'État de Docteur en Médecine"
+  specialty: "DES d'Anesthésie-Réanimation"
+  date: "15 octobre 2026"
+  logo: "logo-universite-paris-saclay.png"
+  directors:
+    - name: "Pr Prénom Nom"
+      title: "PU-PH"
+      role: "Dirigé"
+  jury:
+    - name: "Pr Prénom Nom"
+      title: "PU-PH, Université Paris-Saclay"
+      role: "Président du jury"
+    - name: "Dr Prénom Nom"
+      title: "MCU-PH, Université Paris Cité"
+      role: "Membre du jury"
+frontmatter:
+  table-of-contents: true
+  list-of-figures: true
+  list-of-tables: true
+  keywords: ["Mot-clé 1", "Mot-clé 2", "Mot-clé 3"]
+  keywords-en: ["Keyword 1", "Keyword 2", "Keyword 3"]
+format:
+  husson-pdf:
+    number-sections: true
+---
+```
+
+### Cas 4 : Présentation RevealJS (diaporama clair/sombre)
+
+```yaml
+---
+title: "Titre de la soutenance"
+subtitle: "Présentation des résultats"
+author: "Prénom Nom"
+date: today
+lang: fr
+heading-colors: true
+format:
+  husson-revealjs:
+    slide-number: true
+    transition: none
+---
+```
+
+---
+
+## Interface Graphique Interactive : Quarto Husson Studio
+
+L'application [`gui/app.py`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/app.py) offre un espace de travail sobre et complet (inspiré des applications natives macOS) permettant de gérer tout le cycle de vie d'un document Quarto :
+
+- **Lancement rapide** :
+  - Double-clic sur [`gui/Quarto GUI.command`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/Quarto%20GUI.command) sous macOS.
+  - Ou commande `streamlit run gui/app.py` (ou alias `quarto-gui`).
+- **Fonctionnalités intégrées** :
+  1. **Création directe de documents et de projets (`Nouveau document`)** : choix du dossier parent, création éventuelle d'un sous-dossier projet, choix du modèle initial (*Article*, *Master*, *Thèse*, *Rapport*, *RevealJS*), injection automatique de l'extension `_extensions/husson` et génération d'un squelette `.qmd` prêt à compiler.
+  2. **Conversion automatique d'un `.qmd` natif existant (`Ouvrir / Convertir`)** : détection des formats standards (`pdf`, `html`, `docx`, `revealjs`) et des anciens appels manuels devenus inutiles (`source("gt-page-fit.R")`, `source("auto-dark-setup.R")`), conversion sans perte vers `husson-*` et sauvegarde préventive systématique dans `scratch/`.
+  3. **Sélecteur de préréglages et éditeur complet** :
+     - Application en un clic des 4 profils types (*Devoir / Rapport de Master*, *Thèse / Mémoire officiel*, *Rapport Scientifique Sobre*, *Article / Rapport Web*).
+     - Onglets dédiés : **Formats & Rendu**, **Métadonnées & Typographie**, **Page de garde & Préambule** (avec éditeur de tableau interactif pour ajouter/modifier/supprimer les membres du **jury** et configurer toutes les options `frontmatter`), **Tableaux & Options Husson**.
+  4. **Compilation et ouverture directe** : exécution de `quarto render` depuis l'en-tête principal, accès direct aux fichiers PDF, HTML, Word et au dossier Finder, journal technique repliable.
+  5. **Assistant et diagnostic IA local (Ollama)** : analyse automatique des erreurs de compilation LaTeX/Pandoc/R et assistant conversationnel contextuel lorsque `ollama serve` est actif en local.
+
+---
 
 ## Galerie et Démonstrations en Ligne (GitHub Pages)
 
 Une galerie complète présentant chaque format en conditions réelles est intégrée dans le dossier `docs/` et déployée automatiquement sur GitHub Pages :
 
 - **Rendu HTML statique (`exemple-article.html`)** : page web complète avec table des matières dynamique, bascule clair/sombre One Dark automatique (adaptée aux préférences système), équations LaTeX, encadrés Quarto (callouts), tableaux pleine page et graphiques R intégrés ;
-- **Rendu RevealJS (`exemple-revealjs.html`)** : présentation interactive avec diaporama complet, fil d'Ariane hiérarchique en haut d'écran, titre sticky sur diapositive défilable, bascule One Dark Pro et graphiques R ggplot2 à fond transparent avec images compagnes automatiques ;
+- **Rendu RevealJS (`exemple-revealjs.html`)** : présentation interactive avec diaporama complet, fil d'Ariane hiérarchique en haut d'écran, titre sticky sur diapositive défilable, bascule One Dark Pro et graphiques R ggplot2 à fond transparent avec images compagnes automatiques ; le thème, les titres, le bandeau et les éléments hors des diapositives utilisent Carlito (repli Open Sans, puis Arial) en modes clair et sombre ;
 - **Rendu PDF Thèse complet (`exemple-these.pdf`)** : document de 16 pages au format thèse universitaire (A4, XeLaTeX, Times New Roman 11pt, interligne 1.15) comprenant la page de garde officielle conforme, le jury complet, les pages liminaires (résumé, remerciements, valorisation scientifique, table des matières, liste des figures, liste des tableaux, abréviations), la reprise à la page 1 en chiffres arabes, les tableaux optimisés à 100 % de la largeur utile et l'insertion d'une planche en paysage ;
 - **Rendu Word DOCX (`exemple-article.docx`)** : document Word appliquant directement le modèle éditorial embarqué (`template.docx`), avec styles typographiques calibrés, alignements de tableaux et légendes francisées ;
 - **Rendu R vers Python (`exemple-r-python.html`)** : pipeline de modélisation bidirectionnel avec `reticulate` sur le jeu de données `mtcars` (transfert R → Python → R, régression OLS et analyse des résidus avec `ggplot2`).
@@ -70,24 +259,11 @@ quarto render examples/exemple-article.qmd --to husson-docx --output-dir docs --
 quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
 ```
 
-## Interface Graphique Interactive : Quarto Husson Studio
-
-Pour configurer visuellement vos options, pré-remplir le YAML, activer les modes Thèse ou Tableaux et visualiser la compilation en streaming temps réel, lancez l'application graphique :
-
-- **Depuis le terminal** : tapez simplement `quarto-gui` (ou `husson-gui`) depuis n'importe quel dossier.
-- **Depuis macOS** : double-cliquez sur le fichier lanceur `Quarto GUI.command` situé dans le dossier `gui/`.
-
-L'application Web locale permet de :
-1. **Sélectionner ou déposer un `.qmd`** (avec recherche automatique des documents récents).
-2. **Choisir un profil prêt à l'emploi** (Thèse universitaire, Rapport académique Computer Modern / LaTeX Default, Article, Présentation RevealJS) ou affiner chaque paramètre en mode avancé.
-3. **Sécurité totale** : sauvegarde préventive automatique horodatée avant toute modification du fichier `.qmd`.
-4. **Liaison automatique du template** : vérifie et lie `_extensions/husson` dans le projet cible si manquant.
-5. **Console en streaming temps réel** : visualisation du terminal au cours de `quarto render`, avec chronomètre et boutons d'ouverture directe du PDF ou HTML produit.
+---
 
 ## Ajouter les formats à un projet existant
 
-Exécutez cette commande depuis le dossier qui contient le fichier `.qmd` à
-rendre :
+Exécutez cette commande depuis le dossier qui contient le fichier `.qmd` à rendre :
 
 ```bash
 quarto add thomashusson29/quarto-template-husson
@@ -119,8 +295,7 @@ format:
   husson-revealjs: default
 ```
 
-Après `quarto add` (ou le lien symbolique), l'extension doit se trouver dans le projet cible, par
-exemple :
+Après `quarto add` (ou le lien symbolique), l'extension doit se trouver dans le projet cible, par exemple :
 
 ```text
 mon-projet/
@@ -129,44 +304,85 @@ mon-projet/
 └── mon-document.qmd
 ```
 
-Un dossier contenant une copie (ou un lien) du template placé à côté du projet n'est pas
-recherché automatiquement par Quarto. Ainsi, si l'extension est conservée
-dans un autre dossier, utilisez le modèle Word directement :
+Dans un projet existant, ne déclarez ensemble que les formats qui doivent être produits par la même commande. Pour éviter une collision de noms (`.html` entre page web et diaporama), utilisez habituellement `husson-html` et `husson-pdf` par défaut, puis rendez les autres formats avec `--to`.
+
+---
+
+## Export PPTX modifiable depuis RevealJS
+
+`husson-pptx` prend le `.qmd` comme source unique. Le projet Quarto rend d’abord `husson-revealjs`, puis l’adaptateur Husson prépare chaque vue dans Chromium (1600 × 900, thème clair, fragments visibles) et la convertit avec [dom-to-pptx 2.1.2](https://github.com/atharva9167j/dom-to-pptx). Le PPTX intermédiaire natif de Quarto est remplacé par cet export. [PptxGenJS](https://github.com/gitbrent/PptxGenJS) est utilisé par le moteur.
+
+**Installation.** Quarto ≥ 1.8, Node.js, Chromium et les dépendances npm de l’adaptateur sont nécessaires. Les quatre variantes de [Carlito](https://github.com/googlefonts/carlito) se trouvent dans `_extensions/husson/fonts/` avec leur [licence](_extensions/husson/fonts/OFL.txt). `husson-revealjs` les charge depuis le clone, même hors ligne ; aucune installation de police ni connexion à Google Fonts n’est nécessaire. L’export PPTX intègre aussi les quatre variantes dans le fichier produit. Open Sans puis Arial restent des replis pour les caractères non couverts. Dans le dossier du projet contenant `_extensions/husson/` :
 
 ```bash
-cd /chemin/vers/mon-projet
-quarto render mon-document.qmd \
-  --to docx \
-  --reference-doc chemin/vers/quarto-template-husson/_extensions/husson/template.docx \
-  --output mon-document.docx
+npm ci --prefix _extensions/husson/pptx
 ```
 
-Le rendu doit être lancé depuis le projet qui contient `mon-document.qmd`, et
-non depuis le dépôt `quarto-template-husson`. Le chemin passé à `--output` est
-interprété depuis le dossier courant ; avec la commande ci-dessus, le fichier
-est donc créé dans `mon-projet/`. Évitez les chemins de sortie pointant vers le
-dépôt du template, afin de ne pas y générer accidentellement des documents.
+Par défaut, l’adaptateur lance `/Applications/Chromium.app/Contents/MacOS/Chromium` sur macOS. Sur un autre système, définir `CHROMIUM_PATH` vers le binaire Chromium.
 
-Dans un projet existant, ne déclarez ensemble que les formats qui doivent être
-produits par la même commande. Pour éviter une collision de noms, utilisez
-habituellement `husson-html` et `husson-pdf` par défaut, puis rendez les deux
-autres formats avec `--to`.
+Pour relier la commande Quarto à la conversion, ajouter à `_quarto.yml` du projet :
 
-## Typographie et choix de police
+```yaml
+project:
+  type: default
+  post-render: node _extensions/husson/pptx/post-render.mjs
+```
 
-Le template `husson-pdf` intègre un moteur typographique universel (`typography.lua`) éliminant tout repli vers Computer Modern :
+Conserver `format: husson-revealjs` dans le `.qmd`, puis exécuter :
+
+```bash
+quarto render mon_diaporama.qmd --to husson-pptx
+```
+
+Le fichier `mon_diaporama.pptx` est créé à côté de la sortie Quarto. Le [diaporama de perfusion](https://github.com/Nurserie-Pitie/HOPE_COR_NMP/blob/main/diaporama_perfusion/README.md) utilise ce branchement. Pour un exemple autonome sans dépendance R, depuis la racine de ce template :
+
+```bash
+quarto render examples/exemple-pptx.qmd --to husson-pptx
+# résultat : output/examples/exemple-pptx.pptx
+```
+
+Le [deck d’essai complexe](examples/test-pptx-complex.qmd), créé via **New → Presentation** dans l’interface, contient cinq diapositives sources : colonnes et images, tableau et SVG, boîtes et flèches CSS, diapositive défilante, puis trois onglets. Commande reproductible :
+
+```bash
+quarto render examples/test-pptx-complex.qmd --to husson-pptx
+# résultat : output/examples/test-pptx-complex.pptx (8 diapositives)
+```
+
+Les titres, textes, cartes, encadrés, listes, tableaux et décorations CSS textuelles (`::before`, `::after`, `counter()`, `attr()`) restent modifiables. L’adaptateur mesure dans Chromium la géométrie des lignes et des puces, puis tient compte de l’échelle RevealJS sans modifier la mise en page source. Il matérialise les décorations générées en éléments DOM avant conversion ; pour leurs chiffres et flèches, il vérifie la couverture réelle des caractères dans l’ordre **Carlito, Open Sans, Arial**. Lorsque le texte inline est plus grand que l’interligne du paragraphe, il impose dans PowerPoint un interligne minimal pour éviter un décalage vertical. Aucune règle ne cible une diapositive d’essai ou un numéro de diapositive. Quand `husson-revealjs` affiche sa barre de navigation, l’adaptateur copie son DOM et la convertit en fond, bordure et libellés PowerPoint modifiables. Le numéro de diapositive RevealJS est omis du PPTX : aucun numéro figé en image n’est ajouté. Une ligne de texte dans un conteneur flex peut utiliser l’espace restant pour éviter un retour ajouté par PowerPoint. La bascule clair/sombre et le menu interactif sont masqués dans le PPTX clair.
+
+Les fragments apparaissent dans leur état final. Pour une diapositive [`.scrollable`](https://quarto.org/docs/presentations/revealjs/#content-overflow), l’adaptateur mesure les blocs dans Chromium et crée autant de diapositives de suite que nécessaire, sans couper un bloc entre deux pages. Pour un [`.panel-tabset`](https://quarto.org/docs/presentations/revealjs/#tabsets), il crée une diapositive par onglet, dans l’ordre, et mesure le texte de chaque panneau activé avant conversion ; plusieurs ensembles d’onglets produisent toutes leurs combinaisons, avec une limite explicite de 100. Les photos, QR codes, SVG complexes et iframes de démonstration restent des images ; les iframes sont figées à l’export. Les animations et interactions RevealJS ne sont pas transférées. Carlito est intégré au PPTX produit ; si un autre diaporama utilise une police personnalisée, sa présence dans le PPTX dépend d’une déclaration `@font-face` accessible au navigateur. Une équivalence parfaite pour tout HTML/CSS futur ne peut pas être garantie, donc vérifier les nouveaux types de composants avant diffusion.
+
+L’adaptateur retire aussi la capture pleine page parasite ajoutée par le moteur derrière les objets modifiables. Il arrête l’export si une image est introuvable ou si un contenu CSS généré ne peut pas être converti ; aucun élément de ce type n’est omis silencieusement. Les variantes claires des images `-auto-dark` facultatives sont utilisées pour cet export fixe. L’export applique en mémoire un correctif à [dom-to-pptx 2.1.2](https://github.com/atharva9167j/dom-to-pptx) pour les conteneurs `inline-block` et utilise [JSZip](https://github.com/Stuk/jszip) pour ajuster les tailles de police au facteur RevealJS. Les [notices de provenance et licences](_extensions/husson/THIRD_PARTY_NOTICES.md) détaillent ces adaptations, [PptxGenJS](https://github.com/gitbrent/PptxGenJS), et distinguent les dépendances utilisées des projets consultés comme [HTMLtoPPTX](https://github.com/mmoollee101-lab/HTMLtoPPTX) et [revealjs-to-pptx](https://github.com/ddzeeuw1-ai/revealjs-to-pptx).
+
+---
+
+## Typographie, sauts de page et choix de police
+
+Le template `husson-pdf` intègre un moteur typographique universel (`typography.lua`) et charge directement ses polices, logos et bibliographies depuis `_extensions/husson/` sans jamais copier de fichiers parasites dans le dossier de travail :
 
 - **Polices disponibles out-of-the-box** :
-  - **Times New Roman** (`font: "Times New Roman"` ou par défaut) : standard académique et médical, avec petites capitales véritables via TeX Gyre Termes.
+  - **Times New Roman** (appliquée **par défaut** sur tous les documents `husson-pdf`, ou via `font: "Times New Roman"`) : standard académique et médical, avec petites capitales véritables via TeX Gyre Termes.
+  - **Computer Modern / Latin Modern** (`font: "Computer Modern"` ou `font: "default"`) : police mathématique classique de LaTeX.
   - **Garamond** (`font: "Garamond"` ou `"EB Garamond"`) : typographie littéraire et soignée via le package OpenType EB Garamond embarqué dans TeX Live.
   - **Roboto** (`font: "Roboto"`) : sans-serif moderne, sobre et hautement lisible.
-  - **Carlito** (`font: "Carlito"` ou `"Calibri"`) : sans-serif métriquement compatible avec Microsoft Calibri, embarqué directement dans les ressources du template.
+  - **Carlito** (`font: "Carlito"` ou `"Calibri"`) : sans-serif métriquement compatible avec Microsoft Calibri, chargé directement depuis `_extensions/husson/fonts/`.
   - **Police personnalisée** (`font: "NomDePolice"` ou `mainfont: "NomDePolice"`).
+
+- **Sauts de page des chapitres de niveau 1 (`# H1`)** :
+  - **En mode Thèse (`thesis:`)** : chaque titre de niveau 1 (`# H1`) commence **systématiquement sur une nouvelle page** (`\clearpage`).
+  - **En mode Rapport / Article / Devoir standard** : les sections `# H1` s'enchaînent de manière fluide avec une réserve d'espace anti-veuve (`\Needspace{8\baselineskip}`), évitant de laisser la première page quasi vide sous le titre.
+  - **Option globale (`pagebreak-h1`)** : ajoutez `pagebreak-h1: true` dans le YAML d'un rapport standard pour forcer un saut de page avant chaque `# H1` (ou `pagebreak-h1: false` en mode thèse pour le désactiver).
+  - **Contrôle titre par titre** : ajoutez la classe `{.pagebreak}` ou `{.no-pagebreak}` sur un titre `# H1` spécifique.
+
+- **Couleurs des titres (`heading-colors`)** :
+  - **En PDF (`husson-pdf`)** : par défaut (`heading-colors: true`), les titres utilisent la palette hiérarchique du template (bleu marine `#17365D` pour `# H1`, bordeaux `#7A1F2B` pour `## H2`, vert forêt `#1F5A3A` pour `### H3`, anthracite `#34383D` pour `H4`–`H5`). Ajoutez `heading-colors: false` dans le YAML (ou décochez `Colors` dans l'onglet `Typography`) pour composer tous les titres en noir (`#000000`).
+  - **En HTML et RevealJS (`husson-html`, `husson-revealjs`)** : ajoutez `heading-colors: true` pour appliquer les couleurs d'accentuation aux titres `H1`–`H3` avec adaptation automatique au mode clair/sombre, ou `heading-colors: false` pour conserver la couleur du texte courant.
 
 ### Mode Thèse / Mémoire universitaire
 
 L'activation du mode thèse (en définissant le bloc `thesis:` ou `thesis: true` dans le YAML) configure automatiquement :
 - La police **Times New Roman** (ou la police choisie via `font:`).
+- Le **saut de page systématique** avant chaque chapitre `# H1`.
 - Une taille de corps de **11pt** (`fontsize: 11pt`).
 - Un **interligne de 1,15** (`linestretch: 1.15`).
 - Une **géométrie de page calibrée** (`top=3cm, bottom=2.5cm, left=3cm, right=2.5cm`).
@@ -206,20 +422,19 @@ thesis:
   - **Avec jury** : la formule rituelle (« Présentée et soutenue publiquement le [date] devant un jury composé de : ») s'affiche au millimètre au-dessus du tableau du jury.
   - **Accroche personnalisée (`date_prefix`)** : pour modifier ou adapter la formule, précisez `date_prefix: "Soutenue le "` ou `date_prefix: "Date : "` dans le bloc `thesis:`.
 
-### Pages liminaires facultatives
+### Pages liminaires facultatives (`frontmatter`)
 
-Le mode `thesis` fournit la page de titre. Les autres pages liminaires peuvent
-être activées individuellement avec le bloc `frontmatter:` :
+Les pages liminaires peuvent être activées individuellement avec le bloc `frontmatter:` (en mode thèse comme dans un rapport standard) :
 
 ```yaml
-format:
-  husson-pdf:
-    toc: false # la table sera placée avec les autres pages liminaires
-
 frontmatter:
   blank-page: true
-  summary: |
-    Le résumé de la thèse.
+  abstract: |
+    Résumé en français.
+  abstract-en: |
+    Abstract in English.
+  keywords: ["Mot-clé 1", "Mot-clé 2"]
+  keywords-en: ["Keyword 1", "Keyword 2"]
   acknowledgements: |
     Les remerciements (Membre 1, Membre 2, Hôpital 1, Hôpital 2).
   scientific-valorization: |
@@ -234,130 +449,75 @@ frontmatter:
       definition: "Weight (1000 lbs)"
 ```
 
-L’ordre PDF est alors : page de titre, page blanche facultative, résumé,
-remerciements, valorisation scientifique, table des matières, liste des
-figures, liste des tableaux, liste des abréviations, puis le corps du document
-à la page 1 en chiffres arabes. Les listes de figures et de tableaux sont
-générées par LaTeX et récupèrent automatiquement les légendes et les numéros
-de page après compilation.
+L'ordre PDF est alors : page de titre, page blanche facultative, remerciements, résumé français, abstract anglais, valorisation scientifique, table des matières, liste des figures, liste des tableaux, liste des abréviations (numérotés en chiffres romains `I`, `II`...), puis le corps du document qui démarre automatiquement à la page `1` en chiffres arabes. Lorsque `frontmatter.table-of-contents: true` est activé, le sommaire natif Quarto est automatiquement désactivé afin d'éviter tout doublon.
 
-Les champs `summary`, `acknowledgements`, `scientific-valorization` et
-`abbreviations` sont facultatifs. Pour utiliser la table des matières native
-de Quarto à son emplacement habituel, conserver `toc: true` et ne pas activer
-`frontmatter.table-of-contents`.
+#### Rédiger les pages liminaires directement en Markdown dans le corps du `.qmd`
 
-#### Rédiger les pages en Markdown
-
-Pour éviter de mettre le contenu dans le YAML, activer
-`frontmatter.markdown: true` puis placer les pages sous forme de blocs Markdown
-dans le document :
+Pour rédiger vos textes liminaires avec toute la richesse de Markdown (gras, listes, tableaux) sans alourdir l'en-tête YAML, placez simplement des blocs `::: {.frontmatter-*}` au début de votre document `.qmd` (ils sont détectés automatiquement sur tous les formats) :
 
 ```markdown
-::: {.frontmatter-summary}
-## Contexte
-
-Le résumé peut contenir plusieurs paragraphes, listes, emphases et références.
-:::
-
 ::: {.frontmatter-acknowledgements}
 Les remerciements peuvent être rédigés normalement en Markdown.
 :::
 
-::: {.frontmatter-scientific-valorization}
-### Publications
+::: {.frontmatter-abstract}
+**Introduction :** Contexte de l'étude.
 
+**Méthodes :** Schéma d'étude et analyse statistique.
+:::
+
+::: {.frontmatter-abstract-en}
+**Background:** Study background.
+
+**Methods:** Study design and statistical analysis.
+:::
+
+::: {.frontmatter-scientific-valorization}
 - Article publié : ...
 - Communication : ...
 :::
 
 ::: {.frontmatter-abbreviations}
-MPG
-: Miles per gallon
+| Abréviation | Définition |
+| :--- | :--- |
+| **MPG** | Miles per gallon |
 :::
 ```
 
-Les classes disponibles sont `frontmatter-summary`,
-`frontmatter-acknowledgements`, `frontmatter-scientific-valorization` et
-`frontmatter-abbreviations`. Le filtre les déplace automatiquement avant la
-table des matières, conserve leur contenu Markdown, puis redémarre le corps du
-document à la page 1. Les abréviations utilisent une liste de définitions
-Markdown et sont composées en deux colonnes à largeur fixe (libellé et
-définition), sans tableau LaTeX.
+---
 
 ## Ajustement universel des tableaux (pleine largeur et hauteur minimale)
 
-Le template garantit de façon **systématique et transparente** que tous les tableaux (`gt`, `gtsummary`, `knitr::kable`, tibbles, tableaux Markdown) respectent les contraintes suivantes :
-1. **100 % de la largeur utile (`\linewidth`)** : aucun tableau ne déborde dans les marges. Les largeurs fixes (en `px` ou `pt`) sont automatiquement renormalisées en proportions relatives de `\linewidth`.
-2. **Hauteur minimale et colonnes équilibrées** : espacement vertical compact (`+2.5pt` de padding de ligne) et répartition automatique des largeurs par le filtre Lua (`table-column-widths.lua`) guidée par la demande réelle en texte afin de minimiser les retours à la ligne inutiles.
-3. **Césure automatique universelle en français** : par défaut, LaTeX désactive la césure dans les cellules de tableau (`p{...}`). Le template charge `ragged2e` et redéfinit universellement `\raggedright` en `\RaggedRight\hspace{0pt}`, ce qui restaure les motifs de césure natifs TeX/Babel en français sans nécessiter de liste manuelle de mots.
-4. **Sauts de ligne `<br>` préservés** : les balises HTML `<br>` ou `<br/>` présentes dans les cellules de tableaux Markdown sont automatiquement converties en `\newline` LaTeX par le filtre Lua, évitant que les lignes ne soient collées sans espace.
-5. **Appellation « Tableau » automatique (`lang: fr`)** : si le document est configuré avec `lang: fr`, les tables sont automatiquement étiquetées « Tableau » (références croisées `@tbl-...`, titres de tableaux, macro `\tablename` et `Liste des tableaux`), au lieu du terme anglais « Table » imposé par défaut par Quarto et Pandoc. En anglais (`lang: en`), l'intitulé « Table » reste préservé.
-6. **Indices et symboles scientifiques directs** : prise en charge native sans formule mathématique lourde des indices unicode courants (`₂`, `₁`, `₀`, etc.) et des symboles (`≥`, `≤`, `≈`, `ρ`).
-7. **Respect de la typographie du document** : réduction de police plafonnée à 25 % maximum (`\small` ~10pt par défaut, `\footnotesize` ~9pt pour les tableaux $\ge 6$ colonnes).
-8. **Zéro configuration requise** : fonctionne nativement au niveau du filtre Pandoc Lua (`table-column-widths.lua`) et du préambule LaTeX (`pdf-header.tex`), sans code R dédié obligatoire.
+Le template garantit de façon **systématique, native et transparente** que tous les tableaux (`gt`, `gtsummary`, `knitr::kable`, `data.frame` / `tibble` via `df-print: kable`, tableaux Markdown) respectent les contraintes suivantes **sans aucun chunk de configuration requis** :
+1. **100 % de la largeur utile (`\linewidth`)** : aucun tableau ne déborde dans les marges. Les spécifications brutes (`{lccc}`) ou en pixels/points (`px()`, `pt`) générées par `gt` ou `kable` sont automatiquement converties en colonnes `p{...}` proportionnelles de `\linewidth` (méthode Hamilton-Hare totalisant exactement 100 %).
+2. **Hauteur minimale et en-têtes équilibrés sur 2 lignes** : espacement vertical compact (`+2.5pt` de padding de ligne) et répartition optimale des largeurs par le filtre Lua (`table-column-widths.lua`) calculant le point de coupe optimal en 2 lignes (`best_2line_len`), protégeant les identifiants courts et insérant automatiquement un espace avant les parenthèses d'unités (`CellSaver(mL)` $\rightarrow$ `CellSaver (mL)`).
+3. **Inférence automatique des alignements** : valeurs numériques, estimations et $p$-values alignées à droite (`\raggedleft`), codes courts et stades (`F0`–`F4`, `Oui`/`Non`, plages) centrés (`\centering`), libellés descriptifs alignés à gauche (`\raggedright`).
+4. **Césure automatique universelle en français** : par défaut, LaTeX désactive la césure dans les cellules de tableau (`p{...}`). Le template charge `ragged2e` et redéfinit universellement `\raggedright` en `\RaggedRight\hspace{0pt}`, ce qui restaure les motifs de césure natifs TeX/Babel en français sans nécessiter de liste manuelle de mots.
+5. **Sauts de ligne `<br>` préservés** : les balises HTML `<br>` ou `<br/>` présentes dans les cellules de tableaux Markdown sont automatiquement converties en `\newline` LaTeX par le filtre Lua, évitant que les lignes ne soient collées sans espace.
+6. **Appellation « Tableau » automatique (`lang: fr`)** : si le document est configuré avec `lang: fr`, les tables sont automatiquement étiquetées « Tableau » (références croisées `@tbl-...`, titres de tableaux, macro `\tablename` et `Liste des tableaux`), au lieu du terme anglais « Table » imposé par défaut par Quarto et Pandoc. En anglais (`lang: en`), l'intitulé « Table » reste préservé.
+7. **Indices, exposants et symboles scientifiques directs** : prise en charge native sans formule mathématique lourde des indices et exposants unicode (`₀`–`₉`, `⁰`–`⁹`, `⁺`, `⁻`), des lettres grecques (`α`–`ω`, `Δ`, `Σ`, `Ω`) et des opérateurs cliniques/statistiques (`≥`, `≤`, `≈`, `≠`, `±`, `×`, `÷`, `−`, `→`, `∞`).
+8. **Respect de la typographie du document** : réduction de police adaptative selon la densité (`10pt` pour $< 6$ colonnes, `9pt` pour $6$ à $9$ colonnes, `8pt` pour $\ge 10$ colonnes).
+9. **Zéro configuration requise** : fonctionne nativement au niveau du filtre Pandoc Lua (`table-column-widths.lua`) et du préambule LaTeX (`pdf-header.tex`), même sur un fichier `.qmd` natif ne contenant aucun appel à `gt-page-fit.R`.
 
-### Module R avancé : `gt-page-fit.R`
+### Module R optionnel : `gt-page-fit.R`
 
-Pour les documents contenant des tableaux R générés par `gt`, `gtsummary`, ou des `data.frame` / `tibble`, le module `gt-page-fit.R` fournit une optimisation typographique poussée dès l'étape d'évaluation knitr.
-
-#### Activation dans le document Quarto
-
-Dans le chunk d'initialisation (`setup`) de votre document :
+Le filtre Lua `table-column-widths.lua` applique déjà l'intégralité de l'algorithme de calibrage à tous les tableaux lors du rendu Pandoc. Pour les utilisateurs souhaitant que l'objet R `gt_tbl` lui-même porte ces options dès l'évaluation `knitr` (ou que les `data.frame` soient convertis en `gt` plutôt qu'en `kable`), le module `gt-page-fit.R` reste disponible en option :
 
 ```r
 source("_extensions/husson/gt-page-fit.R")
 husson_tables_on()
 ```
 
-Une fois activé, le module intercepte automatiquement l'impression des tableaux dans les sorties LaTeX/PDF sans nécessiter de retoucher vos chunks existants.
-
-#### Fonctionnalités assurées automatiquement
-
-1. **Interception universelle des tableaux R** :
-   - Tableaux `gt` natifs et objets `gtsummary` convertis (`as_gt()`).
-   - Objets `data.frame` et `tibble` affichés dans un chunk : automatiquement transformés en tableaux `gt` optimisés pleine page.
-
-2. **Minimisation de la hauteur et équilibrage des en-têtes (2 lignes maximum)** :
-   - Analyse combinatoire du texte des en-têtes pour calculer le point de césure optimal en 2 lignes (`best_2line_len`).
-   - Détection des sous-lignes multi-mots (`has_multiword_line`) : garantit une largeur suffisante pour que les en-têtes composés (ex. *« Nombre de décharges »*) tiennent sur 2 lignes sans isoler un mot sur une 3e ligne (*Nombre* / *de* / *décharges*).
-   - Insertion automatique d'un espace avant les parenthèses d'unités lorsqu'il est omis (ex. `CellSaver(mL)` transformé en `CellSaver (mL)`).
-
-3. **Planchers minimaux garantis par profil de colonne (`min_pcts`)** :
-   - **Colonnes descriptives / narratives** (libellés de résection, descriptions cliniques) : plancher garanti ($\ge 23\%-24\%$) pour éviter les retours à la ligne intempestifs dans les cellules de données.
-   - **Identifiants courts** (ex. *« Pièce 1 »*, *« Foie 07/07 »*) : plancher dédié ($\ge 8\%$) maintenant l'identifiant sur une seule ligne.
-   - **En-têtes longs ou composés** : planchers stricts ($\ge 11\%-15\%$).
-   - **Colonnes compactes** (valeurs numériques, pourcentages, délais) : planchers réduits ($\ge 6\%$) libérant de l'espace pour les colonnes complexes.
-
-4. **Allocation entière Hamilton-Hare (100 % strict)** :
-   - Répartition du budget résiduel par la méthode des plus forts restes (Hamilton-Hare), produisant des pourcentages strictement entiers dont la somme fait exactement 100 %, sans dérive d'arrondi lors de la conversion en `\linewidth`.
-
-5. **Inférence automatique des alignements typographiques** :
-   - Nombres et pourcentages formés (`17,2`, `1 987`, `50 %`) : alignés à droite (`right`).
-   - Codes courts, plages de valeurs, stades de fibrose et statuts binaires (`90–120`, `H23`, `F0`, `Oui`, `Non`) : centrés (`center`).
-   - Intitulés textuels et termes narratifs : alignés à gauche (`left`).
-
-6. **Neutralisation des largeurs fixes conflictuelles** :
-   - Remplacement automatique des largeurs fixes en pixels (`px()`) qui provoquent des débordements hors page en LaTeX par la répartition optimale en pourcentages.
-   - Respect strict des pourcentages manuels fournis par l'auteur si leur total équivaut déjà à 100 %.
-
-7. **Désactivation temporaire ou locale** :
-   ```r
-   husson_tables_off()
-   ```
-
+---
 
 ## Navigation d'en-tête et pied de page (PDF & RevealJS)
 
-Le template intègre un système d'orientation élégant et discret, particulièrement adapté aux mémoires universitaires, thèses et rapports volumineux.
+Le template intègre un système d'orientation discret, particulièrement adapté aux mémoires universitaires, thèses et rapports volumineux.
 
 ### 1. Barre de navigation hiérarchique d'en-tête (PDF et RevealJS)
 
 Une ligne fine placée en haut de chaque page ou diapositive affiche en temps réel le contexte hiérarchique actif sous forme d'un fil d'Ariane sobre (`H1 | H2 › H3`).
 
-- **Principe visuel** :
-  - **Chapitre / Partie (H1)** : libellé mis en valeur à gauche en bleu (`headingblue` `#17365D` en PDF, bleu d'accent `#107895` en police `Roboto` graisse `500` en RevealJS), séparé par un filet vertical `|`.
-  - **Sous-sections actives (H2 à H5)** : cheminement affiché avec des chevrons fins `›` (en bleu `#107895` sur RevealJS, graisse `500` sur le segment actif).
-  - **Filet de séparation** : trait continu discret de 0.3 pt en gris doux (`linegray`, `#D0D4D9`), sans filets gras superflus.
 - **Titre court pour l'en-tête (`nav-title`)** :
   Pour éviter qu'un intitulé trop long ne déborde dans la barre d'en-tête, spécifiez un libellé court avec l'attribut `nav-title` :
   ```markdown
@@ -367,124 +527,43 @@ Une ligne fine placée en haut de chaque page ou diapositive affiche en temps r�
 
   ### Cinétiques de relargage de la FMN {nav-title="FMN"}
   ```
-  Rendu dans l'en-tête :
-  ```text
-  MÉTHODES | HOPE › FMN
-  ─────────────────────────────────────────────────────────────────────────────
-  ```
 - **Masquer la barre sur une section ou diapositive spécifique** :
-  Ajoutez l'attribut `{nav="false"}` ou la classe `{.unlisted}` (ou `{.nobar}` pour RevealJS) sur le titre :
-  ```markdown
-  ## Annexe technique hors plan {nav="false"}
-  ```
+  Ajoutez l'attribut `{nav="false"}` ou la classe `{.unlisted}` (ou `{.nobar}` pour RevealJS) sur le titre.
 - **Désactiver globalement la barre d'en-tête** :
-  Pour désactiver la barre haute sur tout le document, ajoutez dans le frontmatter YAML :
   ```yaml
   ---
   navigation-bar: false # ou navbar: false
   ---
   ```
 
-### 2. Pied de page structuré et élégant (husson-pdf)
+### 2. Pied de page structuré (husson-pdf)
 
-Le pied de page offre une structure soignée et symétrique à l'en-tête :
-- **Ligne de séparation** : filet continu de 0.3 pt en gris doux `linegray` (`#D0D4D9`), identique à celui du haut.
-- **Coin inférieur gauche** : nom de l'auteur en typographie droite suivi du titre du document en italique, séparés par un tiret cadratin fin (`Auteur – *Titre*`), composé en gris anthracite foncé (`headingcharcoal`, `#34383D`, taille `\scriptsize`).
-- **Coin inférieur droit** : numéro de page en noir droit (`\scriptsize`), aligné sur la marge droite.
-- **Isolation des pages préliminaires** : la page de couverture (`empty`) et la table des matières (`plain`) restent vierges de tout filet intempestif.
+Le pied de page affiche à gauche le nom de l'auteur suivi du titre en italique (`Auteur – *Titre*`), et à droite le numéro de page.
 
-#### Définir un titre court dans la barre du bas (`short-title`)
-Pour afficher un titre abrégé uniquement dans le pied de page sans altérer le titre complet de votre page de garde ni vos métadonnées :
-
-```yaml
----
-title: "Modélisation statistique et analyse multivariée du jeu de données mtcars"
-short-title: "Analyse mtcars"
-author: "Membre 1"
----
-```
-Rendu en bas de page :
-```text
-─────────────────────────────────────────────────────────────────────────────
-Membre 1 – Analyse mtcars                                                   4
-```
-> **Note** : La clé alternative `footer-title: "..."` est également reconnue. Vous pouvez renseigner cette option à la racine du YAML ou directement sous la section `format: husson-pdf:`.
-
-#### Personnaliser l'auteur dans le pied de page (`footer-author`)
-Pour abréger le prénom ou modifier la mention de l'auteur en bas de page :
-```yaml
----
-footer-author: "Membre 1"
----
-```
-
-#### Contrôle total du bloc inférieur gauche (`footer-left`)
-Pour remplacer intégralement la mention gauche par une chaîne libre (affiliation, date, projet) :
-```yaml
----
-footer-left: "Membre 1 (Hôpital 1, Hôpital 2) – Analyse mtcars"
----
-```
-
-#### Comportement sans auteur
-Si aucun auteur n'est déclaré dans le YAML, le moteur Expl3 s'adapte automatiquement : seul le titre en italique est affiché, sans tiret orphelin.
-
-#### Désactivation ou modification du pied de page
-- **Vider le bloc gauche** : définissez `footer-left: ""` dans le YAML (conserve le filet et la pagination à droite).
-- **Supprimer les filets** : ajoutez dans le YAML sous `format: husson-pdf:` :
+- **Définir un titre court dans le pied de page (`short-title` ou `footer-title`)** :
   ```yaml
-  format:
-    husson-pdf:
-      header-includes: |
-        \KOMAoptions{headsepline=false, footsepline=false}
+  title: "Modélisation statistique et analyse multivariée du jeu de données mtcars"
+  short-title: "Analyse mtcars"
   ```
+- **Personnaliser l'auteur dans le pied de page (`footer-author`)** ou remplacer toute la mention gauche (`footer-left`).
 
 ### 3. Diapositives RevealJS : Navigation, titre fixe et protection du bas de diapositive
 
-Sur une présentation RevealJS (`husson-revealjs`), le template offre une suite complète d'optimisations ergonomiques et visuelles :
+- **Titre fixe (`sticky`) sur contenu défilant** : ajoutez `{.scrollable}` sur un titre `##` pour que l'intitulé reste épinglé en haut pendant le défilement vertical d'un grand tableau.
+- **Hauteur de barre réservée** : tant que la barre de navigation est affichée, `navigation-reveal.js` pose `husson-nav-visible` sur `<body>` et la zone des diapositives commence sous la barre (`--husson-nav-h`, 42 px). La barre ne peut donc pas recouvrir un titre, quelle que soit la taille de la fenêtre.
+- **Plafonnement dynamique des figures (`max-height`)** : les figures se redimensionnent proportionnellement pour ne jamais chevaucher le pied de page ni les numéros de diapositives.
 
-#### A. Titre fixe (sticky) sur contenu défilant
-Les diapositives volumineuses munies de l'attribut `{.scrollable}` conservent automatiquement leur titre ancré au sommet de la vue pendant le défilement vertical du contenu :
-
-```markdown
-## Données individuelles mtcars {.scrollable}
-
-| Modèle | MPG | Poids (1000 lbs) |
-|---|---|---|
-... (long tableau ou figures défilantes) ...
-```
-
-- **Ancrage fixe (`sticky`)** : le titre `h1` ou `h2` reste épinglé en haut de l'écran lors du défilement des données.
-- **Fond opaque protecteur** : le texte et les tableaux passent sous le titre sans collision optique.
-- **Délimitation nette** : un filet fin inférieur sépare discrètement le titre du corps défilant.
-- **Support dark / light mode** : les fonds et bordures basculent automatiquement selon le thème sélectionné.
-- **Fil d'Ariane cliquable** : les segments du fil d'Ariane en haut de l'écran permettent de naviguer directement vers le début de chaque chapitre ou section.
-
-#### B. Protection automatique contre le chevauchement du bas de diapositive
-Pour éviter que les grandes figures ou les graphiques ne viennent rogner le pied de page, les logos institutionnels (`.dual-logo`), la barre de progression ou les numéros de diapositives :
-
-1. **Positionnement vertical équilibré sous la barre du haut** : le premier titre (`h1`, `h2`) conserve une respiration supérieure de 14 px (`padding-top: 14px`) afin de ne pas coller au filet de la barre de navigation haute, tout en maintenant un interligne compact avec le paragraphe introductif.
-2. **Plafonnement dynamique des figures (`max-height`)** :
-   - Par défaut, les images sur diapositive non scrollable sont plafonnées à 480 px.
-   - Si la diapositive contient à la fois du texte introductif / une liste et une figure, la hauteur maximale de l'image est automatiquement ajustée (410 px pour une diapositive standard, 440 px pour une diapositive `{.smaller}`).
-   - La largeur se redimensionne proportionnellement (`width: auto; max-width: 100%`) pour préserver fidèlement le ratio d'aspect sans déformation.
-3. **Recommandations de composition** :
-   - Pour les diapositives denses (titre long sur 2 lignes, sous-titre explicatif et grand graphique multi-panneaux), ajoutez la classe `{.smaller}` sur le titre : `## Synthèse comparative {.smaller}`.
-   - Spécifiez une largeur modérée pour les figures au format 16:9 ou 4:3 (par exemple `width="780"` à `width="840"` au lieu de 950 ou 1000).
+---
 
 ## Insertion d'une page en paysage au milieu du document
 
 Pour intégrer une ou plusieurs pages en orientation paysage (idéal pour les grands tableaux ou les figures larges) au sein d'un document PDF par ailleurs composé en portrait, enveloppez simplement votre contenu dans un bloc `::: {.landscape}` :
 
-```markdown
+````markdown
 # Page précédente en portrait normal
 
 ::: {.landscape}
 # Section en paysage
-
-| Col 1 | Col 2 | Col 3 | Col 4 | Col 5 | Col 6 | Col 7 | Col 8 |
-|---|---|---|---|---|---|---|---|
-| A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8 |
 
 ```{r}
 # Un grand tableau gt ou une figure large ggplot2
@@ -492,160 +571,58 @@ Pour intégrer une ou plusieurs pages en orientation paysage (idéal pour les gr
 :::
 
 # Reprise immédiate en portrait normal
-```
+````
 
-Grâce au package `pdflscape` inclus dans le préambule du template, le lecteur PDF (Acrobat, Aperçu macOS, navigateur) applique **automatiquement une rotation de 90° à la visualisation**, évitant à l'utilisateur d'avoir à faire pivoter l'affichage manuellement.
+Grâce au package `pdflscape`, le lecteur PDF applique automatiquement une rotation de 90° à la visualisation de la page concernée.
 
-## Modèle Word embarqué
+---
 
-Le format `husson-docx` référence directement
-`_extensions/husson/template.docx`. Aucun chemin externe n'est nécessaire après l'installation de
-l'extension : les styles Word du modèle sont appliqués automatiquement.
+## Graphiques R, Python et compatibilité One Dark Pro (HTML & RevealJS)
 
-## Présentations RevealJS
+En HTML et RevealJS, toutes les figures s'adaptent automatiquement lors du passage entre le mode clair et le mode sombre One Dark Pro :
 
-Le format `husson-revealjs` reprend le thème `auto-dark-clean` et ses ressources
-locales. Il suit le thème du système au premier chargement, propose une bascule
-clair/sombre (mémorisée dans le navigateur) et bascule vers la palette One Dark Pro.
+1. **Fonctionnement natif sans configuration (`auto-dark.lua` + `_extension.yml`)** :
+   - Les formats `husson-html` et `husson-revealjs` configurent automatiquement `knitr` (`fig.bg = "transparent"`) et la palette discrète `ggplot2` One Dark Pro.
+   - Même sur un fichier `.qmd` natif n'appelant pas `auto_dark_on()` (et même avec `+ theme_minimal()` ou `+ theme_bw()`), le filtre Lua `auto-dark.lua` rend le fond blanc `#FFFFFF` transparent, génère la variante sombre `*-auto-dark.*` et l'embarque en `data-URI` base64 (100 % compatible avec `embed-resources: true`).
+2. **Graphiques 2D et 3D interactifs (`plotly` en R et Python)** :
+   - `auto-dark-renderings.js` intercepte les graphiques `Plotly` côté navigateur pour adapter dynamiquement les couleurs des séries, des axes et des grilles WebGL 3D au thème clair ou sombre actif.
+3. **Hook R optionnel (`auto-dark-setup.R`)** :
+   ```r
+   source("_extensions/husson/auto-dark-setup.R")
+   auto_dark_on(transparent_figures = TRUE)
+   ```
 
-### Couleur des titres h1, h2 et h3
-
-L'option `heading-colors` permet de colorer les trois premiers niveaux de titres
-sans modifier le thème RevealJS. Elle est désactivée par défaut afin de préserver
-le rendu des présentations existantes.
-
-Pour appliquer la couleur d'accent Husson aux trois niveaux :
-
-```yaml
-heading-colors: true
-```
-
-En thème clair, h1, h2 et h3 utilisent `#107895`; en mode sombre, ils utilisent
-`#61afef`.
-
-Les couleurs peuvent aussi être choisies niveau par niveau :
-
-```yaml
-heading-colors:
-  h1: "#0B6178"
-  h2: "#107895"
-  h3: "#9A2515"
-  dark:
-    h1: "#61AFEF"
-    h2: "#61AFEF"
-    h3: "#E5C07B"
-```
-
-Le gras ordinaire (`**texte**`) conserve désormais la couleur du texte environnant.
-Pour obtenir une couleur d'accent, utilisez une classe explicite sur le conteneur ou
-le texte concerné.
-
-L'espacement entre un titre h2 et un h3 est également normalisé : le même écart est
-appliqué lorsque le h3 est directement sous le h2 ou lorsqu'il se trouve en tête
-d'une colonne Quarto.
-
-### Graphiques R, Python et compatibilité One Dark Pro
-
-Pour assurer une intégration visuelle pérenne et automatique des figures lors de la bascule entre le mode clair et le mode One Dark Pro (sans jamais avoir à forcer manuellement la couleur de fond) :
-
-#### 1. En R (`ggplot2`, `lattice`, base R)
-- **Configuration native par défaut dans `_extension.yml`** : les formats `husson-html` et `husson-revealjs` injectent automatiquement `knitr: opts_chunk: { fig.bg: "transparent", dev.args: { bg: "transparent" } }` ainsi que les options R `ggplot2.discrete.colour` et `ggplot2.discrete.fill` calées sur la palette One Dark Pro, même si `auto-dark-setup.R` n'est pas sourcées manuellement ;
-- **Fond transparent et accompagnement `ggplot2` complet** : le module `auto-dark-setup.R` intercepte en outre l'impression des objets `ggplot` (`knit_print.ggplot`) pour maintenir `plot.background`, `panel.background` et `legend.background` transparents avec une grille semi-transparente, même après un `+ theme_minimal()` ;
-- **Palette One Dark Pro automatique** : application automatique du cycle de couleurs One Dark Pro (`#61afef` bleu, `#98c379` vert, `#e06c75` rouge, `#c678dd` violet, `#d19a66` orange, `#56b6c2` cyan, `#e5c07b` jaune) aux échelles discrètes `ggplot2` (`ggplot2.discrete.colour` et `ggplot2.discrete.fill`) ;
-- **Génération d'images compagnes sombres** : le hook `knitr` traite chaque tracé via le package `magick` en créant un fichier `*-auto-dark.png` (`image_transparent` + `image_negate` + `image_modulate(brightness = 115, saturation = 115, hue = 200)`) ;
-- **Bascule instantanée** : le script navigateur `auto-dark-renderings.js` (et `auto-dark-reveal.js` sur RevealJS) permute l'image source dès l'activation du mode sombre (avec repli sur filtre CSS si `magick` est absent) ;
-- **Activation complète (images compagnes `magick` et `reticulate`)** :
-  ```r
-  source("_extensions/husson/auto-dark-setup.R")
-  auto_dark_on(transparent_figures = TRUE)
-  ```
-
-#### 2. En Python (`matplotlib`, `seaborn` via `reticulate`)
-- **Activation transparente depuis R** : l'appel à `auto_dark_on()` dans le bloc `setup` R configure automatiquement la session Python `reticulate` avant l'exécution des blocs `{python}` sans aucun import supplémentaire ;
-- **Fond transparent et palette One Dark Pro automatiques (`matplotlib` et `seaborn`)** :
-  - Dans `matplotlib.rcParams` : injection automatique de `figure.facecolor = "none"`, `axes.facecolor = "none"`, `savefig.transparent = True` et du cycle de couleurs officiel One Dark Pro (`axes.prop_cycle`) ;
-  - Dans `seaborn` : interception automatique de `sns.axes_style` (utilisé par `sns.set_theme()`, `sns.set_style()`, `sns.set()`) pour empêcher l'écrasement du fond transparent par `'white'` ou `'#EAEAF2'`, remplacement des palettes `SEABORN_PALETTES` (`deep`, `muted`, `bright`, `pastel`, `dark`, `colorblind`, `onedark`) par la palette One Dark Pro, et adaptation de `HueMapping` pour que même une variable `hue` numérique discrète (ex. `cyl`) utilise automatiquement le cycle One Dark Pro ;
-- **Même pipeline `magick` pour les images compagnes** : les figures `matplotlib` et `seaborn` générées dans les blocs `{python}` passent par le même hook `plot` de `knitr` (`auto_dark_make_dark_image` dans `auto-dark-setup.R`), qui produit automatiquement le fichier `*-auto-dark.png` associé.
-
-#### 3. Graphiques 2D et 3D interactifs (`plotly` en R et Python)
-- **En R (`plotly::plot_ly`, `type = "scatter3d"`, etc.)** : interception automatique via `knit_print.plotly` pour appliquer un fond transparent (`paper_bgcolor`, `plot_bgcolor`, `scene.bgcolor`, plans 3D `xaxis`/`yaxis`/`zaxis`) et la palette discrète **One Dark Pro** sans avoir à spécifier `colors = ...` ;
-- **En Python (`plotly.express.scatter_3d`, `plotly.graph_objects`)** : configuration automatique du template `onedark_auto` et de `px.defaults.color_discrete_sequence`, puis conversion transparente en widget interactif `plotly` via `reticulate` ;
-- **Interception universelle côté navigateur (`auto-dark-renderings.js`)** : même sans appel préalable à `auto_dark_on()` (ou avec le moteur `jupyter`), `auto-dark-renderings.js` intercepte globalement `Plotly.newPlot` et `Plotly.react`, remplace automatiquement les couleurs par défaut de Plotly / R Set2 par la palette One Dark Pro (`Plotly.restyle`), et applique des couleurs de quadrillage 3D hexadécimales opaques (`#9aa5b1` / `#57606a` en thème clair, `#5c6370` / `#8b949e` en thème sombre) garantissant la visibilité du quadrillage WebGL (`premultipliedAlpha`) sur fond clair comme sur fond sombre.
+---
 
 ## Exemples et démonstrations inclus dans le dépôt
 
-Le dossier `examples/` contient des cas d'usage complets basés exclusivement sur `mtcars` (`Hôpital 1`, `Hôpital 2`, `Membre 1`, `Membre 2`) :
+Le dossier `examples/` contient des cas d'usage complets basés sur `mtcars` :
 
-1. **`examples/exemple-article.qmd`** :
-   - Rendu HTML statique (`husson-html`) sur `mtcars` avec table des matières, équations mathématiques, encadrés (callouts), tableau `gt`, graphique 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python).
-   - Rendu Word (`husson-docx`) appliquant le modèle éditorial embarqué.
-   - Commandes :
-     ```bash
-     quarto render examples/exemple-article.qmd --to husson-html
-     quarto render examples/exemple-article.qmd --to husson-docx
-     ```
+1. **[`examples/exemple-article.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-article.qmd)** : rendu HTML (`husson-html`) et Word (`husson-docx`).
+2. **[`examples/exemple-revealjs.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-revealjs.qmd)** : présentation RevealJS (`husson-revealjs`).
+3. **[`examples/exemple-these.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-these.qmd)** : thèse PDF complète (`husson-pdf`) avec page de garde, jury, pages liminaires et page paysage.
+4. **[`examples/r-python-reticulate.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/r-python-reticulate.qmd)** : transfert bidirectionnel R $\leftrightarrow$ Python avec `reticulate`.
 
-2. **`examples/exemple-revealjs.qmd`** :
-   - Présentation complète RevealJS (`husson-revealjs`) sur `mtcars` avec fil d'Ariane hiérarchique, diapositives à défilement avec en-tête fixe (sticky), tableaux, figures 2D `ggplot2` et nuages 3D interactifs `plotly` (R et Python) compatibles One Dark Pro.
-   - Commande :
-     ```bash
-     quarto render examples/exemple-revealjs.qmd --to husson-revealjs
-     ```
-
-3. **`examples/exemple-these.qmd`** :
-   - Thèse complète (`husson-pdf`) sur `mtcars` avec page de garde générique (`Université 1`, `Hôpital 1`, `Hôpital 2`, `Membre 1` à `Membre 6`), pages liminaires (résumé, remerciements génériques, valorisation, TOC, LOF, LOT, liste des abréviations), corps de texte démarrant à la page 1 en chiffres arabes, tableaux ajustés et planche en paysage (`pdflscape`).
-   - Commande :
-     ```bash
-     quarto render examples/exemple-these.qmd --to husson-pdf
-     ```
-
-4. **`examples/r-python-reticulate.qmd`** (Transfert bidirectionnel R vers Python avec reticulate sur `mtcars`) :
-   - Démontre l'interopérabilité fluide entre R et Python au sein d'un même document Quarto piloté par `knitr` :
-     1. **Préparation des données dans R** : sélection des variables d'intérêt (`mpg`, `wt`, `hp`) sur le jeu classique `mtcars` ;
-     2. **Accès direct depuis Python** : le préfixe `r.` donne un accès direct aux objets R sans écriture intermédiaire sur disque (`cars = r.cars_data.copy()`) ;
-     3. **Modélisation statistique dans Python** : calcul d'une régression multiple OLS (avec `statsmodels` ou `numpy.linalg.lstsq`) estimant les prédictions (`Predicted`) et résidus (`Residuals`) ;
-     4. **Rapatriement dans R** : le préfixe `py$` récupère le dataframe enrichi dans la session R (`cars_results <- py$cars`) ;
-     5. **Visualisations 2D et 3D dans R et Python** : figures 2D (`ggplot2`, `matplotlib`) et nuages 3D interactifs (`plotly::plot_ly` et `plotly.express.scatter_3d`) adaptés automatiquement à One Dark Pro.
-   - Commandes :
-     ```bash
-     # Rendu local autonome
-     quarto render examples/r-python-reticulate.qmd
-
-     # Rendu pour publication GitHub Pages
-     quarto render examples/r-python-reticulate.qmd --output-dir docs --output exemple-r-python.html
-     ```
-   - Dépendances : packages R `reticulate`, `ggplot2`, `plotly`, `knitr`, et environnement Python 3 avec `numpy`, `pandas`, `matplotlib` et `plotly` (et optionnellement `statsmodels`).
-
+---
 
 ## Bibliographie
 
-Le template prend en charge nativement les deux modes de citation de Quarto :
+Le template prend en charge nativement les deux modes de citation de Quarto (et résout automatiquement la bibliographie partagée `_extensions/husson/biblio_shared.bib` sur les formats concernés) :
 
-### 1. Mode Citeproc (avec feuille de style CSL)
+1. **Mode Citeproc (par défaut sur tous les formats)** :
+   ```yaml
+   bibliography: references.bib
+   csl: american-medical-association.csl # optionnel
+   ```
+   En PDF, l'environnement `CSLReferences` est automatiquement composé en taille compacte (`\footnotesize`, interligne simple, espacement `1.5pt`).
+2. **Mode Natbib (sur option en PDF)** :
+   ```yaml
+   bibliography: references.bib
+   cite-method: natbib
+   ```
 
-Pour utiliser un fichier de style CSL (ex. AMA, Vancouver, Lancet) :
-```yaml
-bibliography: references.bib
-csl: american-medical-association.csl
-cite-method: citeproc
-```
-- **Typographie compacte automatique** : le préambule LaTeX (`pdf-header.tex`) configure automatiquement l'environnement `CSLReferences` en taille `\footnotesize` (9pt), avec un interligne simple et un espacement vertical inter-items compact de `1.5pt` (`\itemsep`). Cela optimise considérablement l'encombrement des références tout en conservant une lisibilité académique rigoureuse.
-- **Recommandation pour le style AMA** : tronquer la liste des auteurs à 3 noms suivis de *et al.* (`et-al-min="4" et-al-use-first="3"`) dans le fichier CSL pour éviter que les articles multicentriques comptant des dizaines de co-auteurs n'allongent inutilement la bibliographie.
-
-### 2. Mode Natbib (par défaut)
-
-Par défaut, `husson-pdf` configure `natbib` et le style `unsrturl` :
-```yaml
-bibliography: references.bib
-```
-L'espacement entre les entrées (`\bibsep`) est également calibré automatiquement à `1.5pt`.
+---
 
 ## Origine du thème HTML
 
-Le thème HTML reprend les ressources du projet
-[`quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme).
-Le mécanisme de détection du mode sombre reprend une idée du projet
-[`gadenbuie/quarto-auto-dark`](https://github.com/gadenbuie/quarto-auto-dark)
-de Garrick Aden-Buie.
-
-Les attributions détaillées sont conservées dans `THIRD_PARTY_NOTICES.md`.
+Le thème HTML reprend les ressources du projet [`quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme). Le mécanisme de détection du mode sombre reprend une idée du projet [`gadenbuie/quarto-auto-dark`](https://github.com/gadenbuie/quarto-auto-dark) de Garrick Aden-Buie. Les attributions détaillées sont conservées dans [`THIRD_PARTY_NOTICES.md`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/_extensions/husson/THIRD_PARTY_NOTICES.md).

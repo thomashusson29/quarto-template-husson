@@ -76,12 +76,26 @@ local function heading(label)
 end
 
 function Pandoc(doc)
-  if not FORMAT:match("latex") then
+  local frontmatter = doc.meta.frontmatter
+  if frontmatter and type(frontmatter) == "table" and frontmatter.markdown ~= nil and not meta_bool(frontmatter.markdown) then
     return doc
   end
 
-  local frontmatter = doc.meta.frontmatter
-  if not frontmatter or not frontmatter.markdown then
+  -- En HTML / DOCX / RevealJS : ajouter les titres de section aux blocs frontmatter-* s'ils n'en ont pas
+  if not FORMAT:match("latex") then
+    for _, block in ipairs(doc.blocks) do
+      if block.t == "Div" then
+        for class_name, label in pairs(labels) do
+          if has_class(block, class_name) then
+            local first = block.content[1]
+            if not first or first.t ~= "Header" then
+              table.insert(block.content, 1, pandoc.Header(2, {pandoc.Str(label)}, pandoc.Attr("", {"unnumbered", "unlisted"})))
+            end
+            break
+          end
+        end
+      end
+    end
     return doc
   end
 
@@ -114,8 +128,21 @@ function Pandoc(doc)
     return doc
   end
 
+  if not doc.meta.frontmatter or type(doc.meta.frontmatter) ~= "table" then
+    doc.meta.frontmatter = pandoc.MetaMap{}
+  end
+  doc.meta.frontmatter.markdown = pandoc.MetaBool(true)
+  frontmatter = doc.meta.frontmatter
+
+  if frontmatter["table-of-contents"] == nil and meta_bool(doc.meta.toc) then
+    frontmatter["table-of-contents"] = pandoc.MetaBool(true)
+  end
+  if meta_bool(frontmatter["table-of-contents"]) then
+    doc.meta.toc = pandoc.MetaBool(false)
+  end
+
   local output = {}
-  table.insert(output, pandoc.RawBlock("latex", "\\pagenumbering{Roman}\n\\setcounter{page}{1}\n"))
+  table.insert(output, pandoc.RawBlock("latex", "\\hussoncustomfrontmattertrue\n\\pagenumbering{Roman}\n\\setcounter{page}{1}\n"))
 
   for _, item in ipairs(collected) do
     local label = labels[item.class]

@@ -2,21 +2,20 @@
 title: "Nouveau document"
 subtitle: "Template PDF, HTML, Word et RevealJS"
 author: "Votre nom"
+lang: fr
+format:
+  husson-pdf: default
+  husson-html: default
 ---
-
-```{r}
-#| label: husson-table-setup
-#| include: false
-source("_extensions/husson/gt-page-fit.R")
-if (requireNamespace("gt", quietly = TRUE)) husson_tables_on()
-```
 
 # Introduction
 
 Ce document produit automatiquement les formats `husson-pdf` et
-`husson-html`. Le format PDF applique la mise en page scientifique, les blocs
-de code différenciés et l'optimisation des tableaux. Le format HTML suit le
-mode clair ou sombre du système. Les formats `husson-docx` et
+`husson-html` sans nécessiter de chunk de configuration R ou Python. Le format
+PDF applique la typographie scientifique (Times New Roman par défaut), les blocs
+de code différenciés et l'ajustement automatique des tableaux (`Markdown`,
+`kable`, `gt`, `gtsummary`). Le format HTML suit automatiquement le mode clair
+ou sombre du système et adapte les figures. Les formats `husson-docx` et
 `husson-revealjs` sont disponibles à la demande.
 
 ::: {.callout-note title="Utilisation"}
