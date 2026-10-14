@@ -1,6 +1,3 @@
-> ### "Je hais Microsoft et les logiciels propriétaires"
-> *(adapté depuis l'incipit de "Tristes Tropiques", Claude Lévi-Strauss, 1955)*
-
 # Quarto Template Husson
 
 Extension Quarto universitaire et scientifique fournissant cinq formats prêts à l'emploi à partir d'un unique fichier `.qmd` natif :
@@ -15,6 +12,45 @@ Extension Quarto universitaire et scientifique fournissant cinq formats prêts �
 
 ---
 
+## Installation et premier rendu
+
+### Prérequis
+
+- [Quarto](https://quarto.org/docs/get-started/) **1.8 ou plus récent** pour tous les formats.
+- Pour `husson-pptx` : [Node.js avec npm](https://nodejs.org/en/download/) et Chromium. Sur macOS, l'export cherche Chromium ou Google Chrome aux emplacements habituels ; ailleurs, indiquez le navigateur avec `CHROMIUM_PATH=/chemin/vers/chromium`.
+- Pour `husson-pdf` : une distribution TeX avec XeLaTeX, par exemple MacTeX ou TeX Live. Elle n'est pas requise pour RevealJS, HTML, DOCX ou PPTX.
+- Pour l'interface graphique, facultative : Python 3, `streamlit`, `pandas` et `ruamel.yaml`.
+
+Carlito est fournie dans l'extension : aucun téléchargement de police n'est nécessaire. R ou Python ne sont nécessaires que si votre document exécute des blocs de code dans ces langages.
+
+### Cloner et essayer RevealJS
+
+```bash
+git clone https://github.com/thomashusson29/quarto-template-husson.git
+cd quarto-template-husson
+quarto render examples/exemple-pptx.qmd --to husson-revealjs
+```
+
+Ouvrez `output/examples/exemple-pptx.html`. Cet exemple utilise des cartes, images, SVG, flèches, onglets et diapositives défilables. Pour exporter le même fichier vers PowerPoint :
+
+```bash
+npm ci --prefix _extensions/husson/pptx
+quarto render examples/exemple-pptx.qmd --to husson-pptx
+```
+
+Le résultat est `output/examples/exemple-pptx.pptx`. Si Chromium n'est pas trouvé, définissez `CHROMIUM_PATH` avant la seconde commande. L'export PPTX utilise le rendu RevealJS clair et transforme les textes et formes compatibles en objets modifiables ; les limites sont détaillées dans [Export PPTX](#export-pptx-modifiable-depuis-revealjs).
+
+### Lancer l'interface graphique (facultatif)
+
+Depuis la racine du clone :
+
+```bash
+python3 -m pip install streamlit pandas ruamel.yaml
+python3 -m streamlit run gui/app.py
+```
+
+Dans **Formats**, choisissez RevealJS et, si souhaité, PPTX. L'interface utilise le dossier où le dépôt a été cloné. Sur macOS, vous pouvez également utiliser [`gui/Quarto GUI.command`](gui/Quarto%20GUI.command) si `streamlit` est disponible dans le `PATH`.
+
 ## Démarrage rapide (3 méthodes au choix)
 
 Vous n'avez besoin d'ajouter **aucun script R ni code LaTeX** dans votre document : un fichier `.qmd` standard fonctionne immédiatement.
@@ -24,10 +60,10 @@ Vous n'avez besoin d'ajouter **aucun script R ni code LaTeX** dans votre documen
 L'application locale **Quarto Husson Studio** est organisée en **3 panneaux horizontaux + 1 panneau Terminal inférieur** (chacun affichable ou masquable via les petits boutons **`Files`**, **`Preview`** et **`Terminal`** situés tout en haut du panneau central) :
 
 1. **Lancement** :
-   - Sur macOS : double-cliquez sur [`gui/Quarto GUI.command`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/Quarto%20GUI.command).
+   - Sur macOS : double-cliquez sur [`gui/Quarto GUI.command`](gui/Quarto%20GUI.command).
    - Ou depuis un terminal :
      ```bash
-     streamlit run gui/app.py
+     python3 -m streamlit run gui/app.py
      ```
 2. **Panneau de gauche (`Files`, rétractable) — Créer ou Ouvrir** :
    - **New** (par défaut à l'ouverture) : choisissez le dossier (`Folder` / `Subfolder`) et le nom du fichier (`Filename`), puis cliquez sur **Create** dans le panneau central pour créer le `.qmd` et installer automatiquement `_extensions/husson`.
@@ -210,10 +246,10 @@ format:
 
 ## Interface Graphique Interactive : Quarto Husson Studio
 
-L'application [`gui/app.py`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/app.py) offre un espace de travail sobre et complet (inspiré des applications natives macOS) permettant de gérer tout le cycle de vie d'un document Quarto :
+L'application [`gui/app.py`](gui/app.py) offre un espace de travail sobre et complet (inspiré des applications natives macOS) permettant de gérer tout le cycle de vie d'un document Quarto :
 
 - **Lancement rapide** :
-  - Double-clic sur [`gui/Quarto GUI.command`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/gui/Quarto%20GUI.command) sous macOS.
+  - Double-clic sur [`gui/Quarto GUI.command`](gui/Quarto%20GUI.command) sous macOS.
   - Ou commande `streamlit run gui/app.py` (ou alias `quarto-gui`).
 - **Fonctionnalités intégrées** :
   1. **Création directe de documents et de projets (`Nouveau document`)** : choix du dossier parent, création éventuelle d'un sous-dossier projet, choix du modèle initial (*Article*, *Master*, *Thèse*, *Rapport*, *RevealJS*), injection automatique de l'extension `_extensions/husson` et génération d'un squelette `.qmd` prêt à compiler.
@@ -278,7 +314,7 @@ Ajoutez cette fonction dans votre fichier `~/.zshrc` (ou `~/.bashrc`) :
 ```bash
 use-quarto-husson() {
   mkdir -p _extensions
-  ln -snf /Users/thomashusson/Documents/Projets/quarto-template-husson/_extensions/husson _extensions/husson
+  ln -snf /chemin/vers/quarto-template-husson/_extensions/husson _extensions/husson
   echo "Thème Husson activé dans ce dossier (zéro copie !)"
 }
 ```
@@ -598,10 +634,10 @@ En HTML et RevealJS, toutes les figures s'adaptent automatiquement lors du passa
 
 Le dossier `examples/` contient des cas d'usage complets basés sur `mtcars` :
 
-1. **[`examples/exemple-article.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-article.qmd)** : rendu HTML (`husson-html`) et Word (`husson-docx`).
-2. **[`examples/exemple-revealjs.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-revealjs.qmd)** : présentation RevealJS (`husson-revealjs`).
-3. **[`examples/exemple-these.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/exemple-these.qmd)** : thèse PDF complète (`husson-pdf`) avec page de garde, jury, pages liminaires et page paysage.
-4. **[`examples/r-python-reticulate.qmd`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/examples/r-python-reticulate.qmd)** : transfert bidirectionnel R $\leftrightarrow$ Python avec `reticulate`.
+1. **[`examples/exemple-article.qmd`](examples/exemple-article.qmd)** : rendu HTML (`husson-html`) et Word (`husson-docx`).
+2. **[`examples/exemple-revealjs.qmd`](examples/exemple-revealjs.qmd)** : présentation RevealJS (`husson-revealjs`).
+3. **[`examples/exemple-these.qmd`](examples/exemple-these.qmd)** : thèse PDF complète (`husson-pdf`) avec page de garde, jury, pages liminaires et page paysage.
+4. **[`examples/r-python-reticulate.qmd`](examples/r-python-reticulate.qmd)** : transfert bidirectionnel R $\leftrightarrow$ Python avec `reticulate`.
 
 ---
 
@@ -625,4 +661,4 @@ Le template prend en charge nativement les deux modes de citation de Quarto (et 
 
 ## Origine du thème HTML
 
-Le thème HTML reprend les ressources du projet [`quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme). Le mécanisme de détection du mode sombre reprend une idée du projet [`gadenbuie/quarto-auto-dark`](https://github.com/gadenbuie/quarto-auto-dark) de Garrick Aden-Buie. Les attributions détaillées sont conservées dans [`THIRD_PARTY_NOTICES.md`](file:///Users/thomashusson/Documents/Projets/quarto-template-husson/_extensions/husson/THIRD_PARTY_NOTICES.md).
+Le thème HTML reprend les ressources du projet [`quarto_auto_dark_theme`](https://github.com/thomashusson29/quarto_auto_dark_theme). Le mécanisme de détection du mode sombre reprend une idée du projet [`gadenbuie/quarto-auto-dark`](https://github.com/gadenbuie/quarto-auto-dark) de Garrick Aden-Buie. Les attributions détaillées sont conservées dans [`THIRD_PARTY_NOTICES.md`](_extensions/husson/THIRD_PARTY_NOTICES.md).

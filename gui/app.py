@@ -46,10 +46,10 @@ yaml_parser = YAML()
 yaml_parser.preserve_quotes = True
 yaml_parser.indent(mapping=2, sequence=4, offset=2)
 
-TEMPLATE_REPO_PATH = Path("/Users/thomashusson/Documents/Projets/quarto-template-husson")
+TEMPLATE_REPO_PATH = Path(__file__).resolve().parent.parent
 REPO_ROOT = TEMPLATE_REPO_PATH
 TEMPLATE_EXTENSION_DIR = TEMPLATE_REPO_PATH / "_extensions" / "husson"
-PROJECTS_BASE_DIR = Path("/Users/thomashusson/Documents/Projets")
+PROJECTS_BASE_DIR = TEMPLATE_REPO_PATH.parent
 
 st.set_page_config(
     page_title="Quarto Husson Studio",
@@ -1590,12 +1590,7 @@ st.session_state["sidebar_mode_val"] = sidebar_mode
 
 recent_files = find_recent_qmd_files(str(PROJECTS_BASE_DIR))
 default_fallback = str(TEMPLATE_REPO_PATH / "template.qmd")
-default_epidemio = "/Users/thomashusson/Documents/Projets/M2biostatistiques/S2/devoir_epidemio/devoir_epidemio.qmd"
-initial_default_path = (
-    default_epidemio
-    if Path(default_epidemio).exists()
-    else (recent_files[0] if recent_files else default_fallback)
-)
+initial_default_path = recent_files[0] if recent_files else default_fallback
 
 if "active_file_override" in st.session_state and st.session_state["active_file_override"]:
     initial_default_path = st.session_state["active_file_override"]
