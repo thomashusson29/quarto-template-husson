@@ -109,6 +109,26 @@
     return null;
   }
 
+  // Reserve (ou libere) la hauteur de la barre au-dessus des diapositives,
+  // puis demande a Reveal de recalculer l'echelle si l'etat a change.
+  function setNavVisible(visible) {
+    var body = document.body;
+    if (!body || body.classList.contains("husson-nav-visible") === visible) return;
+    body.classList.toggle("husson-nav-visible", visible);
+    // Styles poses aussi en ligne : la reserve ne depend pas d'une feuille
+    // de style restee en cache dans le navigateur.
+    var reveal = document.querySelector(".reveal");
+    var printing = /print-pdf|reveal-print/.test(document.documentElement.className);
+    if (reveal && !printing) {
+      var navH = (navbar && navbar.offsetHeight) || 42;
+      reveal.style.marginTop = visible ? navH + "px" : "";
+      reveal.style.height = visible ? "calc(100% - " + navH + "px)" : "";
+    }
+    if (window.Reveal && typeof window.Reveal.layout === "function") {
+      window.Reveal.layout();
+    }
+  }
+
   function updateNavbar(currentSlide) {
     if (!navbar) {
       createNavbar();
@@ -123,6 +143,7 @@
     ) {
       navbar.classList.add("husson-nav-hidden");
       navbar.innerHTML = "";
+      setNavVisible(false);
       return;
     }
 
@@ -130,6 +151,7 @@
     if (!navData || navData.hidden || !navData.h1 || navData.h1 === "") {
       navbar.classList.add("husson-nav-hidden");
       navbar.innerHTML = "";
+      setNavVisible(false);
       return;
     }
 
@@ -173,6 +195,7 @@
 
     navbar.innerHTML = html;
     navbar.classList.remove("husson-nav-hidden");
+    setNavVisible(true);
 
     attachClickHandlers();
   }

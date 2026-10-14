@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 42px;
+  height: var(--husson-nav-h, 42px);
   z-index: 999;
   display: flex;
   align-items: center;
@@ -27,6 +27,21 @@
   transition: opacity 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/*
+ * Reserve la hauteur de la barre : Reveal calcule l'echelle des diapositives
+ * sur la zone situee sous la barre, qui ne peut donc jamais recouvrir un titre,
+ * quelle que soit la taille de la fenetre. La classe est posee par
+ * navigation-reveal.js tant que la barre est affichee.
+ */
+:root {
+  --husson-nav-h: 42px;
+}
+
+html:not(.print-pdf):not(.reveal-print) body.husson-nav-visible > .reveal {
+  margin-top: var(--husson-nav-h, 42px);
+  height: calc(100% - var(--husson-nav-h, 42px));
 }
 
 /* Masquage fluide sur diapositive de titre ou masquage explicite */
