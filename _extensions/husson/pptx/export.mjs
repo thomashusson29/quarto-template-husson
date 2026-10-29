@@ -5,6 +5,8 @@ import { readFile, writeFile, realpath } from 'node:fs/promises';
 import { dirname, resolve, relative, extname, sep } from 'node:path';
 import puppeteer from 'puppeteer';
 import JSZip from 'jszip';
+import {captureNativeText,renderNativeText,finalizeNativeText} from './native-text.mjs';
+import {powerPointLanguage,setPresentationLanguage} from './language.mjs';
 
 const [htmlArg, pptxArg, selection = 'all'] = process.argv.slice(2);
 if (!htmlArg || !pptxArg) throw new Error('Usage: node export.mjs input.html output.pptx [all|1,2,3]');
@@ -41,24 +43,44 @@ const browser = await puppeteer.launch({ headless: true, executablePath: process
 try {
   const page = await browser.newPage();
   await page.setViewport({width:1600,height:900,deviceScaleFactor:1});
+  // Choose light before any theme script or iframe runs. Changing only the
+  // root class after startup leaves body variables and Reveal contrast stale.
+  await page.emulateMediaFeatures([{name:'prefers-color-scheme',value:'light'}]);
+  await page.evaluateOnNewDocument(() => {
+    try { localStorage.setItem('quarto-auto-dark-theme','light'); } catch {}
+  });
   page.on('console', msg => { if (['error','warning'].includes(msg.type())) warnings.push('browser: ' + msg.text()); });
   page.on('pageerror', e => warnings.push('page: ' + e.message));
   const htmlUrl=relative(projectRoot,html).split(sep).map(encodeURIComponent).join('/');
-  await page.goto(`http://127.0.0.1:${port}/${htmlUrl}`, {waitUntil:'networkidle2', timeout:120000});
+  await page.goto(`http://127.0.0.1:${port}/${htmlUrl}?theme=light`, {waitUntil:'networkidle2', timeout:120000});
   await page.waitForFunction(() => window.Reveal && Reveal.isReady(), {timeout:30000});
+  const documentLanguage=powerPointLanguage(await page.evaluate(()=>document.documentElement.lang||'en'));
   await page.evaluate(() => Reveal.configure({hash:false,history:false}));
   await page.evaluate(async () => {
-    document.documentElement.classList.remove('auto-dark-theme-dark');
-    document.documentElement.classList.add('auto-dark-theme-light');
-    document.documentElement.setAttribute('data-auto-dark-theme','light');
-    document.body.classList.remove('quarto-dark'); document.body.classList.add('quarto-light');
+    for (const element of [document.documentElement,document.body]) {
+      element.classList.remove('auto-dark-theme-dark','quarto-dark');
+      element.classList.add('auto-dark-theme-light','quarto-light');
+      element.setAttribute('data-auto-dark-theme','light');
+    }
+    window.dispatchEvent(new CustomEvent('auto-dark-change',{detail:{theme:'light'}}));
     // The HTML theme toggle has no action in a fixed, light PowerPoint deck.
     // Hide it before taking browser pixels for fixed non-text elements.
     const exportStyle = document.createElement('style');
     exportStyle.textContent = '.auto-dark-switch{visibility:hidden!important}';
     document.head.appendChild(exportStyle);
     await document.fonts.ready;
+    // Refuse mixed theme state rather than silently exporting white text or
+    // dark cards in a deck that is advertised as light.
+    const darkRoots=[document.documentElement,document.body].filter(element =>
+      element.matches('.auto-dark-theme-dark,.quarto-dark,[data-auto-dark-theme="dark"]'));
+    const backgroundAttributes=['color','image','video','iframe','gradient'];
+    const staleSlides=Array.from(document.querySelectorAll('.reveal .slides section.has-dark-background')).filter(slide =>
+      !backgroundAttributes.some(kind=>slide.hasAttribute('data-background-'+kind)));
+    if(darkRoots.length||staleSlides.length) {
+      throw new Error(`Light PPTX theme not applied: ${darkRoots.length} dark roots, ${staleSlides.length} stale slide backgrounds`);
+    }
   });
+  await page.addScriptTag({content:`window.hussonNativeText={capture:${captureNativeText.toString()},render:${renderNativeText.toString()}}`});
   const views = await page.evaluate(() => Array.from(document.querySelectorAll('.reveal .slides > section')).flatMap((s,h) => {
     const children = Array.from(s.children).filter(e=>e.tagName==='SECTION');
     return children.length ? children.map((e,v)=>({h,v,id:e.id,title:e.querySelector('h1,h2')?.textContent?.trim()||''})) : [{h,v:0,id:s.id,title:s.querySelector('h1,h2')?.textContent?.trim()||''}];
@@ -325,72 +347,22 @@ try {
           }
         }
         for(const slide of pageSlides){
-        // Keep each list item at its browser-measured position. The library's
-        // combined list text box changes indentation and vertical spacing.
-        slide.querySelectorAll('ul,ol').forEach(list=>{
-          const listRect=list.getBoundingClientRect(), style=getComputedStyle(list);
-          const rows=document.createElement('div');rows.className='pptx-measured-list';
-          rows.style.cssText=`display:${style.display};position:relative;width:${list.offsetWidth}px;height:${list.offsetHeight}px;margin:${style.margin};vertical-align:${style.verticalAlign};box-sizing:border-box`;
-          Array.from(list.children).filter(el=>el.tagName==='LI').forEach((li,index)=>{
-            const r=li.getBoundingClientRect(), cs=getComputedStyle(li);
-            let visualContainer=li.parentElement;
-            while(visualContainer&&visualContainer!==slide){
-              const s=getComputedStyle(visualContainer);
-              if((s.backgroundColor!=='rgba(0, 0, 0, 0)'&&s.backgroundColor!=='transparent')||parseFloat(s.borderLeftWidth)>0)break;
-              visualContainer=visualContainer.parentElement;
-            }
-            const contentRight=visualContainer&&visualContainer!==slide
-              ?visualContainer.getBoundingClientRect().right-parseFloat(getComputedStyle(visualContainer).paddingRight)*factor
-              :r.right;
-            const lines=[];
-            const walker=document.createTreeWalker(li,NodeFilter.SHOW_TEXT);
-            for(let node=walker.nextNode();node;node=walker.nextNode()){
-              const computed=getComputedStyle(node.parentElement);
-              for(let c=0;c<node.length;c++){
-                const range=document.createRange();range.setStart(node,c);range.setEnd(node,c+1);
-                const rect=range.getBoundingClientRect();
-                if(rect.width<.01)continue;
-                let line=lines.find(x=>Math.abs(x.y-rect.y)<parseFloat(cs.fontSize)*.35);
-                if(!line){line={x:rect.x,y:rect.y,right:rect.right,bottom:rect.bottom,runs:[]};lines.push(line)}
-                line.x=Math.min(line.x,rect.x);line.right=Math.max(line.right,rect.right);line.bottom=Math.max(line.bottom,rect.bottom);
-                const key=[computed.fontFamily,computed.fontSize,computed.fontWeight,computed.fontStyle,computed.color].join('|');
-                let run=line.runs.at(-1);
-                if(!run||run.key!==key){run={key,text:'',style:computed};line.runs.push(run)}
-                run.text+=node.nodeValue[c];
-              }
-            }
-            lines.sort((a,b)=>a.y-b.y);
-            for(const visual of lines){
-              const line=document.createElement('div');
-              line.style.cssText=`position:absolute;left:${(visual.x-listRect.x)/factor}px;top:${(visual.y-listRect.y)/factor}px;width:${(Math.max(r.right,contentRight)-visual.x)/factor}px;height:${(visual.bottom-visual.y)/factor+4}px;font-family:${cs.fontFamily};font-size:${cs.fontSize};font-weight:${cs.fontWeight};line-height:${cs.lineHeight};color:${cs.color};white-space:nowrap`;
-              for(const run of visual.runs){const span=document.createElement('span');span.textContent=run.text;span.style.cssText=`font-family:${run.style.fontFamily};font-size:${run.style.fontSize};font-weight:${run.style.fontWeight};font-style:${run.style.fontStyle};color:${run.style.color}`;line.appendChild(span)}
-              rows.appendChild(line);
-            }
-            if(cs.listStyleType!=='none'){
-              const mark=document.createElement('span');
-              mark.textContent=list.tagName==='OL'?String(index+1)+'.':cs.listStyleType==='square'?'▪':cs.listStyleType==='circle'?'◦':'•';
-              const markerStyle=getComputedStyle(li,'::marker');
-              const first=lines[0];const x=((first?.x??r.x)-listRect.x)/factor,y=((first?.y??r.y)-listRect.y)/factor;
-              mark.style.cssText=`position:absolute;left:${x-0.7*parseFloat(cs.fontSize)}px;top:${y}px;width:${0.5*parseFloat(cs.fontSize)}px;height:${parseFloat(cs.lineHeight)}px;font-family:${cs.fontFamily};font-size:${cs.fontSize};line-height:${cs.lineHeight};color:${markerStyle.color};text-align:center`;
-              rows.appendChild(mark);
-            }
-          });
-          list.replaceWith(rows);
-        });
-        // dom-to-pptx rasterizes native HTML tables. Rebuild their measured cells
-        // as positioned HTML boxes so the labels and values remain editable.
+        // Keep whole logical text blocks: one shape per list or consecutive
+        // paragraph group, with native paragraphs and native soft line breaks.
+        const nativeBlocks=window.hussonNativeText.capture(slide);
+        slide.closest('.husson-pptx-slide').dataset.nativeText=JSON.stringify(nativeBlocks);
+        // Keep the semantic HTML table intact for the native addTable path.
+        // Measure its grid in Chromium so merged cells and row heights keep
+        // the source geometry instead of relying on automatic text sizing.
         slide.querySelectorAll('table').forEach(table=>{
-          const tableRect=table.getBoundingClientRect();
-          const tableStyle=getComputedStyle(table);
-          const grid=document.createElement('div');grid.className='husson-pptx-table';
-          grid.style.cssText=`position:relative;width:${table.offsetWidth}px;height:${table.offsetHeight}px;margin:${tableStyle.margin};box-sizing:border-box`;
-          table.querySelectorAll('th,td').forEach(cell=>{
-            const r=cell.getBoundingClientRect(), cs=getComputedStyle(cell);
-            const box=document.createElement('div');box.innerHTML=cell.innerHTML;
-            box.style.cssText=`position:absolute;left:${(r.x-tableRect.x)/factor}px;top:${(r.y-tableRect.y)/factor}px;width:${r.width/factor}px;height:${r.height/factor}px;box-sizing:border-box;padding:${cs.padding};font-family:${cs.fontFamily};font-size:${cs.fontSize};font-weight:${cs.fontWeight};line-height:${cs.lineHeight};color:${cs.color};text-align:${cs.textAlign};background:${cs.backgroundColor};border-bottom:${cs.borderBottomWidth} ${cs.borderBottomStyle} ${cs.borderBottomColor};white-space:nowrap`;
-            grid.appendChild(box);
+          const cells=Array.from(table.querySelectorAll('tr > th,tr > td'));
+          const edges=cells.flatMap(cell=>{const r=cell.getBoundingClientRect();return [r.left,r.right]}).sort((a,b)=>a-b);
+          const boundaries=[];
+          for(const x of edges)if(!boundaries.length||x-boundaries.at(-1)>.75)boundaries.push(x);
+          table.dataset.hussonTable=JSON.stringify({
+            rows:Array.from(table.rows).map(row=>row.getBoundingClientRect().height),
+            columns:boundaries.slice(1).map((x,index)=>x-boundaries[index])
           });
-          table.replaceWith(grid);
         });
         }
       }
@@ -405,6 +377,8 @@ try {
     const broken=[];
     for(const root of roots)for(const img of root.querySelectorAll('img')){if(!img.complete||img.naturalWidth===0)broken.push(img.src)}
     return {count:roots.length,broken,scales:roots.map(root=>Number(root.dataset.revealScale)),
+      nativeText:roots.map(root=>JSON.parse(root.dataset.nativeText||'[]')),
+      nativeTables:roots.map(root=>root.querySelectorAll('table').length),
       unresolved:roots.flatMap((root,i)=>(JSON.parse(root.dataset.unresolvedPseudo||'[]')).map(value=>`slide ${i+1}: ${value}`))};
   });
   if(prep.broken.length) throw new Error('Images missing: '+prep.broken.map(x=>x.slice(0,120)).join(', '));
@@ -457,7 +431,31 @@ try {
   const bundle=await readFile(bundlePath,'utf8');
   const from="const isBlockDisplay = display === 'block' || display === 'flex' || display === 'grid' || display === 'table';";
   if(!bundle.includes(from))throw new Error('Unsupported dom-to-pptx bundle version');
-  await page.addScriptTag({content:bundle.replace(from,"const isBlockDisplay = display === 'block' || display === 'flex' || display === 'grid' || display === 'table' || display === 'inline-block';")});
+  let patchedBundle=bundle.replace(from,"const isBlockDisplay = display === 'block' || display === 'flex' || display === 'grid' || display === 'table' || display === 'inline-block';");
+  const nativeHook='function prepareRenderItem(node, config, domOrder, pptx, effectiveZIndex, computedStyle, globalOptions = {}) {';
+  const transport='item.options.altText = transportVal;';
+  if(!patchedBundle.includes(nativeHook)||!patchedBundle.includes(transport))throw new Error('Unsupported native-text hooks in dom-to-pptx');
+  patchedBundle=patchedBundle.replace(nativeHook,nativeHook+`
+    const nativeText=window.hussonNativeText.render(node,config,domOrder,effectiveZIndex);
+    if(nativeText)return nativeText;`);
+  patchedBundle=patchedBundle.replace(transport,"item.options.altText = transportVal + (item.hussonNativeId !== undefined ? ' husson-native:' + item.hussonNativeId : '');");
+  const objectName='item.options.objectName = transportVal;';
+  if(!patchedBundle.includes(objectName))throw new Error('Unsupported native text object names');
+  patchedBundle=patchedBundle.replace(objectName,"item.options.objectName = item.hussonNativeId !== undefined ? '__z_' + i + '__dom_' + item.domOrder + ' husson-native:' + item.hussonNativeId : transportVal;");
+  const tableExtract='const tableData = extractTableData(node, config.scale);';
+  const tableRows='colW: item.tableData.colWidths,';
+  if(!patchedBundle.includes(tableExtract)||!patchedBundle.includes(tableRows))throw new Error('Unsupported native table hooks');
+  patchedBundle=patchedBundle.replace(tableExtract,tableExtract+`
+    const measuredTable=JSON.parse(node.dataset.hussonTable||'null');
+    if(measuredTable){
+      tableData.rowHeights=measuredTable.rows.map(px=>px/96*config.scale);
+      tableData.colWidths=measuredTable.columns.map(px=>px/96*config.scale);
+    }`);
+  patchedBundle=patchedBundle.replace(tableRows,tableRows+'\n          rowH: item.tableData.rowHeights,');
+  const tablePosition='x: item.options.x,';
+  if(!patchedBundle.includes(tablePosition))throw new Error('Unsupported native table positioning');
+  patchedBundle=patchedBundle.replace(tablePosition,tablePosition+'\n          h: item.options.h,');
+  await page.addScriptTag({content:patchedBundle});
   const encoded=await page.evaluate(async()=>{
     const roots=Array.from(document.querySelectorAll('#husson-pptx-stage > .husson-pptx-slide'));
     const blob=await window.domToPptx.exportToPptx(roots,{width:13.333333,height:7.5,skipDownload:true,autoEmbedFonts:true,svgAsVector:false});
@@ -521,6 +519,19 @@ try {
       if(current>=largest)return paragraph;
       return paragraph.replace(spacing[0],spacing[0].replace(spacing[1],String(Math.round(largest*1.15))));
     });
+    xml=finalizeNativeText(xml,prep.nativeText[slide-1]);
+    // PptxGenJS 3.x can reuse an object ID for a table and a shape. Give
+    // native tables unique IDs and make the frame exactly match its grid.
+    let tableShapeId=Math.max(...Array.from(xml.matchAll(/<p:cNvPr\b[^>]*\bid="(\d+)"/g),m=>Number(m[1])));
+    xml=xml.replace(/<p:graphicFrame\b[\s\S]*?<\/p:graphicFrame>/g,frame=>{
+      if(!frame.includes('<a:tbl>'))return frame;
+      const height=Array.from(frame.matchAll(/<a:tr\b[^>]*\bh="(\d+)"/g),m=>Number(m[1])).reduce((a,b)=>a+b,0);
+      const width=Array.from(frame.matchAll(/<a:gridCol\b[^>]*\bw="(\d+)"/g),m=>Number(m[1])).reduce((a,b)=>a+b,0);
+      frame=frame.replace(/(<p:cNvPr\b[^>]*\bid=")\d+("[^>]*>)/,(_,a,b)=>a+(++tableShapeId)+b);
+      return frame.replace(/(<p:xfrm>[\s\S]*?<a:ext\b[^>]*\bcx=")\d+("[^>]*\bcy=")\d+("[^>]*\/>)/,(_,a,b,c)=>a+width+b+height+c);
+    });
+    const nativeTableCount=(xml.match(/<a:tbl>/g)||[]).length;
+    if(nativeTableCount!==prep.nativeTables[slide-1])throw new Error(`Native tables missing on slide ${slide}: ${nativeTableCount}/${prep.nativeTables[slide-1]}`);
     archive.file(path,xml);
   }
   // The converter's image resampling can prepend a black pixel row to small
@@ -555,6 +566,7 @@ try {
     return output;
   },smallPngs);
   for(const {name,data} of repaired)archive.file(name,Buffer.from(data,'base64'));
+  await setPresentationLanguage(archive,documentLanguage);
   await writeFile(output,await archive.generateAsync({type:'nodebuffer',compression:'DEFLATE'}));
   process.stdout.write(`Wrote ${output} (${prep.count} slides)\n`);
   if(warnings.length) process.stderr.write(warnings.slice(0,30).join('\n')+'\n');
