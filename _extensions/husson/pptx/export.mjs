@@ -53,8 +53,11 @@ try {
   page.on('pageerror', e => warnings.push('page: ' + e.message));
   const htmlUrl=relative(projectRoot,html).split(sep).map(encodeURIComponent).join('/');
   await page.goto(`http://127.0.0.1:${port}/${htmlUrl}?theme=light`, {waitUntil:'networkidle2', timeout:120000});
-  await page.waitForFunction(() => window.Reveal && Reveal.isReady(), {timeout:30000});
+  await page.waitForFunction(() => window.Reveal && Reveal.isReady(), {timeout:120000});
   const documentLanguage=powerPointLanguage(await page.evaluate(()=>document.documentElement.lang||'en'));
+  // Main text face of the deck: the first family of the RevealJS root (Carlito
+  // in the Husson theme, but a deck may declare its own with @font-face).
+  const mainFont=await page.evaluate(()=>getComputedStyle(document.querySelector('.reveal')).fontFamily.split(',')[0].trim().replace(/^['"]|['"]$/g,''));
   await page.evaluate(() => Reveal.configure({hash:false,history:false}));
   await page.evaluate(async () => {
     for (const element of [document.documentElement,document.body]) {
@@ -93,6 +96,71 @@ try {
     document.head.appendChild(style);
     const stage = document.createElement('div'); stage.id='husson-pptx-stage'; document.body.appendChild(stage);
   });
+  // Characters the declared font lacks (an arrow, a symbol) are drawn by
+  // Chrome with a fallback font. Ask Chrome which font actually drew each
+  // character and keep that font in PowerPoint, instead of the declared one.
+  const glyphFonts=await page.createCDPSession();
+  await glyphFonts.send('DOM.enable');await glyphFonts.send('CSS.enable');
+  const platformFonts=async selector=>{
+    const {root}=await glyphFonts.send('DOM.getDocument',{depth:-1});
+    const {nodeId}=await glyphFonts.send('DOM.querySelector',{nodeId:root.nodeId,selector});
+    return nodeId?(await glyphFonts.send('CSS.getPlatformFontsForNode',{nodeId})).fonts.map(f=>f.familyName):[];
+  };
+  const markFallbackGlyphs=async()=>{
+    // Each element with its own text, plus a probe: an "a" in the same font
+    // gives the platform name of the declared font.
+    // Numbering continues across slides: an index must name one element of
+    // the whole document, not one per slide.
+    const [first,count]=await page.evaluate(()=>{
+      const start=window.hussonGlyphCount||0;let n=start;
+      for(const el of Reveal.getCurrentSlide().querySelectorAll('*')){
+        if(el.closest('svg,script,style,.husson-glyph-probe')||el.dataset.hussonGlyphs)continue;
+        if(!Array.from(el.childNodes).some(c=>c.nodeType===3&&c.nodeValue.trim()))continue;
+        el.dataset.hussonGlyphs=String(n++);
+        const probe=document.createElement('span');probe.className='husson-glyph-probe';probe.textContent='a';
+        probe.style.cssText='position:absolute;opacity:0;pointer-events:none';el.appendChild(probe);
+      }
+      window.hussonGlyphCount=n;
+      return [start,n];
+    });
+    for(let k=first;k<count;k++){
+      const element=`[data-husson-glyphs="${k}"]`;
+      const declared=(await platformFonts(`${element} > .husson-glyph-probe`))[0];
+      const used=await platformFonts(element);
+      if(!declared||used.every(font=>font===declared))continue;
+      // Ask character by character: split the element's own text into neutral
+      // custom elements for the query only, then put the text back as it was.
+      const chars=await page.evaluate(selector=>{
+        const el=document.querySelector(selector);let j=0;
+        el.hussonText=Array.from(el.childNodes).filter(c=>c.nodeType===3).map(text=>{
+          const parts=Array.from(text.nodeValue).map(char=>{
+            const glyph=document.createElement('husson-glyph');glyph.textContent=char;glyph.dataset.index=String(j++);return glyph;
+          });
+          text.replaceWith(...parts);return {text,parts};
+        });
+        return j;
+      },element);
+      const fallback={};
+      for(let j=0;j<chars;j++){
+        const font=(await platformFonts(`${element} > husson-glyph[data-index="${j}"]`))[0];
+        if(font&&font!==declared){
+          const char=await page.evaluate(({element,j})=>document.querySelector(`${element} > husson-glyph[data-index="${j}"]`).textContent,{element,j});
+          fallback[char]=font;
+        }
+      }
+      await page.evaluate(({element,fallback})=>{
+        const el=document.querySelector(element);
+        for(const {text,parts} of el.hussonText){parts[0].replaceWith(text);parts.slice(1).forEach(p=>p.remove())}
+        delete el.hussonText;
+        if(Object.keys(fallback).length)el.dataset.hussonFallback=JSON.stringify(fallback);
+      },{element,fallback});
+      // A fallback face is a system font: it is not embedded, so PowerPoint
+      // uses it only if the computer opening the file has it too.
+      for(const [char,font] of Object.entries(fallback))
+        warnings.push(`Character ${JSON.stringify(char)} drawn with fallback font "${font}" (not in ${declared.replace(/\*$/,'')}; not embedded)`);
+    }
+    await page.evaluate(()=>document.querySelectorAll('.husson-glyph-probe').forEach(p=>p.remove()));
+  };
   for (const i of picks) {
     const view = views[i];
     await page.evaluate(({h,v})=>Reveal.slide(h,v),view);
@@ -105,6 +173,7 @@ try {
       await new Promise(ok=>setTimeout(ok,120));
     };
     await ensureView();
+    await markFallbackGlyphs();
     const demo = await page.evaluate(() => {
       const s=Reveal.getCurrentSlide();
       const frame=s.querySelector('iframe');
@@ -132,6 +201,11 @@ try {
       const hasNavbar=navbar&&navbarRect.width>1&&navbarRect.height>1&&navbarStyle.display!=='none'&&navbarStyle.visibility!=='hidden'&&Number(navbarStyle.opacity)>0&&!navbar.classList.contains('husson-nav-hidden');
       // Quarto tabsets expose their panels in DOM order. Export each state as a
       // separate, ordinary slide. Multiple tabsets form a Cartesian product.
+      const indices=Reveal.getIndices(source);
+      const pageBackground=[Reveal.getSlideBackground?.(indices.h,indices.v),document.querySelector('.reveal-viewport'),
+        document.querySelector('.reveal'),document.body,document.documentElement].filter(Boolean)
+        .map(el=>getComputedStyle(el).backgroundColor)
+        .find(color=>color&&color!=='transparent'&&!/^rgba\(.*,\s*0\)$/.test(color))||'#fff';
       const tabsets=Array.from(source.querySelectorAll('.panel-tabset'));
       const variants=tabsets.reduce((states,set)=>{
         const count=set.querySelectorAll(':scope > .tab-content > [role="tabpanel"]').length;
@@ -141,6 +215,10 @@ try {
       if(variants.length>100)throw new Error(`Too many tab combinations: ${variants.length}`);
       for (const variant of variants) {
         const root=document.createElement('div'); root.className='husson-pptx-slide'; root.dataset.sourceIndex=String(i+1); root.dataset.sourceId=source.id;
+        // The PowerPoint page takes the background the browser paints behind
+        // this view (Reveal slide background, then viewport, body, html):
+        // a deck with a coloured page must not get a white frame around it.
+        root.style.setProperty('background-color',pageBackground,'important');
         const reveal=document.createElement('div'); reveal.className='reveal';
         const stage=document.createElement('div'); stage.className='slides';
         const slide=source.cloneNode(true); slide.classList.add('present'); slide.classList.remove('past','future');
@@ -393,7 +471,7 @@ try {
   const {nodeIds: pseudoNodes} = await pseudoFonts.send('DOM.querySelectorAll', {
     nodeId: documentNode.nodeId, selector: '#husson-pptx-stage .pptx-pseudo-text'
   });
-  const fontCandidates = ['Carlito', 'Open Sans', 'Arial'];
+  const fontCandidates = [...new Set([mainFont, 'Carlito', 'Open Sans', 'Arial'])];
   const normalizeFont = value => value.toLowerCase().replace(/[\s"']/g, '');
   for (let index = 0; index < pseudoNodes.length; index++) {
     const nodeId = pseudoNodes[index];
@@ -455,6 +533,11 @@ try {
   const tablePosition='x: item.options.x,';
   if(!patchedBundle.includes(tablePosition))throw new Error('Unsupported native table positioning');
   patchedBundle=patchedBundle.replace(tablePosition,tablePosition+'\n          h: item.options.h,');
+  // PptxGenJS turns a zero shadow blur into its 8 pt default (`blur || 8`):
+  // a hard CSS shadow such as `0 5px 0` must stay hard in PowerPoint.
+  const shadowBlur='valToPts(slideItemObj.options.shadow.blur || 8)';
+  if(!patchedBundle.includes(shadowBlur))throw new Error('Unsupported shadow blur hook');
+  patchedBundle=patchedBundle.split(shadowBlur).join('valToPts(slideItemObj.options.shadow.blur ?? 8)');
   await page.addScriptTag({content:patchedBundle});
   const encoded=await page.evaluate(async()=>{
     const roots=Array.from(document.querySelectorAll('#husson-pptx-stage > .husson-pptx-slide'));
@@ -463,15 +546,19 @@ try {
   });
   const archive=await JSZip.loadAsync(Buffer.from(encoded,'base64'));
   const presentation=await archive.file('ppt/presentation.xml')?.async('string');
-  const embeddedCarlito=[...(presentation||'').matchAll(/<p:embeddedFont\b[^>]*>[\s\S]*?<\/p:embeddedFont>/g)]
-    .map(match=>match[0]).find(xml=>/<p:font\b[^>]*\btypeface="Carlito"/.test(xml));
-  const variants=['regular','bold','italic','boldItalic'];
-  if(!embeddedCarlito||variants.some(variant=>!new RegExp(`<p:${variant}\\b`).test(embeddedCarlito))) {
-    throw new Error('Carlito was not embedded in the PPTX with all four variants');
+  // The main face must travel with the deck. Carlito ships its four variants
+  // with the template; a custom face needs at least the variants it declares.
+  const embeddedMain=[...(presentation||'').matchAll(/<p:embeddedFont\b[^>]*>[\s\S]*?<\/p:embeddedFont>/g)]
+    .map(match=>match[0]).find(xml=>new RegExp(`<p:font\\b[^>]*\\btypeface="${mainFont.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}"`).test(xml));
+  const variants=mainFont==='Carlito'?['regular','bold','italic','boldItalic']:['regular'];
+  if(!embeddedMain||variants.some(variant=>!new RegExp(`<p:${variant}\\b`).test(embeddedMain))) {
+    throw new Error(`${mainFont} was not embedded in the PPTX with variants ${variants.join(', ')}`);
   }
-  if(Object.keys(archive.files).filter(path=>/^ppt\/fonts\/[^/]+\.fntdata$/.test(path)).length<4) {
-    throw new Error('PPTX is missing embedded Carlito font data');
+  const embeddedVariants=(embeddedMain.match(/<p:(regular|bold|italic|boldItalic)\b/g)||[]).length;
+  if(Object.keys(archive.files).filter(path=>/^ppt\/fonts\/[^/]+\.fntdata$/.test(path)).length<embeddedVariants) {
+    throw new Error(`PPTX is missing embedded ${mainFont} font data`);
   }
+  process.stdout.write(`Embedded font: ${mainFont} (${embeddedVariants} variants)\n`);
   for(let slide=1;slide<=prep.count;slide++){
     const path=`ppt/slides/slide${slide}.xml`,part=archive.file(path);
     if(!part)throw new Error(`Missing PowerPoint slide: ${path}`);
@@ -520,6 +607,44 @@ try {
       return paragraph.replace(spacing[0],spacing[0].replace(spacing[1],String(Math.round(largest*1.15))));
     });
     xml=finalizeNativeText(xml,prep.nativeText[slide-1]);
+    // PowerPoint underlines text that carries a hyperlink even with u="none".
+    // When the whole text of a box is one link (every run, one address) and
+    // CSS does not underline it, put the link on the box itself: still
+    // clickable, never underlined. A link on a few words stays on the words.
+    const linkRels=await archive.file(`ppt/slides/_rels/slide${slide}.xml.rels`)?.async('string')||'';
+    const linkTarget=id=>linkRels.match(new RegExp(`<Relationship\\b(?=[^>]*\\bId="${id}")[^>]*\\bTarget="([^"]*)"`))?.[1];
+    xml=xml.replace(/<p:sp>[\s\S]*?<\/p:sp>/g,shape=>{
+      const links=[...shape.matchAll(/<a:rPr\b([^>]*)>(?:(?!<\/a:rPr>)[\s\S])*?<a:hlinkClick\b[^>]*\br:id="(rId\d+)"/g)];
+      const runs=[...shape.matchAll(/<a:r>[\s\S]*?<\/a:r>/g)].filter(run=>/<a:t>[^<]*\S/.test(run[0])||/<a:t\b[^>]*>[^<]*\S/.test(run[0]));
+      if(!links.length||links.some(link=>!/\bu="none"/.test(link[1]))||runs.some(run=>!run[0].includes('<a:hlinkClick')))return shape;
+      const targets=new Set(links.map(link=>linkTarget(link[2])));
+      if(targets.size!==1||!linkTarget(links[0][2])||/<p:cNvPr\b[^>]*>\s*<a:hlinkClick/.test(shape))return shape;
+      const unlinked=shape.replace(/<a:hlinkClick\b[^>]*\/>|<a:hlinkClick\b[^>]*>[\s\S]*?<\/a:hlinkClick>/g,'');
+      return unlinked.replace(/<p:cNvPr\b([^>]*?)\s*(\/>|>)/,(m,attributes,end)=>
+        `<p:cNvPr${attributes}><a:hlinkClick r:id="${links[0][2]}"/>${end==='/>'?'</p:cNvPr>':''}`);
+    });
+    // CSS draws a border inside its box; PowerPoint centres an outline on the
+    // shape edge. Scale the outline like the rest of the slide (RevealJS
+    // factor), then inset the shape by half the outline on every side and
+    // keep the corner radius of the CSS box.
+    xml=xml.replace(/<p:sp>[\s\S]*?<\/p:sp>/g,shape=>{
+      const outline=shape.match(/<a:ln w="(\d+)"([^>]*)>([\s\S]*?)<\/a:ln>/);
+      const geometry=shape.match(/<a:prstGeom prst="(rect|roundRect|ellipse)"/);
+      const frame=shape.match(/<a:off x="(-?\d+)" y="(-?\d+)"\/>\s*<a:ext cx="(\d+)" cy="(\d+)"\/>/);
+      if(!outline||!geometry||!frame||!/<a:(solidFill|gradFill)\b/.test(outline[3]))return shape;
+      const width=Math.round(Number(outline[1])*scale);
+      const [x,y,cx,cy]=frame.slice(1).map(Number);
+      if(cx<=width||cy<=width)return shape;
+      let result=shape.replace(outline[0],`<a:ln w="${width}"${outline[2]}>${outline[3]}</a:ln>`)
+        .replace(frame[0],`<a:off x="${Math.round(x+width/2)}" y="${Math.round(y+width/2)}"/><a:ext cx="${cx-width}" cy="${cy-width}"/>`);
+      const corner=result.match(/<a:gd name="adj" fmla="val (\d+)"\/>/);
+      if(geometry[1]==='roundRect'&&corner){
+        const radius=Number(corner[1])/100000*Math.min(cx,cy);
+        const adjusted=Math.min(50000,Math.round(Math.max(0,radius-width/2)/Math.min(cx-width,cy-width)*100000));
+        result=result.replace(corner[0],`<a:gd name="adj" fmla="val ${adjusted}"/>`);
+      }
+      return result;
+    });
     // PptxGenJS 3.x can reuse an object ID for a table and a shape. Give
     // native tables unique IDs and make the frame exactly match its grid.
     let tableShapeId=Math.max(...Array.from(xml.matchAll(/<p:cNvPr\b[^>]*\bid="(\d+)"/g),m=>Number(m[1])));
